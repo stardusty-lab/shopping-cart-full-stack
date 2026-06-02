@@ -3,6 +3,8 @@ import { createRoot } from "react-dom/client";
 
 import { worker } from "@/mocks/msw/browser";
 
+import { AppProviders } from "@/providers";
+
 import App from "./App.tsx";
 
 await worker.start({
@@ -13,6 +15,8 @@ await worker.start({
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
+    <AppProviders>
+      <App />
+    </AppProviders>
   </StrictMode>,
 );
