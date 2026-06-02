@@ -1,5 +1,8 @@
-import type { ReactNode } from "react";
+export type Props<T extends React.ElementType = "div"> = {
+  as?: T;
+} & React.ComponentPropsWithoutRef<T>;
 
-export interface Props {
-  children: ReactNode;
-}
+export type PolymorphicProps<T extends React.ElementType = "div", P = {}> = {
+  as?: T;
+} & Omit<React.ComponentPropsWithoutRef<T>, keyof P | "as"> &
+  P;

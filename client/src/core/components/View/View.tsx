@@ -1,7 +1,8 @@
-import styles from "./View.module.css";
+import type { Props } from "./";
 
-import type { Props } from ".";
+export const View = <T extends React.ElementType = "div">(props: Props<T>) => {
+  const { as, ...restProps } = props;
+  const Component = as || "div";
 
-export const View = ({ children }: Props) => {
-  return <div className={styles.component}>{children}</div>;
+  return <Component {...restProps} />;
 };
