@@ -19,7 +19,10 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    /* Vite alias(@ -> src)와 동일한 경로 별칭을 TypeScript에도 적용 */
+    "paths": { "@/*": ["./src/*"] }
   },
   "include": ["src"]
 }
