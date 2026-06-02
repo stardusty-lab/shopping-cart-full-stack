@@ -1,7 +1,9 @@
+import { AppRoutes } from "@/routes";
+
 import "@/core/styles/index.css";
 
 function App() {
-  return null;
+  return <AppRoutes />;
 }
 
 export default App;
