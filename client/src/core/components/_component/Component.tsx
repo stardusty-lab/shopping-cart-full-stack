@@ -1,7 +1,21 @@
+import type { ElementType } from "react";
+
+import cn from "classnames";
+
+import { View } from "@/core/components/View";
+
 import styles from "./Component.module.css";
 
-import type { Props } from ".";
+import type { Props } from "./";
 
-export const Component = ({ children }: Props) => {
-  return <div className={styles.component}>{children}</div>;
+export const Component = <T extends ElementType>({
+  as = "div",
+  ...restProps
+}: Props<T>) => {
+  const { children } = restProps;
+  return (
+    <View as={as} className={cn(styles.component)} {...restProps}>
+      {children}
+    </View>
+  );
 };
