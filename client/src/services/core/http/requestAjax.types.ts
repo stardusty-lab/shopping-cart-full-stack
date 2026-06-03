@@ -1,4 +1,4 @@
-type Method = 'get' | 'post' | 'put' | 'delete';
+type Method = "get" | "post" | "put" | "patch" | "delete";
 
 export type Configs = {
   method?: Method | undefined;
