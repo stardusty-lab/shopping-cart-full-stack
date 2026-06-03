@@ -1,9 +1,9 @@
 import { requestAjax } from "@/services/core/http";
 
-export const getCarts = async ({ id }: { id: number }) => {
+export const getCarts = async ({ cartId }: { cartId: number }) => {
   const response = await requestAjax("/carts", {
     method: "get",
-    pathParams: { id },
+    pathParams: { cartId },
   });
   return response.data;
 };
