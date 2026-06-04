@@ -1,12 +1,14 @@
 import { http, HttpResponse } from "msw";
 
+import { cartsProducts } from "../data/carts";
+
 export const handlers = [
   http.get("/carts/:cartId", async ({ params }) => {
     const { cartId } = params;
 
     return HttpResponse.json(
       {
-        data: { id: cartId, products: [] },
+        data: { id: cartId, products: cartsProducts },
         status: 200,
       },
       { status: 200 },
@@ -15,17 +17,20 @@ export const handlers = [
   http.patch(
     "/carts/:cartId/products/:productId",
     async ({ params, request }) => {
-      const { productId } = params;
+      const productId = Number(params.productId);
+
       const data = (await request.clone().json()) as { quantity: number };
+
+      const productData = cartsProducts.find(
+        (product) => product.id === productId,
+      ) as { quantity: number };
+
+      productData.quantity = data.quantity;
 
       return HttpResponse.json(
         {
           data: {
-            id: productId,
-            name: "",
-            price: 0,
-            imgUrl: "",
-            quantity: data.quantity,
+            ...productData,
           },
           status: 200,
         },
