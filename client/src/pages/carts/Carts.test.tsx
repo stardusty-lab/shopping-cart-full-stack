@@ -135,6 +135,25 @@ describe("장바구니 페이지 테스트", () => {
       ).toBeInTheDocument();
     });
 
-    test("주문금액이 배송비 무료 기준 이상이면 배송비를 없이 계산한다", async () => {});
+    test("주문금액이 배송비 무료 기준 이상이면 배송비를 없이 계산한다", async () => {
+      // ARRANGE
+      render(<Carts />);
+
+      const expectedCartAmount = cartsProducts.reduce((acc, product) => {
+        return acc + product.price * product.quantity;
+      }, 0);
+      const expectedDeliveryFee = 0;
+
+      expect(expectedCartAmount).toBeGreaterThanOrEqual(
+        FREE_DEVERLY_FEE_THRESHOLD,
+      );
+
+      // ACT
+      await screen.findByText(cartsProducts[0].name);
+
+      // ASSERT
+      expect(screen.getByText(`${expectedDeliveryFee}원`)).toBeInTheDocument();
+      expect(screen.getAllByText(`${expectedCartAmount}원`)).toHaveLength(2);
+    });
   });
 });
