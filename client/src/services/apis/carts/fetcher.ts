@@ -22,9 +22,9 @@ export const patchCartsProducts = async ({
   pathParams: { cartId, productId },
   data: { quantity },
 }: PatchCartsProductsRequestDto): Promise<PatchCartsProductsResponseDto> => {
-  const response = await requestAjax("/carts/products", {
+  const response = await requestAjax(`/carts/${cartId}/products`, {
     method: "patch",
-    pathParams: { cartId, productId },
+    pathParams: { productId },
     data: { quantity },
   });
   return response.data;
@@ -33,9 +33,9 @@ export const patchCartsProducts = async ({
 export const deleteCartsProducts = async ({
   pathParams: { cartId, productId },
 }: DeleteCartsProductsRequestDto) => {
-  const response = await requestAjax("/carts/products", {
+  const response = await requestAjax(`/carts/${cartId}/products`, {
     method: "delete",
-    pathParams: { cartId, productId },
+    pathParams: { productId },
   });
   return response.data;
 };
