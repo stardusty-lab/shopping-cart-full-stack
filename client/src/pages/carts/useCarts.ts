@@ -27,7 +27,7 @@ const CART_ID = 1;
 export const useCarts = () => {
   const [cartProducts, setCartProducts] = useState<CartProduct[]>([]);
 
-  const fetchGetCarts = async () => {
+  const loadCartProducts = async () => {
     const { products } = await getCarts({ cartId: CART_ID });
     setCartProducts(
       products.map((product) => ({ ...product, selected: true })),
@@ -35,7 +35,7 @@ export const useCarts = () => {
   };
 
   useEffect(() => {
-    fetchGetCarts();
+    loadCartProducts();
   }, []);
 
   const updateProductQuauntity = ({
