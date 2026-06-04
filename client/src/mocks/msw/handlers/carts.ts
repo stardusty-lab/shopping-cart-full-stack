@@ -1,9 +1,11 @@
 import { http, HttpResponse } from "msw";
 
+import { ENV } from "@/configs/env";
+
 import { cartsProducts } from "../data/carts";
 
 export const handlers = [
-  http.get("/carts/:cartId", async ({ params }) => {
+  http.get(ENV.API_URL + "/carts/:cartId", async ({ params }) => {
     const { cartId } = params;
 
     return HttpResponse.json(
@@ -15,7 +17,7 @@ export const handlers = [
     );
   }),
   http.patch(
-    "/carts/:cartId/products/:productId",
+    ENV.API_URL + "/carts/:cartId/products/:productId",
     async ({ params, request }) => {
       const productId = Number(params.productId);
 
@@ -40,7 +42,7 @@ export const handlers = [
       );
     },
   ),
-  http.delete("/carts/:cartId/products/:productId", async () => {
+  http.delete(ENV.API_URL + "/carts/:cartId/products/:productId", async () => {
     return new HttpResponse(null, { status: 204 });
   }),
 ];
