@@ -5,7 +5,7 @@ export const Carts = () => {
     cartProducts,
     updateProductQuauntity,
     deleteProduct,
-    selectToggleProduct,
+    updateProductSelection,
   } = useCarts();
 
   const handleChangeQuantity = ({
@@ -29,7 +29,7 @@ export const Carts = () => {
     id: number;
     checked: boolean;
   }) => {
-    selectToggleProduct({ id, checked });
+    updateProductSelection({ id, selected: checked });
   };
 
   return (
@@ -49,7 +49,7 @@ export const Carts = () => {
                 id={String(product.id)}
                 name={String(product.id)}
                 type="checkbox"
-                checked={product.checked}
+                checked={product.selected}
                 onChange={(e) => {
                   handleChangeSelectProduct({
                     id: product.id,

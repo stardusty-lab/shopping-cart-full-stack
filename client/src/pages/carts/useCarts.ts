@@ -10,7 +10,7 @@ interface CartProduct {
   name: string;
   price: number;
   imgUrl: string;
-  checked: boolean;
+  selected: boolean;
 }
 
 interface UpdateProductQuauntityCommand {
@@ -52,15 +52,15 @@ export const useCarts = () => {
     setCartProducts(filteredCartProducts);
   };
 
-  const selectToggleProduct = ({
+  const updateProductSelection = ({
     id: productId,
-    checked,
+    selected,
   }: {
     id: number;
-    checked: boolean;
+    selected: boolean;
   }) => {
     const changedCartProducts = cartProducts.map((product) => {
-      return product.id !== productId ? product : { ...product, checked };
+      return product.id !== productId ? product : { ...product, selected };
     });
 
     setCartProducts(changedCartProducts);
@@ -70,6 +70,6 @@ export const useCarts = () => {
     cartProducts,
     updateProductQuauntity,
     deleteProduct,
-    selectToggleProduct,
+    updateProductSelection,
   };
 };
