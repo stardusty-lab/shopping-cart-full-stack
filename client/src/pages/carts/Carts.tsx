@@ -47,7 +47,7 @@ export const Carts = () => {
       acc += selectedProduct.price * selectedProduct.quantity;
       return acc;
     }, 0);
-  const delveryFee = DEVERLY_FEE;
+  const delveryFee = cartAmount >= FREE_DEVERLY_FEE_THRESHOLD ? 0 : DEVERLY_FEE;
   const paymentAmount = cartAmount + delveryFee;
 
   return (
