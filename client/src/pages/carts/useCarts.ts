@@ -10,6 +10,7 @@ interface CartProduct {
   name: string;
   price: number;
   imgUrl: string;
+  checked: boolean;
 }
 
 interface UpdateProductQuauntityCommand {
@@ -17,11 +18,17 @@ interface UpdateProductQuauntityCommand {
   quantity: number;
 }
 
+interface DeleteProductParams {
+  id: number;
+}
+
 export const useCarts = () => {
   const [cartProducts, setCartProducts] = useState<CartProduct[]>([]);
 
   useEffect(() => {
-    setCartProducts(cartsProducts);
+    setCartProducts(
+      cartsProducts.map((product) => ({ ...product, checked: true })),
+    );
   }, []);
 
   const updateProductQuauntity = ({
@@ -37,7 +44,7 @@ export const useCarts = () => {
     setCartProducts(changedCartProducts);
   };
 
-  const deleteProduct = ({ id: productId }: { id: number }) => {
+  const deleteProduct = ({ id: productId }: DeleteProductParams) => {
     const filteredCartProducts = cartProducts.filter((product) => {
       return product.id !== productId;
     });
@@ -45,5 +52,24 @@ export const useCarts = () => {
     setCartProducts(filteredCartProducts);
   };
 
-  return { cartProducts, updateProductQuauntity, deleteProduct };
+  const selectToggleProduct = ({
+    id: productId,
+    checked,
+  }: {
+    id: number;
+    checked: boolean;
+  }) => {
+    const changedCartProducts = cartProducts.map((product) => {
+      return product.id !== productId ? product : { ...product, checked };
+    });
+
+    setCartProducts(changedCartProducts);
+  };
+
+  return {
+    cartProducts,
+    updateProductQuauntity,
+    deleteProduct,
+    selectToggleProduct,
+  };
 };
