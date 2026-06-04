@@ -1,6 +1,6 @@
 import type { ElementType } from "react";
 
-import cn from "classnames";
+import { createClassName } from "@/core/utils/classname";
 
 import { View } from "@/core/components/View";
 
@@ -8,18 +8,34 @@ import styles from "./Button.module.css";
 
 import type { Props } from "./";
 
+const classnameDefault = "ui-button";
+
 export const Button = <T extends ElementType>(props: Props<T>) => {
-  const { as = "button", children, variant, block, ...restProps } = props;
+  const {
+    as = "button",
+    className,
+    children,
+
+    variant,
+    block,
+
+    ...restProps
+  } = props;
+
+  const modifiers = {
+    variant: variant && styles[`variant-${variant}`],
+    block: block && styles[`is-block`],
+  };
+
+  const classname = createClassName({
+    styles,
+    baseName: classnameDefault,
+    modifiers,
+    className,
+  });
+
   return (
-    <View
-      as={as}
-      className={cn(
-        styles["ui-button"],
-        styles[`variant-${variant}`],
-        block && styles[`is-block`],
-      )}
-      {...restProps}
-    >
+    <View as={as} className={classname} {...restProps}>
       {children}
     </View>
   );
