@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 
@@ -26,7 +26,31 @@ describe("장바구니 페이지 테스트", () => {
       });
     });
 
-    test("장바구니 상품 수량을 수정한다", async () => {});
+    test("장바구니 상품 수량을 수정한다", async () => {
+      // ARRANGE
+      const user = userEvent.setup();
+      render(<Carts />);
+
+      const targetProduct = cartsProducts[0];
+      const expectedCartAmount =
+        targetProduct.price * (targetProduct.quantity + 1) +
+        cartsProducts[1].price * cartsProducts[1].quantity;
+
+      await screen.findByText(targetProduct.name);
+      const targetProductElement = screen
+        .getByText(targetProduct.name)
+        .closest("div");
+
+      // ACT
+      await user.click(
+        within(targetProductElement as HTMLElement).getByRole("button", {
+          name: "+",
+        }),
+      );
+
+      // ASSERT
+      expect(screen.getAllByText(`${expectedCartAmount}원`)).toHaveLength(2);
+    });
 
     test("장바구니 상품을 삭제한다", async () => {});
 
