@@ -1,19 +1,21 @@
 import * as fetcher from "./fetcher";
 
-export const getCarts = async ({ cartId }: { cartId: number }) => {
+import type {
+  GetCarts,
+  PatchCartsProducts,
+  DeleteCartsProducts,
+} from "./repository.types";
+
+export const getCarts: GetCarts = async ({ cartId }) => {
   const response = await fetcher.getCarts({ pathParams: { cartId } });
 
   return response;
 };
 
-export const patchCartsProducts = async ({
+export const patchCartsProducts: PatchCartsProducts = async ({
   cartId,
   productId,
   quantity,
-}: {
-  cartId: number;
-  productId: number;
-  quantity: number;
 }) => {
   const response = await fetcher.patchCartsProducts({
     pathParams: { cartId, productId },
@@ -23,12 +25,9 @@ export const patchCartsProducts = async ({
   return response;
 };
 
-export const deleteCartsProducts = async ({
+export const deleteCartsProducts: DeleteCartsProducts = async ({
   cartId,
   productId,
-}: {
-  cartId: number;
-  productId: number;
 }) => {
   const response = await fetcher.deleteCartsProducts({
     pathParams: { cartId, productId },
