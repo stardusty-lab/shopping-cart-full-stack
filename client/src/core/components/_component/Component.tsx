@@ -8,11 +8,8 @@ import styles from "./Component.module.css";
 
 import type { Props } from "./";
 
-export const Component = <T extends ElementType>({
-  as = "div",
-  ...restProps
-}: Props<T>) => {
-  const { children } = restProps;
+export const Component = <T extends ElementType>(props: Props<T>) => {
+  const { as = "div", children, ...restProps } = props;
   return (
     <View as={as} className={cn(styles.component)} {...restProps}>
       {children}
