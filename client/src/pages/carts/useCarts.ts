@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 
 import { cartsProducts } from "@/mocks/data/carts";
 
+import { validateUpdateProductQuauntity } from "./validate";
+
 interface CartProduct {
   id: number;
   quantity: number;
@@ -9,13 +11,6 @@ interface CartProduct {
   price: number;
   imgUrl: string;
 }
-
-const validateUpdateProductQuauntity = (quantity: number) => {
-  if (quantity < 1) return false;
-  if (quantity > 99) return false;
-
-  return true;
-};
 
 export const useCarts = () => {
   const [cartProducts, setCartProducts] = useState<CartProduct[]>([]);
