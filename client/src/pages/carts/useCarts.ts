@@ -10,6 +10,13 @@ interface CartProduct {
   imgUrl: string;
 }
 
+const validateUpdateProductQuauntity = (quantity: number) => {
+  if (quantity < 1) return false;
+  if (quantity > 99) return false;
+
+  return true;
+};
+
 export const useCarts = () => {
   const [cartProducts, setCartProducts] = useState<CartProduct[]>([]);
 
@@ -24,6 +31,8 @@ export const useCarts = () => {
     id: number;
     quantity: number;
   }) => {
+    if (!validateUpdateProductQuauntity(quantity)) return false;
+
     const changedCartProducts = cartProducts.map((product) => {
       return product.id !== productId ? product : { ...product, quantity };
     });
