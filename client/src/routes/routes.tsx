@@ -1,3 +1,5 @@
+import { Navigate } from "react-router";
+
 import type { ReactNode } from "react";
 
 import { ROUTES } from "@/constants/routes";
@@ -10,11 +12,7 @@ export interface RouteItem {
   children?: RouteItem[];
 }
 
-const DummyPage = () => {
-  return "DummyPage";
-};
-
 export const routes: RouteItem[] = [
-  { path: ROUTES.HOME, element: <DummyPage /> },
+  { path: ROUTES.HOME, element: <Navigate to={ROUTES.CARTS} replace /> },
   { path: ROUTES.CARTS, element: <Carts /> },
 ];
