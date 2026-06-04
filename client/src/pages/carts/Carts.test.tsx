@@ -52,7 +52,32 @@ describe("장바구니 페이지 테스트", () => {
       expect(screen.getAllByText(`${expectedCartAmount}원`)).toHaveLength(2);
     });
 
-    test("장바구니 상품을 삭제한다", async () => {});
+    test("장바구니 상품을 삭제한다", async () => {
+      // ARRANGE
+      const user = userEvent.setup();
+      render(<Carts />);
+
+      const targetProduct = cartsProducts[0];
+      const expectedCartProductsCountText = `현재 ${
+        cartsProducts.length - 1
+      }종류의 상품이 담겨있습니다.`;
+
+      await screen.findByText(targetProduct.name);
+      const targetProductElement = screen
+        .getByText(targetProduct.name)
+        .closest("div");
+
+      // ACT
+      await user.click(
+        within(targetProductElement as HTMLElement).getByRole("button", {
+          name: "삭제",
+        }),
+      );
+
+      // ASSERT
+      expect(screen.getByText(expectedCartProductsCountText)).toBeInTheDocument();
+      expect(screen.queryByText(targetProduct.name)).not.toBeInTheDocument();
+    });
 
     test("선택한 상품만 주문 금액에 포함하여 계산한다", async () => {});
 
