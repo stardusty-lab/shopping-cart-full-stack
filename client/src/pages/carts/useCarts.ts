@@ -12,6 +12,11 @@ interface CartProduct {
   imgUrl: string;
 }
 
+interface UpdateProductQuauntityCommand {
+  id: number;
+  quantity: number;
+}
+
 export const useCarts = () => {
   const [cartProducts, setCartProducts] = useState<CartProduct[]>([]);
 
@@ -22,10 +27,7 @@ export const useCarts = () => {
   const updateProductQuauntity = ({
     id: productId,
     quantity,
-  }: {
-    id: number;
-    quantity: number;
-  }) => {
+  }: UpdateProductQuauntityCommand) => {
     if (!validateUpdateProductQuauntity(quantity)) return false;
 
     const changedCartProducts = cartProducts.map((product) => {
@@ -35,5 +37,13 @@ export const useCarts = () => {
     setCartProducts(changedCartProducts);
   };
 
-  return { cartProducts, updateProductQuauntity };
+  const deleteProduct = ({ id: productId }: { id: number }) => {
+    const filteredCartProducts = cartProducts.filter((product) => {
+      return product.id !== productId;
+    });
+
+    setCartProducts(filteredCartProducts);
+  };
+
+  return { cartProducts, updateProductQuauntity, deleteProduct };
 };

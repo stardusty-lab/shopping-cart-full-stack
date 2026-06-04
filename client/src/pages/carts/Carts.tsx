@@ -1,7 +1,7 @@
 import { useCarts } from "./useCarts";
 
 export const Carts = () => {
-  const { cartProducts, updateProductQuauntity } = useCarts();
+  const { cartProducts, updateProductQuauntity, deleteProduct } = useCarts();
 
   const handleChangeQuantity = ({
     id,
@@ -11,6 +11,10 @@ export const Carts = () => {
     quantity: number;
   }) => {
     updateProductQuauntity({ id, quantity });
+  };
+
+  const handleClickDeleteProduct = ({ id }: { id: number }) => {
+    deleteProduct({ id });
   };
 
   return (
@@ -31,7 +35,13 @@ export const Carts = () => {
                 name={String(product.id)}
                 type="checkbox"
               />
-              <button>삭제</button>
+              <button
+                onClick={() => {
+                  handleClickDeleteProduct({ id: product.id });
+                }}
+              >
+                삭제
+              </button>
               <img src={product.imgUrl} alt="" />
               <p>{product.name}</p>
               <p>{product.price}원</p>
