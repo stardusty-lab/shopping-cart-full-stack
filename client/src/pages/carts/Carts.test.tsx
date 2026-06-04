@@ -4,6 +4,7 @@ import "@testing-library/jest-dom";
 
 import { cartsProducts } from "@/mocks/data/carts";
 
+import { DEVERLY_FEE, FREE_DEVERLY_FEE_THRESHOLD } from "./constants";
 import { Carts } from "./";
 
 describe("장바구니 페이지 테스트", () => {
@@ -75,7 +76,9 @@ describe("장바구니 페이지 테스트", () => {
       );
 
       // ASSERT
-      expect(screen.getByText(expectedCartProductsCountText)).toBeInTheDocument();
+      expect(
+        screen.getByText(expectedCartProductsCountText),
+      ).toBeInTheDocument();
       expect(screen.queryByText(targetProduct.name)).not.toBeInTheDocument();
     });
 
@@ -86,7 +89,8 @@ describe("장바구니 페이지 테스트", () => {
 
       const unselectedProduct = cartsProducts[0];
       const selectedProduct = cartsProducts[1];
-      const expectedCartAmount = selectedProduct.price * selectedProduct.quantity;
+      const expectedCartAmount =
+        selectedProduct.price * selectedProduct.quantity;
 
       await screen.findByText(unselectedProduct.name);
       const unselectedProductElement = screen
@@ -102,7 +106,34 @@ describe("장바구니 페이지 테스트", () => {
       expect(screen.getByText(`${expectedCartAmount}원`)).toBeInTheDocument();
     });
 
-    test("주문금액이 배송비 무료 기준 미만이면 배송비를 포함해서 계산한다", async () => {});
+    test("주문금액이 배송비 무료 기준 미만이면 배송비를 포함해서 계산한다", async () => {
+      // ARRANGE
+      const user = userEvent.setup();
+      render(<Carts />);
+
+      const unselectedProduct = cartsProducts[0];
+      const selectedProduct = cartsProducts[1];
+      const expectedCartAmount =
+        selectedProduct.price * selectedProduct.quantity;
+      const expectedPaymentAmount = expectedCartAmount + DEVERLY_FEE;
+
+      await screen.findByText(unselectedProduct.name);
+      const unselectedProductElement = screen
+        .getByText(unselectedProduct.name)
+        .closest("div");
+
+      // ACT
+      await user.click(
+        within(unselectedProductElement as HTMLElement).getByRole("checkbox"),
+      );
+
+      // ASSERT
+      expect(screen.getByText(`${expectedCartAmount}원`)).toBeInTheDocument();
+      expect(screen.getByText(`${DEVERLY_FEE}원`)).toBeInTheDocument();
+      expect(
+        screen.getByText(`${expectedPaymentAmount}원`),
+      ).toBeInTheDocument();
+    });
 
     test("주문금액이 배송비 무료 기준 이상이면 배송비를 없이 계산한다", async () => {});
   });
