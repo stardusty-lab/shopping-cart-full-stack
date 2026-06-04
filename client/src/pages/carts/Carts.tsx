@@ -6,7 +6,7 @@ export const Carts = () => {
     updateProductQuauntity,
     deleteProduct,
     updateProductSelection,
-    updateProductsSelection,
+    updateAllProductSelection,
   } = useCarts();
 
   const handleChangeQuantity = ({
@@ -26,7 +26,7 @@ export const Carts = () => {
   const isAllChecked = cartProducts.every((product) => product.selected);
 
   const handleAllToogleProductChecked = ({ checked }: { checked: boolean }) => {
-    updateProductsSelection({ selected: checked });
+    updateAllProductSelection({ selected: checked });
   };
 
   const handleToggleProductChecked = ({
