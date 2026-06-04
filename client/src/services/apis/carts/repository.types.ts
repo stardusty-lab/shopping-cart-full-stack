@@ -7,7 +7,16 @@ export interface GetCartsParmas {
   cartId: number;
 }
 
-export type GetCarts = (params: GetCartsParmas) => Promise<unknown>;
+export type GetCarts = (params: GetCartsParmas) => Promise<{
+  id: number;
+  products: {
+    id: number;
+    name: string;
+    price: number;
+    imgUrl: string;
+    quantity: number;
+  }[];
+}>;
 
 export interface PatchCartsProductsCommand {
   cartId: number;
