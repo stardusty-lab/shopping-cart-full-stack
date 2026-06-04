@@ -10,6 +10,11 @@
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
+    "template:copy": "cp -r ./src/core/components/_component ./src/core/components/__component",
+    "template:rename-file": "find ./src/core/components/__component -type f -exec sed -i '' \"s/Component/$npm_config_to/g\" {} +",
+    "template:rename-code": "find ./src/core/components/__component -type f -name '*Component*' | while read file; do mv \"$file\" \"${file/Component/$npm_config_to}\"; done",
+    "template:rename-folder": "mv ./src/core/components/__component ./src/core/components/\"$npm_config_to\"",
+    "generate:template": "npm run template:copy && npm run template:rename-file --to=$npm_config_to && npm run template:rename-code --to=$npm_config_to && npm run template:rename-folder --to=$npm_config_to",
     "test": "jest",
     "test:watch": "jest --watch"
   },
