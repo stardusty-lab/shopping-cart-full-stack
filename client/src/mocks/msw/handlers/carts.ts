@@ -2,7 +2,7 @@ import { http, HttpResponse } from "msw";
 
 import { ENV } from "@/configs/env";
 
-import { cartsProducts } from "../data/carts";
+import { cartsProducts } from "@/mocks/data/carts";
 
 export const handlers = [
   http.get(ENV.API_URL + "/carts/:cartId", async ({ params }) => {
