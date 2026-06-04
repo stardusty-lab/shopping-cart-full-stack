@@ -9,7 +9,7 @@ import type {
 } from "./dto";
 
 export const getCarts = async ({
-  cartId,
+  pathParams: { cartId },
 }: GetCartsRequestDto): Promise<GetCartsResponseDto> => {
   const response = await requestAjax("/carts", {
     method: "get",
@@ -19,9 +19,8 @@ export const getCarts = async ({
 };
 
 export const patchCartsProducts = async ({
-  cartId,
-  productId,
-  quantity,
+  pathParams: { cartId, productId },
+  data: { quantity },
 }: PatchCartsProductsRequestDto): Promise<PatchCartsProductsResponseDto> => {
   const response = await requestAjax("/carts/products", {
     method: "patch",
@@ -32,8 +31,7 @@ export const patchCartsProducts = async ({
 };
 
 export const deleteCartsProducts = async ({
-  cartId,
-  productId,
+  pathParams: { cartId, productId },
 }: DeleteCartsProductsRequestDto) => {
   const response = await requestAjax("/carts/products", {
     method: "delete",

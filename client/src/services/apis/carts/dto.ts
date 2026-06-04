@@ -1,5 +1,5 @@
 export interface GetCartsRequestDto {
-  cartId: number;
+  pathParams: { cartId: number };
 }
 
 export interface GetCartsResponseDto {
@@ -14,9 +14,8 @@ export interface GetCartsResponseDto {
 }
 
 export interface PatchCartsProductsRequestDto {
-  cartId: number;
-  productId: number;
-  quantity: number;
+  pathParams: { cartId: number; productId: number };
+  data: { quantity: number };
 }
 
 export interface PatchCartsProductsResponseDto {
@@ -28,8 +27,7 @@ export interface PatchCartsProductsResponseDto {
 }
 
 export interface DeleteCartsProductsRequestDto {
-  cartId: number;
-  productId: number;
+  pathParams: { cartId: number; productId: number };
 }
 
 // 장바구니 상품 삭제
