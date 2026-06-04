@@ -39,6 +39,15 @@ export const Carts = () => {
     updateProductSelection({ id, selected: checked });
   };
 
+  const cartAmount = cartProducts
+    .filter((product) => product.selected)
+    .reduce((acc, selectedProduct) => {
+      acc += selectedProduct.price * selectedProduct.quantity;
+      return acc;
+    }, 0);
+  const delveryFee = 3000;
+  const paymentAmount = cartAmount + delveryFee;
+
   return (
     <>
       <h1>장바구니</h1>
@@ -113,15 +122,15 @@ export const Carts = () => {
       <hr />
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <div>주문금액</div>
-        <div>70000원</div>
+        <div>{cartAmount}원</div>
       </div>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <div>배송비</div>
-        <div>3,000원</div>
+        <div>{delveryFee}원</div>
       </div>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <div>총결제금액</div>
-        <div>73,000원</div>
+        <div>{paymentAmount}원</div>
       </div>
     </>
   );
