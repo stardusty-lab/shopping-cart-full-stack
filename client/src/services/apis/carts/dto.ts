@@ -1,30 +1,38 @@
+import type { RepsonseDTO } from "@/services/apis/api.types";
+
 export interface GetCartsRequestDto {
   pathParams: { cartId: number };
 }
 
-export interface GetCartsResponseDto {
-  id: number;
-  products: {
+export type GetCartsResponseDto = RepsonseDTO<
+  200,
+  {
     id: number;
-    name: string;
-    price: number;
-    imgUrl: string;
-    quantity: number;
-  }[];
-}
+    products: {
+      id: number;
+      name: string;
+      price: number;
+      imgUrl: string;
+      quantity: number;
+    }[];
+  }
+>;
 
 export interface PatchCartsProductsRequestDto {
   pathParams: { cartId: number; productId: number };
   data: { quantity: number };
 }
 
-export interface PatchCartsProductsResponseDto {
-  id: number; // product id,
-  name: string;
-  price: number;
-  imgUrl: string;
-  quantity: number;
-}
+export type PatchCartsProductsResponseDto = RepsonseDTO<
+  200,
+  {
+    id: number; // product id,
+    name: string;
+    price: number;
+    imgUrl: string;
+    quantity: number;
+  }
+>;
 
 export interface DeleteCartsProductsRequestDto {
   pathParams: { cartId: number; productId: number };
