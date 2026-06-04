@@ -25,6 +25,27 @@ export const VariantPrimary: Story = {
   },
 };
 
+export const VariantSecondary: Story = {
+  args: {
+    children: "button",
+    variant: "secondary",
+  },
+};
+
+export const SizeSmall: Story = {
+  args: {
+    children: "button",
+    size: "small",
+  },
+};
+
+export const SizeLarge: Story = {
+  args: {
+    children: "button",
+    size: "large",
+  },
+};
+
 export const Block: Story = {
   args: {
     children: "button",

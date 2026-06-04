@@ -5,7 +5,8 @@ import type { PolymorphicProps } from "@/core/components/View";
 export type AS = "button";
 
 export type OwnProps = {
-  variant?: "default" | "primary";
+  variant?: "default" | "primary" | "secondary";
+  size?: "large" | "small";
   block?: boolean;
 };
 

@@ -17,6 +17,7 @@ export const Button = <T extends ElementType>(props: Props<T>) => {
     children,
 
     variant,
+    size,
     block,
 
     ...restProps
@@ -24,6 +25,7 @@ export const Button = <T extends ElementType>(props: Props<T>) => {
 
   const modifiers = {
     variant: variant && styles[`variant-${variant}`],
+    size: size && styles[`size-${size}`],
     block: block && styles[`is-block`],
   };
 

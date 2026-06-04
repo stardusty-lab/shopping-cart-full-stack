@@ -8,11 +8,7 @@
 
   box-sizing: border-box;
 
-
-  height: 64px;
   font-family: Noto Sans;
-  font-weight: Bold;
-  font-size: 16px;
 }
 
 .variant-default {
@@ -22,6 +18,25 @@
 .variant-primary {
   color: #ffffff;
   background: #000000;
+}
+
+.variant-secondary {
+  color: #0A0D13;
+  background: #ffffff;
+  border: 1px solid #0000001A;
+}
+
+.size-small {
+  height: 24px;
+
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.size-large {
+  height: 64px;
+  font-weight: Bold;
+  font-size: 16px;
 }
 
 .is-block {
