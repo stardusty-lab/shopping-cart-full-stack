@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { cartsProducts } from "@/mocks/data/carts";
+import { getCarts } from "@/services/apis/carts/repository";
 
 import { validateUpdateProductQuauntity } from "./validate";
 
@@ -22,13 +22,20 @@ interface DeleteProductParams {
   id: number;
 }
 
+const CART_ID = 1;
+
 export const useCarts = () => {
   const [cartProducts, setCartProducts] = useState<CartProduct[]>([]);
 
-  useEffect(() => {
+  const fetchGetCarts = async () => {
+    const { products } = await getCarts({ cartId: CART_ID });
     setCartProducts(
-      cartsProducts.map((product) => ({ ...product, selected: true })),
+      products.map((product) => ({ ...product, selected: true })),
     );
+  };
+
+  useEffect(() => {
+    fetchGetCarts();
   }, []);
 
   const updateProductQuauntity = ({
