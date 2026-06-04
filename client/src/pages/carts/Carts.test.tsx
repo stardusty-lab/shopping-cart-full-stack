@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 
@@ -6,6 +6,17 @@ import { cartsProducts } from "@/mocks/data/carts";
 
 import { DEVERLY_FEE, FREE_DEVERLY_FEE_THRESHOLD } from "./constants";
 import { Carts } from "./";
+
+const getCartProductElement = async (productName: string) => {
+  const productNameElement = await screen.findByText(productName);
+  const productElement = productNameElement.closest("div");
+
+  if (!productElement) {
+    throw new Error(`${productName} 상품 영역을 찾을 수 없습니다.`);
+  }
+
+  return productElement;
+};
 
 describe("장바구니 페이지 테스트", () => {
   describe("성공 케이스", () => {
@@ -37,20 +48,21 @@ describe("장바구니 페이지 테스트", () => {
         targetProduct.price * (targetProduct.quantity + 1) +
         cartsProducts[1].price * cartsProducts[1].quantity;
 
-      await screen.findByText(targetProduct.name);
-      const targetProductElement = screen
-        .getByText(targetProduct.name)
-        .closest("div");
+      const targetProductElement = await getCartProductElement(
+        targetProduct.name,
+      );
 
       // ACT
       await user.click(
-        within(targetProductElement as HTMLElement).getByRole("button", {
+        within(targetProductElement).getByRole("button", {
           name: "+",
         }),
       );
 
       // ASSERT
-      expect(screen.getAllByText(`${expectedCartAmount}원`)).toHaveLength(2);
+      await waitFor(() => {
+        expect(screen.getAllByText(`${expectedCartAmount}원`)).toHaveLength(2);
+      });
     });
 
     test("장바구니 상품을 삭제한다", async () => {
@@ -63,23 +75,24 @@ describe("장바구니 페이지 테스트", () => {
         cartsProducts.length - 1
       }종류의 상품이 담겨있습니다.`;
 
-      await screen.findByText(targetProduct.name);
-      const targetProductElement = screen
-        .getByText(targetProduct.name)
-        .closest("div");
+      const targetProductElement = await getCartProductElement(
+        targetProduct.name,
+      );
 
       // ACT
       await user.click(
-        within(targetProductElement as HTMLElement).getByRole("button", {
+        within(targetProductElement).getByRole("button", {
           name: "삭제",
         }),
       );
 
       // ASSERT
-      expect(
-        screen.getByText(expectedCartProductsCountText),
-      ).toBeInTheDocument();
-      expect(screen.queryByText(targetProduct.name)).not.toBeInTheDocument();
+      await waitFor(() => {
+        expect(
+          screen.getByText(expectedCartProductsCountText),
+        ).toBeInTheDocument();
+        expect(screen.queryByText(targetProduct.name)).not.toBeInTheDocument();
+      });
     });
 
     test("선택한 상품만 주문 금액에 포함하여 계산한다", async () => {
@@ -92,18 +105,19 @@ describe("장바구니 페이지 테스트", () => {
       const expectedCartAmount =
         selectedProduct.price * selectedProduct.quantity;
 
-      await screen.findByText(unselectedProduct.name);
-      const unselectedProductElement = screen
-        .getByText(unselectedProduct.name)
-        .closest("div");
+      const unselectedProductElement = await getCartProductElement(
+        unselectedProduct.name,
+      );
 
       // ACT
       await user.click(
-        within(unselectedProductElement as HTMLElement).getByRole("checkbox"),
+        within(unselectedProductElement).getByRole("checkbox"),
       );
 
       // ASSERT
-      expect(screen.getByText(`${expectedCartAmount}원`)).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText(`${expectedCartAmount}원`)).toBeInTheDocument();
+      });
     });
 
     test("주문금액이 배송비 무료 기준 미만이면 배송비를 포함해서 계산한다", async () => {
@@ -117,22 +131,23 @@ describe("장바구니 페이지 테스트", () => {
         selectedProduct.price * selectedProduct.quantity;
       const expectedPaymentAmount = expectedCartAmount + DEVERLY_FEE;
 
-      await screen.findByText(unselectedProduct.name);
-      const unselectedProductElement = screen
-        .getByText(unselectedProduct.name)
-        .closest("div");
+      const unselectedProductElement = await getCartProductElement(
+        unselectedProduct.name,
+      );
 
       // ACT
       await user.click(
-        within(unselectedProductElement as HTMLElement).getByRole("checkbox"),
+        within(unselectedProductElement).getByRole("checkbox"),
       );
 
       // ASSERT
-      expect(screen.getByText(`${expectedCartAmount}원`)).toBeInTheDocument();
-      expect(screen.getByText(`${DEVERLY_FEE}원`)).toBeInTheDocument();
-      expect(
-        screen.getByText(`${expectedPaymentAmount}원`),
-      ).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText(`${expectedCartAmount}원`)).toBeInTheDocument();
+        expect(screen.getByText(`${DEVERLY_FEE}원`)).toBeInTheDocument();
+        expect(
+          screen.getByText(`${expectedPaymentAmount}원`),
+        ).toBeInTheDocument();
+      });
     });
 
     test("주문금액이 배송비 무료 기준 이상이면 배송비를 없이 계산한다", async () => {
