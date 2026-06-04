@@ -1,0 +1,29 @@
+.ui-button {
+  display: inline-block;
+  border: 1px solid transparent;
+  background: transparent;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+
+  box-sizing: border-box;
+
+
+  height: 64px;
+  font-family: Noto Sans;
+  font-weight: Bold;
+  font-size: 16px;
+}
+
+.variant-default {
+  color: #000000;
+}
+
+.variant-primary {
+  color: #ffffff;
+  background: #000000;
+}
+
+.is-block {
+  width: 100%;
+}
