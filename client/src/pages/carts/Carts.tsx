@@ -1,7 +1,18 @@
 import { useCarts } from "./useCarts";
 
 export const Carts = () => {
-  const { cartProducts } = useCarts();
+  const { cartProducts, updateProductQuauntity } = useCarts();
+
+  const handleChangeQuantity = ({
+    id,
+    quantity,
+  }: {
+    id: number;
+    quantity: number;
+  }) => {
+    updateProductQuauntity({ id, quantity });
+  };
+
   return (
     <>
       <h1>장바구니</h1>
@@ -24,9 +35,27 @@ export const Carts = () => {
               <img src={product.imgUrl} alt="" />
               <p>{product.name}</p>
               <p>{product.price}원</p>
-              <button>-</button>
+              <button
+                onClick={() => {
+                  handleChangeQuantity({
+                    id: product.id,
+                    quantity: product.quantity - 1,
+                  });
+                }}
+              >
+                -
+              </button>
               {product.quantity}
-              <button>+</button>
+              <button
+                onClick={() => {
+                  handleChangeQuantity({
+                    id: product.id,
+                    quantity: product.quantity + 1,
+                  });
+                }}
+              >
+                +
+              </button>
             </div>
             <hr />
           </>

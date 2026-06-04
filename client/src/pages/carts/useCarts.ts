@@ -17,5 +17,19 @@ export const useCarts = () => {
     setCartProducts(cartsProducts);
   }, []);
 
-  return { cartProducts };
+  const updateProductQuauntity = ({
+    id: productId,
+    quantity,
+  }: {
+    id: number;
+    quantity: number;
+  }) => {
+    const changedCartProducts = cartProducts.map((product) => {
+      return product.id !== productId ? product : { ...product, quantity };
+    });
+
+    setCartProducts(changedCartProducts);
+  };
+
+  return { cartProducts, updateProductQuauntity };
 };
