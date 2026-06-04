@@ -8,7 +8,23 @@ import { Carts } from "./";
 
 describe("장바구니 페이지 테스트", () => {
   describe("성공 케이스", () => {
-    test("장바구니 목록을 불러온다", async () => {});
+    test("장바구니 목록을 불러온다", async () => {
+      // ARRANGE
+      render(<Carts />);
+
+      const cartProductsCountText = `현재 ${cartsProducts.length}종류의 상품이 담겨있습니다.`;
+
+      // ACT
+      const cartProductsCount = await screen.findByText(cartProductsCountText);
+
+      // ASSERT
+      expect(cartProductsCount).toBeInTheDocument();
+
+      cartsProducts.forEach((product) => {
+        expect(screen.getByText(product.name)).toBeInTheDocument();
+        expect(screen.getByText(`${product.price}원`)).toBeInTheDocument();
+      });
+    });
 
     test("장바구니 상품 수량을 수정한다", async () => {});
 
