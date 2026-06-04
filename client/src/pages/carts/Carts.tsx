@@ -1,22 +1,7 @@
-import { useEffect, useState } from "react";
-
-import { cartsProducts } from "@/mocks/data/carts";
-
-interface CartProduct {
-  id: number;
-  quantity: number;
-  name: string;
-  price: number;
-  imgUrl: string;
-}
+import { useCarts } from "./useCarts";
 
 export const Carts = () => {
-  const [cartProducts, setCartProducts] = useState<CartProduct[]>([]);
-
-  useEffect(() => {
-    setCartProducts(cartsProducts);
-  }, []);
-
+  const { cartProducts } = useCarts();
   return (
     <>
       <h1>장바구니</h1>
