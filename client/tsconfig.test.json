@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.app.json",
   "compilerOptions": {
+    "allowJs": true,
     "module": "commonjs",
     "verbatimModuleSyntax": false
   }
