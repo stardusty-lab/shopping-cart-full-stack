@@ -6,6 +6,7 @@ export const Carts = () => {
     updateProductQuauntity,
     deleteProduct,
     updateProductSelection,
+    updateProductsSelection,
   } = useCarts();
 
   const handleChangeQuantity = ({
@@ -20,6 +21,12 @@ export const Carts = () => {
 
   const handleClickDeleteProduct = ({ id }: { id: number }) => {
     deleteProduct({ id });
+  };
+
+  const isAllChecked = cartProducts.every((product) => product.selected);
+
+  const handleAllToogleProductChecked = ({ checked }: { checked: boolean }) => {
+    updateProductsSelection({ selected: checked });
   };
 
   const handleToggleProductChecked = ({
@@ -37,7 +44,14 @@ export const Carts = () => {
       <h1>장바구니</h1>
       <p>현재 {cartProducts.length}종류의 상품이 담겨있습니다.</p>
 
-      <input id="all" type="checkbox" />
+      <input
+        id="all"
+        type="checkbox"
+        checked={isAllChecked}
+        onChange={(e) => {
+          handleAllToogleProductChecked({ checked: e.target.checked });
+        }}
+      />
       <label htmlFor="all">전체선택</label>
 
       <hr />

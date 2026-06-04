@@ -66,10 +66,19 @@ export const useCarts = () => {
     setCartProducts(changedCartProducts);
   };
 
+  const updateProductsSelection = ({ selected }: { selected: boolean }) => {
+    const changedCartProducts = cartProducts.map((product) => {
+      return { ...product, selected };
+    });
+
+    setCartProducts(changedCartProducts);
+  };
+
   return {
     cartProducts,
     updateProductQuauntity,
     deleteProduct,
     updateProductSelection,
+    updateProductsSelection,
   };
 };
