@@ -3,15 +3,27 @@
  * repository 반환 모델 정의 후 unknown 제거
  */
 
-export type GetCarts = (params: { cartId: number }) => Promise<unknown>;
+interface GetCartsParmas {
+  cartId: number;
+}
 
-export type PatchCartsProducts = (command: {
+export type GetCarts = (params: GetCartsParmas) => Promise<unknown>;
+
+interface PatchCartsProductsCommand {
   cartId: number;
   productId: number;
   quantity: number;
-}) => Promise<unknown>;
+}
 
-export type DeleteCartsProducts = (params: {
+export type PatchCartsProducts = (
+  command: PatchCartsProductsCommand,
+) => Promise<unknown>;
+
+interface DeleteCartsProductsParams {
   cartId: number;
   productId: number;
-}) => Promise<void>;
+}
+
+export type DeleteCartsProducts = (
+  params: DeleteCartsProductsParams,
+) => Promise<void>;
