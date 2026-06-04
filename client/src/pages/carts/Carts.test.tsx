@@ -79,7 +79,28 @@ describe("장바구니 페이지 테스트", () => {
       expect(screen.queryByText(targetProduct.name)).not.toBeInTheDocument();
     });
 
-    test("선택한 상품만 주문 금액에 포함하여 계산한다", async () => {});
+    test("선택한 상품만 주문 금액에 포함하여 계산한다", async () => {
+      // ARRANGE
+      const user = userEvent.setup();
+      render(<Carts />);
+
+      const unselectedProduct = cartsProducts[0];
+      const selectedProduct = cartsProducts[1];
+      const expectedCartAmount = selectedProduct.price * selectedProduct.quantity;
+
+      await screen.findByText(unselectedProduct.name);
+      const unselectedProductElement = screen
+        .getByText(unselectedProduct.name)
+        .closest("div");
+
+      // ACT
+      await user.click(
+        within(unselectedProductElement as HTMLElement).getByRole("checkbox"),
+      );
+
+      // ASSERT
+      expect(screen.getByText(`${expectedCartAmount}원`)).toBeInTheDocument();
+    });
 
     test("주문금액이 배송비 무료 기준 미만이면 배송비를 포함해서 계산한다", async () => {});
 
