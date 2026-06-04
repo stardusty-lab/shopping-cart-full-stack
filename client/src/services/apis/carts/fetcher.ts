@@ -1,6 +1,16 @@
 import { requestAjax } from "@/services/core/http";
 
-export const getCarts = async ({ cartId }: { cartId: number }) => {
+import type {
+  GetCartsRequestDto,
+  GetCartsResponseDto,
+  PatchCartsProductsRequestDto,
+  PatchCartsProductsResponseDto,
+  DeleteCartsProductsRequestDto,
+} from "./dto";
+
+export const getCarts = async ({
+  cartId,
+}: GetCartsRequestDto): Promise<GetCartsResponseDto> => {
   const response = await requestAjax("/carts", {
     method: "get",
     pathParams: { cartId },
@@ -12,11 +22,7 @@ export const patchCartsProducts = async ({
   cartId,
   productId,
   quantity,
-}: {
-  cartId: number;
-  productId: number;
-  quantity: number;
-}) => {
+}: PatchCartsProductsRequestDto): Promise<PatchCartsProductsResponseDto> => {
   const response = await requestAjax("/carts/products", {
     method: "patch",
     pathParams: { cartId, productId },
@@ -28,10 +34,7 @@ export const patchCartsProducts = async ({
 export const deleteCartsProducts = async ({
   cartId,
   productId,
-}: {
-  cartId: number;
-  productId: number;
-}) => {
+}: DeleteCartsProductsRequestDto) => {
   const response = await requestAjax("/carts/products", {
     method: "delete",
     pathParams: { cartId, productId },
