@@ -22,7 +22,7 @@ export const Carts = () => {
     deleteProduct({ id });
   };
 
-  const handleChangeSelectProduct = ({
+  const handleToggleProductChecked = ({
     id,
     checked,
   }: {
@@ -51,7 +51,7 @@ export const Carts = () => {
                 type="checkbox"
                 checked={product.selected}
                 onChange={(e) => {
-                  handleChangeSelectProduct({
+                  handleToggleProductChecked({
                     id: product.id,
                     checked: e.target.checked,
                   });
