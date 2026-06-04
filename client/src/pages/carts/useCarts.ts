@@ -27,7 +27,7 @@ export const useCarts = () => {
 
   useEffect(() => {
     setCartProducts(
-      cartsProducts.map((product) => ({ ...product, checked: true })),
+      cartsProducts.map((product) => ({ ...product, selected: true })),
     );
   }, []);
 
