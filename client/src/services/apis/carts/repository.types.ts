@@ -3,13 +3,13 @@
  * repository 반환 모델 정의 후 unknown 제거
  */
 
-interface GetCartsParmas {
+export interface GetCartsParmas {
   cartId: number;
 }
 
 export type GetCarts = (params: GetCartsParmas) => Promise<unknown>;
 
-interface PatchCartsProductsCommand {
+export interface PatchCartsProductsCommand {
   cartId: number;
   productId: number;
   quantity: number;
@@ -19,7 +19,7 @@ export type PatchCartsProducts = (
   command: PatchCartsProductsCommand,
 ) => Promise<unknown>;
 
-interface DeleteCartsProductsParams {
+export interface DeleteCartsProductsParams {
   cartId: number;
   productId: number;
 }

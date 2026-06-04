@@ -1,4 +1,12 @@
 import * as fetcher from "./fetcher";
+import {
+  mapGetCartsModelToRequestDTO,
+  mapGetCartsResponseDTOToModel,
+  mapPatchCartsProductsModelToRequestDTO,
+  mapPatchCartsProductsResponseDTOToModel,
+  mapDeleteCartsProductsModelToRequestDTO,
+  mapDeleteCartsProductsResponseDTOToModel,
+} from "./mapper";
 
 import type {
   GetCarts,
@@ -6,32 +14,32 @@ import type {
   DeleteCartsProducts,
 } from "./repository.types";
 
-export const getCarts: GetCarts = async ({ cartId }) => {
-  const response = await fetcher.getCarts({ pathParams: { cartId } });
+export const getCarts: GetCarts = async (model) => {
+  const { cartId } = mapGetCartsModelToRequestDTO(model);
 
-  return response;
+  const responseDTO = await fetcher.getCarts({ pathParams: { cartId } });
+
+  return mapGetCartsResponseDTOToModel(responseDTO);
 };
 
-export const patchCartsProducts: PatchCartsProducts = async ({
-  cartId,
-  productId,
-  quantity,
-}) => {
-  const response = await fetcher.patchCartsProducts({
+export const patchCartsProducts: PatchCartsProducts = async (model) => {
+  const { cartId, productId, quantity } =
+    mapPatchCartsProductsModelToRequestDTO(model);
+
+  const responseDTO = await fetcher.patchCartsProducts({
     pathParams: { cartId, productId },
     data: { quantity },
   });
 
-  return response;
+  return mapPatchCartsProductsResponseDTOToModel(responseDTO);
 };
 
-export const deleteCartsProducts: DeleteCartsProducts = async ({
-  cartId,
-  productId,
-}) => {
-  const response = await fetcher.deleteCartsProducts({
+export const deleteCartsProducts: DeleteCartsProducts = async (model) => {
+  const { cartId, productId } = mapDeleteCartsProductsModelToRequestDTO(model);
+
+  const responseDTO = await fetcher.deleteCartsProducts({
     pathParams: { cartId, productId },
   });
 
-  return response;
+  return mapDeleteCartsProductsResponseDTOToModel(responseDTO);
 };

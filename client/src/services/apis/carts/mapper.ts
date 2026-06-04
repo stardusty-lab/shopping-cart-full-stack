@@ -1,0 +1,43 @@
+import type {
+  GetCartsParmas,
+  PatchCartsProductsCommand,
+  DeleteCartsProductsParams,
+} from "./repository.types";
+
+import type { GetCartsResponseDto, PatchCartsProductsResponseDto } from "./dto";
+
+// GetCarts
+export const mapGetCartsModelToRequestDTO = (
+  model: GetCartsParmas,
+): GetCartsParmas => {
+  return model;
+};
+export const mapGetCartsResponseDTOToModel = (
+  response: GetCartsResponseDto,
+) => {
+  return response;
+};
+
+// PatchCartsProducts
+export const mapPatchCartsProductsModelToRequestDTO = (
+  model: PatchCartsProductsCommand,
+): PatchCartsProductsCommand => {
+  return model;
+};
+export const mapPatchCartsProductsResponseDTOToModel = (
+  response: PatchCartsProductsResponseDto,
+) => {
+  return response;
+};
+
+// DeleteCartsProducts
+export const mapDeleteCartsProductsModelToRequestDTO = (
+  model: DeleteCartsProductsParams,
+): DeleteCartsProductsParams => {
+  return model;
+};
+export const mapDeleteCartsProductsResponseDTOToModel = (
+  response: undefined,
+) => {
+  return response;
+};
