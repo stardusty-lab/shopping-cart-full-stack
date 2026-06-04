@@ -1,5 +1,7 @@
 import { useCarts } from "./useCarts";
 
+import { DEVERLY_FEE, FREE_DEVERLY_FEE_THRESHOLD } from "./constants";
+
 export const Carts = () => {
   const {
     cartProducts,
@@ -45,7 +47,7 @@ export const Carts = () => {
       acc += selectedProduct.price * selectedProduct.quantity;
       return acc;
     }, 0);
-  const delveryFee = 3000;
+  const delveryFee = DEVERLY_FEE;
   const paymentAmount = cartAmount + delveryFee;
 
   return (
@@ -117,7 +119,10 @@ export const Carts = () => {
         );
       })}
 
-      <p>총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다.</p>
+      <p>
+        총 주문 금액이 {FREE_DEVERLY_FEE_THRESHOLD}원 이상일 경우 무료
+        배송됩니다.
+      </p>
 
       <hr />
       <div style={{ display: "flex", justifyContent: "space-between" }}>
