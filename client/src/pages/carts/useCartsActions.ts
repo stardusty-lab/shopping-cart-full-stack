@@ -3,11 +3,18 @@ import { useEffect, useCallback } from "react";
 import { useLoadData } from "@/services/core/useLoadData";
 import { useExecute } from "@/services/core/useExecute";
 
-import { getCarts, patchCartsProducts } from "@/services/apis/carts/repository";
+import {
+  getCarts,
+  patchCartsProducts,
+  deleteCartsProducts,
+} from "@/services/apis/carts/repository";
 import type { GetCarts } from "@/services/apis/carts/repository.types";
 
 import { useCarts } from "./useCarts";
-import type { UpdateProductQuauntityCommand } from "./useCarts";
+import type {
+  UpdateProductQuauntityCommand,
+  DeleteProductParams,
+} from "./useCarts";
 
 import { validateUpdateProductQuauntity } from "./validate";
 
@@ -66,10 +73,27 @@ export const useCartsActions = () => {
     });
   };
 
+  const { mutate: deleteCartsProductsMutate } = useExecute({
+    executeFn: deleteCartsProducts,
+  });
+
+  const executeDeleteProduct = async ({
+    id: productId,
+  }: DeleteProductParams) => {
+    await deleteCartsProductsMutate({
+      cartId: CART_ID,
+      productId,
+    });
+
+    deleteProduct({
+      id: productId,
+    });
+  };
+
   return {
     cartProducts,
     updateProductQuauntity: executeUpdateProductQuauntity,
-    deleteProduct,
+    deleteProduct: executeDeleteProduct,
     updateProductSelection,
     updateAllProductSelection,
   };
