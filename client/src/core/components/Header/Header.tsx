@@ -6,12 +6,23 @@ import { View } from "@/core/components/View";
 
 import styles from "./Header.module.css";
 
+import { Back } from "./Back";
+
 import type { Props } from "./";
 
 const classnameDefault = "ui-header";
 
 export const Header = <T extends ElementType>(props: Props<T>) => {
-  const { as = "div", className, children, ...restProps } = props;
+  const {
+    as = "div",
+    className,
+
+    leading,
+    title,
+    trailing,
+
+    ...restProps
+  } = props;
 
   const modifiers = {};
 
@@ -24,7 +35,11 @@ export const Header = <T extends ElementType>(props: Props<T>) => {
 
   return (
     <View as={as} className={classname} {...restProps}>
-      {children}
+      {leading}
+      {title}
+      {trailing}
     </View>
   );
 };
+
+Header.Back = Back;
