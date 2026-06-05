@@ -28,5 +28,6 @@ module.exports = {
   moduleNameMapper: {
     "^@/configs/env$": "<rootDir>/src/configs/env.jest.ts",
     "^@/(.*)$": "<rootDir>/src/$1",
+    "\\.css$": "<rootDir>/__mocks__/styleMock.js", // 이 부분 추가
   },
 };
