@@ -41613,7 +41613,7 @@ var __vitePreload = function preload(baseModule, deps, importerUrl) {
 //#endregion
 //#region src/configs/env.ts
 var ENV = {
-	BASE_URL: void 0,
+	BASE_URL: "/shopping-cart-full-stack",
 	API_URL: "https://shopping-cart-full-stack-production-86b1.up.railway.app"
 };
 //#endregion
