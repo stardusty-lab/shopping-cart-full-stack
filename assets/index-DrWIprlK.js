@@ -41658,9 +41658,7 @@ var handlers$1 = [
 		return new HttpResponse(null, { status: 204 });
 	})
 ];
-//#endregion
-//#region src/mocks/msw/browser.ts
-var worker = setupWorker(...[http.get("/health", () => {
+setupWorker(...[http.get("/health", () => {
 	return HttpResponse.json({});
 }), ...handlers$1]);
 //#endregion
@@ -44673,6 +44671,5 @@ function App() {
 }
 //#endregion
 //#region src/main.tsx
-await worker.start({ serviceWorker: { url: `/mockServiceWorker.js` } });
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AppProviders, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }) }));
 //#endregion
