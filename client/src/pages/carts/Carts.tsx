@@ -10,6 +10,7 @@ import { Title } from "@/core/components/Title";
 import { DataInfo } from "@/core/components/DataInfo";
 import { NumberStepper } from "@/core/components/NumberStepper";
 import { ContentBox } from "@/core/components/ContentBox";
+import { Notice } from "@/core/components/Notice";
 
 import { useCartsActions } from "./useCartsActions";
 
@@ -135,19 +136,33 @@ export const Carts = () => {
             );
           })}
         </List>
+        {!cartProducts.length && (
+          <Notice>장바구니에 담은 상품이 없습니다.</Notice>
+        )}
+        {!!cartProducts.length && (
+          <>
+            <p>
+              총 주문 금액이 {FREE_DEVERLY_FEE_THRESHOLD}원 이상일 경우 무료
+              배송됩니다.
+            </p>
 
-        <p>
-          총 주문 금액이 {FREE_DEVERLY_FEE_THRESHOLD}원 이상일 경우 무료
-          배송됩니다.
-        </p>
-
-        <DataInfo>
-          <DataInfo.Item title="주문금액" content={`${cartAmount}원`} />
-          <DataInfo.Item title="배송비" content={`${delveryFee}원`} />
-          <DataInfo.Item title="총결제금액" content={`${paymentAmount}원`} />
-        </DataInfo>
+            <DataInfo>
+              <DataInfo.Item title="주문금액" content={`${cartAmount}원`} />
+              <DataInfo.Item title="배송비" content={`${delveryFee}원`} />
+              <DataInfo.Item
+                title="총결제금액"
+                content={`${paymentAmount}원`}
+              />
+            </DataInfo>
+          </>
+        )}
       </ContentBox>
-      <Button variant="primary" block size="large">
+      <Button
+        variant="primary"
+        block
+        size="large"
+        disabled={!cartProducts.length}
+      >
         주문 확인
       </Button>
     </Layout>
