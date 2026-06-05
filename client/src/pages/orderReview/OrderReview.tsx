@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { Layout } from "@/core/components/Layout";
 import { Header } from "@/core/components/Header";
@@ -8,6 +8,7 @@ import { Notice } from "@/core/components/Notice";
 import type { OrderReviewState } from "./OrderReview.types";
 
 export const OrderReview = () => {
+  const navigate = useNavigate();
   const location = useLocation();
 
   const state = location.state as OrderReviewState;
@@ -21,9 +22,13 @@ export const OrderReview = () => {
     return acc;
   }, 0);
 
+  const handlelickBack = () => {
+    navigate(-1);
+  };
+
   return (
     <Layout>
-      <Header leading={<Header.Back onClick={() => {}} />} />
+      <Header leading={<Header.Back onClick={handlelickBack} />} />
       <Notice>
         <p>주문</p>
         <p>
