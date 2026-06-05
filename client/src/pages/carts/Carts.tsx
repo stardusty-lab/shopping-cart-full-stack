@@ -11,7 +11,7 @@ import { DataInfo } from "@/core/components/DataInfo";
 import { NumberStepper } from "@/core/components/NumberStepper";
 import { ContentBox } from "@/core/components/ContentBox";
 
-import { useCarts } from "./useCarts";
+import { useCartsActions } from "./useCartsActions";
 
 import { DEVERLY_FEE, FREE_DEVERLY_FEE_THRESHOLD } from "./constants";
 
@@ -22,7 +22,7 @@ export const Carts = () => {
     deleteProduct,
     updateProductSelection,
     updateAllProductSelection,
-  } = useCarts();
+  } = useCartsActions();
 
   const handleChangeQuantity = ({
     id,
