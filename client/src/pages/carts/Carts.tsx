@@ -126,6 +126,8 @@ export const Carts = () => {
           {cartProducts.map((product) => {
             return (
               <List.Item
+                key={product.id}
+                data-testid={`cart-product-${product.id}`}
                 headerLeft={
                   <Checkbox
                     id={String(product.id)}
