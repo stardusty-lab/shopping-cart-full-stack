@@ -16,7 +16,8 @@
     "template:rename-folder": "mv ./src/core/components/__component ./src/core/components/\"$npm_config_to\"",
     "generate:template": "npm run template:copy && npm run template:rename-file --to=$npm_config_to && npm run template:rename-code --to=$npm_config_to && npm run template:rename-folder --to=$npm_config_to",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "deploy": "vite build --base=/shopping-cart-full-stack/ --minify=false && cp dist/index.html dist/404.html && npx gh-pages -d dist"
   },
   "dependencies": {
     "classnames": "^2.5.1",
