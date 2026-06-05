@@ -96,6 +96,7 @@ export const useCarts = () => {
 
   return {
     cartProducts,
+    setCartProducts,
     updateProductQuauntity,
     deleteProduct,
     updateProductSelection,
