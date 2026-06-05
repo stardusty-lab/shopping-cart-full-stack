@@ -13,6 +13,7 @@ import { DataInfo } from "@/core/components/DataInfo";
 import { NumberStepper } from "@/core/components/NumberStepper";
 import { ContentBox } from "@/core/components/ContentBox";
 import { Notice } from "@/core/components/Notice";
+import { Loading } from "@/core/components/Loading";
 
 import { ROUTES } from "@/constants/routes";
 
@@ -22,6 +23,7 @@ import { DEVERLY_FEE, FREE_DEVERLY_FEE_THRESHOLD } from "./constants";
 
 export const Carts = () => {
   const {
+    loadCartsProductsStatus,
     cartProducts,
     updateProductQuauntity,
     deleteProduct,
@@ -99,6 +101,7 @@ export const Carts = () => {
         />
 
         <hr />
+        {loadCartsProductsStatus === "loading" && <Loading>loading...</Loading>}
         <List>
           {cartProducts.map((product) => {
             return (

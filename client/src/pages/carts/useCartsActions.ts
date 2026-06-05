@@ -31,7 +31,7 @@ export const useCartsActions = () => {
   } = useCarts();
 
   const {
-    status: { data },
+    status: { status: loadCartsProductsStatus, data },
   } = useLoadData<Awaited<ReturnType<GetCarts>>>({
     queryFn: useCallback(async () => {
       return await getCarts({ cartId: CART_ID });
@@ -91,6 +91,7 @@ export const useCartsActions = () => {
   };
 
   return {
+    loadCartsProductsStatus,
     cartProducts,
     updateProductQuauntity: executeUpdateProductQuauntity,
     deleteProduct: executeDeleteProduct,
