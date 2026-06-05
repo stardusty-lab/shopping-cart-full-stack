@@ -1,0 +1,38 @@
+.ui-checkbox {
+  display: inline-block;
+}
+.ui-checkbox input {
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+}
+
+.ui-checkbox input + label {
+  display: inline-block;
+  padding-left: 40px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  height: 24px;
+  margin: 0;
+  border: none;
+  background: transparent
+    url("./imgs/checkbox-off.svg") 0 0
+    no-repeat;
+
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.ui-checkbox.checked input label,
+.ui-checkbox input:checked + label {
+  background: transparent
+    url("./imgs/checkbox-on.svg") 0 0
+    no-repeat;
+}
+
+.ui-checkbox.empty input + label {
+  padding-left: 24px;
+}
