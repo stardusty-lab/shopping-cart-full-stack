@@ -27,7 +27,7 @@ export const Checkbox = <T extends ElementType>(props: Props<T>) => {
 
   return (
     <div className={classname}>
-      <View as={as} id={id} checked={checked} {...restProps} />
+      <View as={as} id={id} type="checkbox" checked={checked} {...restProps} />
       <label htmlFor={id}>{label || id}</label>
     </div>
   );
