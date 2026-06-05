@@ -22,6 +22,12 @@ import { useCartsActions } from "./useCartsActions";
 
 import { DEVERLY_FEE, FREE_DEVERLY_FEE_THRESHOLD } from "./constants";
 
+const ERROR_MESSAGES = {
+  TYPE_MISMATCH: "잘못된 형식의 요청입니다. 입력값을 확인해주세요.",
+  NO_JSON: "잘못된 요청입니다. 다시 시도해주세요.",
+  ROUTE_NOT_FOUND: "요청한 기능을 찾을 수 없습니다. 잠시 후 다시 시도해주세요.",
+};
+
 export const Carts = () => {
   const {
     loadCartsProductsStatus,
@@ -35,6 +41,11 @@ export const Carts = () => {
     openAlert,
     onAlertClose,
   } = useCartsActions();
+
+  const errorMessage =
+    ERROR_MESSAGES[
+      updateProductQuauntityError?.errorCode as keyof typeof ERROR_MESSAGES
+    ] || "";
 
   const handleChangeQuantity = ({
     id,
@@ -180,10 +191,6 @@ export const Carts = () => {
             </DataInfo>
           </>
         )}
-
-        {updateProductQuauntityError && (
-          <div style={{ background: "red" }}>error</div>
-        )}
       </ContentBox>
       <Button
         variant="primary"
@@ -194,7 +201,7 @@ export const Carts = () => {
       >
         주문 확인
       </Button>
-      {openAlert && <Alert onClose={onAlertClose}>Alert</Alert>}
+      {openAlert && <Alert onClose={onAlertClose}>{errorMessage}</Alert>}
     </Layout>
   );
 };
