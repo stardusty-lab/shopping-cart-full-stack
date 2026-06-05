@@ -5,13 +5,12 @@ import { Header } from "@/core/components/Header";
 import { Button } from "@/core/components/Button";
 import { Notice } from "@/core/components/Notice";
 
+import type { OrderReviewState } from "./OrderReview.types";
+
 export const OrderReview = () => {
   const location = useLocation();
 
-  const state = location.state as {
-    products: number[];
-    paymentAmount: number;
-  };
+  const state = location.state as OrderReviewState;
 
   if (!state) return null;
 
