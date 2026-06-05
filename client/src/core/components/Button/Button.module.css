@@ -11,6 +11,10 @@
   font-family: Noto Sans;
 }
 
+.ui-button:disabled {
+  background: #BEBEBE;
+}
+
 .variant-default {
   color: #000000;
 }
