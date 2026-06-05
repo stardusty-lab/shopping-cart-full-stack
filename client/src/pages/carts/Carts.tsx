@@ -55,12 +55,14 @@ export const Carts = () => {
     updateProductSelection({ id, selected: checked });
   };
 
-  const cartAmount = cartProducts
-    .filter((product) => product.selected)
-    .reduce((acc, selectedProduct) => {
-      acc += selectedProduct.price * selectedProduct.quantity;
-      return acc;
-    }, 0);
+  const filteredCartProducts = cartProducts.filter(
+    (product) => product.selected,
+  );
+
+  const cartAmount = filteredCartProducts.reduce((acc, selectedProduct) => {
+    acc += selectedProduct.price * selectedProduct.quantity;
+    return acc;
+  }, 0);
   const delveryFee = cartAmount >= FREE_DEVERLY_FEE_THRESHOLD ? 0 : DEVERLY_FEE;
   const paymentAmount = cartAmount + delveryFee;
 
@@ -161,7 +163,7 @@ export const Carts = () => {
         variant="primary"
         block
         size="large"
-        disabled={!cartProducts.length}
+        disabled={!cartProducts.length || !filteredCartProducts.length}
       >
         주문 확인
       </Button>
