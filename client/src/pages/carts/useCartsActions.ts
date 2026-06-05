@@ -8,6 +8,8 @@ import type { GetCarts } from "@/services/apis/carts/repository.types";
 import { useCarts } from "./useCarts";
 import type { UpdateProductQuauntityCommand } from "./useCarts";
 
+import { validateUpdateProductQuauntity } from "./validate";
+
 const CART_ID = 1;
 
 export const useCartsActions = () => {
@@ -45,6 +47,8 @@ export const useCartsActions = () => {
     id: productId,
     quantity,
   }: UpdateProductQuauntityCommand) => {
+    if (!validateUpdateProductQuauntity(quantity)) return false;
+
     await patchCartsProducts({
       cartId: CART_ID,
       productId,
