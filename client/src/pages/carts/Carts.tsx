@@ -42,10 +42,14 @@ export const Carts = () => {
     onAlertClose,
   } = useCartsActions();
 
+  const errorCode = (
+    updateProductQuauntityError as { errorCode: string } | null
+  )?.errorCode;
+
   const errorMessage =
-    ERROR_MESSAGES[
-      updateProductQuauntityError?.errorCode as keyof typeof ERROR_MESSAGES
-    ] || "";
+    errorCode && errorCode in ERROR_MESSAGES
+      ? ERROR_MESSAGES[errorCode as keyof typeof ERROR_MESSAGES]
+      : "";
 
   const handleChangeQuantity = ({
     id,

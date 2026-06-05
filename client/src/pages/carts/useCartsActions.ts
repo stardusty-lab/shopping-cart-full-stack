@@ -61,7 +61,7 @@ export const useCartsActions = () => {
     mutate: patchCartsProductsMutate,
   } = useExecute({
     executeFn: patchCartsProducts,
-    onError: (error: Error | { errorCode: string }) => {
+    onError: (error: unknown) => {
       if (error instanceof RequestAjaxError) {
         const { errorCode } = error.data as { errorCode: string };
 
