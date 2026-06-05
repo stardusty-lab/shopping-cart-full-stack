@@ -1,6 +1,7 @@
 import { useEffect, useCallback } from "react";
 
 import { useLoadData } from "@/services/core/useLoadData";
+import { useExecute } from "@/services/core/useExecute";
 
 import { getCarts, patchCartsProducts } from "@/services/apis/carts/repository";
 import type { GetCarts } from "@/services/apis/carts/repository.types";
@@ -43,13 +44,17 @@ export const useCartsActions = () => {
     );
   }, [data]);
 
+  const { mutate: patchCartsProductsMutate } = useExecute({
+    executeFn: patchCartsProducts,
+  });
+
   const executeUpdateProductQuauntity = async ({
     id: productId,
     quantity,
   }: UpdateProductQuauntityCommand) => {
     if (!validateUpdateProductQuauntity(quantity)) return false;
 
-    await patchCartsProducts({
+    await patchCartsProductsMutate({
       cartId: CART_ID,
       productId,
       quantity,
