@@ -39,9 +39,10 @@ export const useCarts = () => {
   });
 
   useEffect(() => {
-    if (!data?.products) return;
+    if (!data?.data?.products) return;
+
     setCartProducts(
-      data?.products.map(
+      data?.data?.products.map(
         (product: Awaited<ReturnType<GetCarts>>["products"][number]) => ({
           ...product,
           selected: true,
