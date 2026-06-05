@@ -12,9 +12,10 @@ export const Item = ({
   title,
   content,
   description,
+  ...restProps
 }: ItemProps) => {
   return (
-    <div className={styles.item}>
+    <div className={styles.item} {...restProps}>
       {(headerLeft || headerRight) && (
         <div className={styles.header}>
           {headerLeft && <div className={styles.headerLeft}>{headerLeft}</div>}

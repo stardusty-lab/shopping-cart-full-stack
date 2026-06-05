@@ -1,4 +1,4 @@
-import type { ElementType, ReactNode } from "react";
+import type { ElementType, HTMLAttributes, ReactNode } from "react";
 
 import type { PolymorphicProps } from "@/core/components/View";
 
@@ -8,16 +8,19 @@ export type OwnProps = {
   children: ReactNode;
 };
 
-export interface ItemProps {
-  headerLeft?: React.ReactNode;
-  headerRight?: React.ReactNode;
+export type ItemProps = PolymorphicProps<
+  "div",
+  {
+    headerLeft?: React.ReactNode;
+    headerRight?: React.ReactNode;
 
-  left?: ReactNode;
-  right?: ReactNode;
+    left?: ReactNode;
+    right?: ReactNode;
 
-  title?: ReactNode;
-  content?: ReactNode;
-  description?: ReactNode;
-}
+    title?: ReactNode;
+    content?: ReactNode;
+    description?: ReactNode;
+  }
+>;
 
 export type Props<T extends ElementType = AS> = PolymorphicProps<T, OwnProps>;
