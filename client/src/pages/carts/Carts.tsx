@@ -1,3 +1,16 @@
+import type { ChangeEvent } from "react";
+
+import { Layout } from "@/core/components/Layout";
+import { Header } from "@/core/components/Header";
+import { Button } from "@/core/components/Button";
+import { Checkbox } from "@/core/components/Checkbox";
+import { List } from "@/core/components/List";
+import { ImgBox } from "@/core/components/ImgBox";
+import { Title } from "@/core/components/Title";
+import { DataInfo } from "@/core/components/DataInfo";
+import { NumberStepper } from "@/core/components/NumberStepper";
+import { ContentBox } from "@/core/components/ContentBox";
+
 import { useCarts } from "./useCarts";
 
 import { DEVERLY_FEE, FREE_DEVERLY_FEE_THRESHOLD } from "./constants";
@@ -51,92 +64,92 @@ export const Carts = () => {
   const paymentAmount = cartAmount + delveryFee;
 
   return (
-    <>
-      <h1>장바구니</h1>
-      <p>현재 {cartProducts.length}종류의 상품이 담겨있습니다.</p>
+    <Layout>
+      <Header title="SHOP" />
+      <ContentBox>
+        <Title
+          title="장바구니"
+          subTitle={`현재 ${cartProducts.length}종류의 상품이 담겨있습니다.`}
+        />
 
-      <input
-        id="all"
-        type="checkbox"
-        checked={isAllChecked}
-        onChange={(e) => {
-          handleAllToogleProductChecked({ checked: e.target.checked });
-        }}
-      />
-      <label htmlFor="all">전체선택</label>
+        <Checkbox
+          id="all"
+          label="전체선택"
+          checked={isAllChecked}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            handleAllToogleProductChecked({ checked: e.target.checked });
+          }}
+        />
 
-      <hr />
-      {cartProducts.map((product) => {
-        return (
-          <>
-            <div>
-              <input
-                id={String(product.id)}
-                name={String(product.id)}
-                type="checkbox"
-                checked={product.selected}
-                onChange={(e) => {
-                  handleToggleProductChecked({
-                    id: product.id,
-                    checked: e.target.checked,
-                  });
-                }}
+        <hr />
+        <List>
+          {cartProducts.map((product) => {
+            return (
+              <List.Item
+                headerLeft={
+                  <Checkbox
+                    id={String(product.id)}
+                    name={String(product.id)}
+                    empty
+                    checked={product.selected}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                      handleToggleProductChecked({
+                        id: product.id,
+                        checked: e.target.checked,
+                      });
+                    }}
+                  />
+                }
+                headerRight={
+                  <Button
+                    variant="secondary"
+                    size="small"
+                    onClick={() => {
+                      handleClickDeleteProduct({ id: product.id });
+                    }}
+                  >
+                    삭제
+                  </Button>
+                }
+                left={<ImgBox img={product.imgUrl || ""} />}
+                title={product.name}
+                content={`${product.price}원`}
+                description={
+                  <NumberStepper
+                    value={product.quantity}
+                    onDecrement={() => {
+                      handleChangeQuantity({
+                        id: product.id,
+                        quantity: product.quantity - 1,
+                      });
+                    }}
+                    onIncrement={() => {
+                      handleChangeQuantity({
+                        id: product.id,
+                        quantity: product.quantity + 1,
+                      });
+                    }}
+                  />
+                }
               />
-              <button
-                onClick={() => {
-                  handleClickDeleteProduct({ id: product.id });
-                }}
-              >
-                삭제
-              </button>
-              <img src={product.imgUrl} alt="" />
-              <p>{product.name}</p>
-              <p>{product.price}원</p>
-              <button
-                onClick={() => {
-                  handleChangeQuantity({
-                    id: product.id,
-                    quantity: product.quantity - 1,
-                  });
-                }}
-              >
-                -
-              </button>
-              {product.quantity}
-              <button
-                onClick={() => {
-                  handleChangeQuantity({
-                    id: product.id,
-                    quantity: product.quantity + 1,
-                  });
-                }}
-              >
-                +
-              </button>
-            </div>
-            <hr />
-          </>
-        );
-      })}
+            );
+          })}
+        </List>
 
-      <p>
-        총 주문 금액이 {FREE_DEVERLY_FEE_THRESHOLD}원 이상일 경우 무료
-        배송됩니다.
-      </p>
+        <p>
+          총 주문 금액이 {FREE_DEVERLY_FEE_THRESHOLD}원 이상일 경우 무료
+          배송됩니다.
+        </p>
 
-      <hr />
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <div>주문금액</div>
-        <div>{cartAmount}원</div>
-      </div>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <div>배송비</div>
-        <div>{delveryFee}원</div>
-      </div>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <div>총결제금액</div>
-        <div>{paymentAmount}원</div>
-      </div>
-    </>
+        <DataInfo>
+          <DataInfo.Item title="주문금액" content={`${cartAmount}원`} />
+          <DataInfo.Item title="배송비" content={`${delveryFee}원`} />
+          <DataInfo.Item title="총결제금액" content={`${paymentAmount}원`} />
+        </DataInfo>
+      </ContentBox>
+      <Button variant="primary" block size="large">
+        주문 확인
+      </Button>
+    </Layout>
   );
 };
