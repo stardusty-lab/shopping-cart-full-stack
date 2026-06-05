@@ -25,6 +25,7 @@ export const Carts = () => {
   const {
     loadCartsProductsStatus,
     cartProducts,
+    updateProductQuauntityError,
     updateProductQuauntity,
     deleteProduct,
     updateProductSelection,
@@ -174,6 +175,10 @@ export const Carts = () => {
               />
             </DataInfo>
           </>
+        )}
+
+        {updateProductQuauntityError && (
+          <div style={{ background: "red" }}>error</div>
         )}
       </ContentBox>
       <Button

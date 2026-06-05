@@ -51,7 +51,10 @@ export const useCartsActions = () => {
     );
   }, [data]);
 
-  const { mutate: patchCartsProductsMutate } = useExecute({
+  const {
+    status: { error: patchCartsProductsError },
+    mutate: patchCartsProductsMutate,
+  } = useExecute({
     executeFn: patchCartsProducts,
   });
 
@@ -61,16 +64,20 @@ export const useCartsActions = () => {
   }: UpdateProductQuauntityCommand) => {
     if (!validateUpdateProductQuauntity(quantity)) return false;
 
-    await patchCartsProductsMutate({
-      cartId: CART_ID,
-      productId,
-      quantity,
-    });
+    try {
+      await patchCartsProductsMutate({
+        cartId: CART_ID,
+        productId,
+        quantity,
+      });
 
-    updateProductQuauntity({
-      id: productId,
-      quantity,
-    });
+      updateProductQuauntity({
+        id: productId,
+        quantity,
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const { mutate: deleteCartsProductsMutate } = useExecute({
@@ -93,6 +100,7 @@ export const useCartsActions = () => {
   return {
     loadCartsProductsStatus,
     cartProducts,
+    updateProductQuauntityError: patchCartsProductsError,
     updateProductQuauntity: executeUpdateProductQuauntity,
     deleteProduct: executeDeleteProduct,
     updateProductSelection,
