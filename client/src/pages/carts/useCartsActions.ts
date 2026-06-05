@@ -17,6 +17,7 @@ import type {
 } from "./useCarts";
 
 import { validateUpdateProductQuauntity } from "./validate";
+import { RequestAjaxError } from "@/services/core/http/error";
 
 const CART_ID = 1;
 
@@ -51,11 +52,40 @@ export const useCartsActions = () => {
     );
   }, [data]);
 
+  const { open, onOpen, onClose } = useAlert();
+
   const {
     status: { error: patchCartsProductsError },
     mutate: patchCartsProductsMutate,
   } = useExecute({
     executeFn: patchCartsProducts,
+    onError: (error: Error | { errorCode: string }) => {
+      if (error instanceof RequestAjaxError) {
+        const { errorCode } = error.data as { errorCode: string };
+
+        console.log("errorCode", errorCode);
+
+        if (errorCode === "MISSING_FIELD") {
+          return;
+        }
+
+        if (errorCode === "INVALID") {
+          return;
+        }
+
+        if (errorCode === "RESOURCE_NOT_FOUND") {
+          return;
+        }
+
+        if (
+          errorCode === "TYPE_MISMATCH" ||
+          errorCode === "NO_JSON" ||
+          errorCode === "ROUTE_NOT_FOUND"
+        ) {
+          return;
+        }
+      }
+    },
   });
 
   const executeUpdateProductQuauntity = async ({
