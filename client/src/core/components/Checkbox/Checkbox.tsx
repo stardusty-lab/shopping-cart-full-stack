@@ -11,8 +11,15 @@ import type { Props } from "./";
 const classnameDefault = "ui-checkbox";
 
 export const Checkbox = <T extends ElementType>(props: Props<T>) => {
-  console.log(props);
-  const { as = "input", id, label, checked, className, ...restProps } = props;
+  const {
+    as = "input",
+    id,
+    label,
+    checked,
+    empty,
+    className,
+    ...restProps
+  } = props;
 
   const modifiers = {
     checked: checked && styles[`checked`],
@@ -28,7 +35,7 @@ export const Checkbox = <T extends ElementType>(props: Props<T>) => {
   return (
     <div className={classname}>
       <View as={as} id={id} type="checkbox" checked={checked} {...restProps} />
-      <label htmlFor={id}>{label || id}</label>
+      <label htmlFor={id}>{!empty && (label || id)}</label>
     </div>
   );
 };
