@@ -7,11 +7,13 @@ import { AppProviders } from "@/providers";
 
 import App from "./App.tsx";
 
-await worker.start({
-  serviceWorker: {
-    url: `/mockServiceWorker.js`,
-  },
-});
+if (import.meta.env.DEV) {
+  await worker.start({
+    serviceWorker: {
+      url: `/mockServiceWorker.js`,
+    },
+  });
+}
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
