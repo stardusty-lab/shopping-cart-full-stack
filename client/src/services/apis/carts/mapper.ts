@@ -15,7 +15,7 @@ export const mapGetCartsModelToRequestDTO = (
 export const mapGetCartsResponseDTOToModel = (
   response: GetCartsResponseDto,
 ) => {
-  return response;
+  return response.data;
 };
 
 // PatchCartsProducts
@@ -27,7 +27,7 @@ export const mapPatchCartsProductsModelToRequestDTO = (
 export const mapPatchCartsProductsResponseDTOToModel = (
   response: PatchCartsProductsResponseDto,
 ) => {
-  return response;
+  return response.data;
 };
 
 // DeleteCartsProducts
