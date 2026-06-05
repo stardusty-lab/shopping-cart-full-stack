@@ -10,8 +10,11 @@ import { DEVERLY_FEE, FREE_DEVERLY_FEE_THRESHOLD } from "./constants";
 import { Carts } from "./";
 
 const getCartProductElement = async (productName: string) => {
-  const productNameElement = await screen.findByText(productName);
-  const productElement = productNameElement.closest("div");
+  await screen.findByText(productName);
+  const product = cartsProducts.find(({ name }) => name === productName);
+  const productElement = product
+    ? screen.getByTestId(`cart-product-${product.id}`)
+    : null;
 
   if (!productElement) {
     throw new Error(`${productName} 상품 영역을 찾을 수 없습니다.`);
