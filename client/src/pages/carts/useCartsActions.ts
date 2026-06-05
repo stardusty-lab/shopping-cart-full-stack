@@ -2,10 +2,11 @@ import { useEffect, useCallback } from "react";
 
 import { useLoadData } from "@/services/core/useLoadData";
 
-import { getCarts } from "@/services/apis/carts/repository";
+import { getCarts, patchCartsProducts } from "@/services/apis/carts/repository";
 import type { GetCarts } from "@/services/apis/carts/repository.types";
 
 import { useCarts } from "./useCarts";
+import type { UpdateProductQuauntityCommand } from "./useCarts";
 
 const CART_ID = 1;
 
@@ -40,9 +41,25 @@ export const useCartsActions = () => {
     );
   }, [data]);
 
+  const executeUpdateProductQuauntity = async ({
+    id: productId,
+    quantity,
+  }: UpdateProductQuauntityCommand) => {
+    await patchCartsProducts({
+      cartId: CART_ID,
+      productId,
+      quantity,
+    });
+
+    updateProductQuauntity({
+      id: productId,
+      quantity,
+    });
+  };
+
   return {
     cartProducts,
-    updateProductQuauntity,
+    updateProductQuauntity: executeUpdateProductQuauntity,
     deleteProduct,
     updateProductSelection,
     updateAllProductSelection,

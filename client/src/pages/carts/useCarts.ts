@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { validateUpdateProductQuauntity } from "./validate";
 
-interface CartProduct {
+export interface CartProduct {
   id: number;
   quantity: number;
   name: string;
@@ -11,12 +11,12 @@ interface CartProduct {
   selected: boolean;
 }
 
-interface UpdateProductQuauntityCommand {
+export interface UpdateProductQuauntityCommand {
   id: number;
   quantity: number;
 }
 
-interface DeleteProductParams {
+export interface DeleteProductParams {
   id: number;
 }
 
