@@ -1,9 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
-
-import { useLoadData } from "@/services/core/useLoadData";
-
-import { getCarts } from "@/services/apis/carts/repository";
-import type { GetCarts } from "@/services/apis/carts/repository.types";
+import { useState } from "react";
 
 import { validateUpdateProductQuauntity } from "./validate";
 
@@ -25,31 +20,8 @@ interface DeleteProductParams {
   id: number;
 }
 
-const CART_ID = 1;
-
 export const useCarts = () => {
   const [cartProducts, setCartProducts] = useState<CartProduct[]>([]);
-
-  const {
-    status: { data },
-  } = useLoadData<Awaited<ReturnType<GetCarts>>>({
-    queryFn: useCallback(async () => {
-      return await getCarts({ cartId: CART_ID });
-    }, []),
-  });
-
-  useEffect(() => {
-    if (!data?.products) return;
-
-    setCartProducts(
-      data?.products.map(
-        (product: Awaited<ReturnType<GetCarts>>["products"][number]) => ({
-          ...product,
-          selected: true,
-        }),
-      ),
-    );
-  }, [data]);
 
   const updateProductQuauntity = ({
     id: productId,
