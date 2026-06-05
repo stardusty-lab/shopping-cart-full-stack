@@ -1,5 +1,7 @@
 import type { ChangeEvent } from "react";
 
+import { useNavigate } from "react-router-dom";
+
 import { Layout } from "@/core/components/Layout";
 import { Header } from "@/core/components/Header";
 import { Button } from "@/core/components/Button";
@@ -11,6 +13,8 @@ import { DataInfo } from "@/core/components/DataInfo";
 import { NumberStepper } from "@/core/components/NumberStepper";
 import { ContentBox } from "@/core/components/ContentBox";
 import { Notice } from "@/core/components/Notice";
+
+import { ROUTES } from "@/constants/routes";
 
 import { useCartsActions } from "./useCartsActions";
 
@@ -53,6 +57,16 @@ export const Carts = () => {
     checked: boolean;
   }) => {
     updateProductSelection({ id, selected: checked });
+  };
+
+  const naviate = useNavigate();
+  const handleClickOrderReview = () => {
+    naviate(ROUTES.ORDER_REVIEW, {
+      state: {
+        products: filteredCartProducts.map((product) => product.quantity),
+        paymentAmount,
+      },
+    });
   };
 
   const filteredCartProducts = cartProducts.filter(
@@ -164,6 +178,7 @@ export const Carts = () => {
         block
         size="large"
         disabled={!cartProducts.length || !filteredCartProducts.length}
+        onClick={handleClickOrderReview}
       >
         주문 확인
       </Button>
