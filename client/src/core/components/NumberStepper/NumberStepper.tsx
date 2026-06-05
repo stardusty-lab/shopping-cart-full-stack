@@ -33,6 +33,7 @@ export const NumberStepper = <T extends ElementType>(props: Props<T>) => {
     <View as={as} className={classname} {...restProps}>
       <button
         className={styles[`button-minus`]}
+        aria-label="-"
         onClick={() => {
           onDecrement();
         }}
@@ -40,6 +41,7 @@ export const NumberStepper = <T extends ElementType>(props: Props<T>) => {
       <span className={styles[`value-item`]}>{value}</span>
       <button
         className={styles[`button-plus`]}
+        aria-label="+"
         onClick={() => {
           onIncrement();
         }}
