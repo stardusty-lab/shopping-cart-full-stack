@@ -1,6 +1,8 @@
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
+
+import { renderProvider } from "../../../tests/utils/render";
 
 import { cartsProducts } from "@/mocks/data/carts";
 
@@ -22,7 +24,7 @@ describe("장바구니 페이지 테스트", () => {
   describe("성공 케이스", () => {
     test("장바구니 목록을 불러온다", async () => {
       // ARRANGE
-      render(<Carts />);
+      renderProvider(<Carts />);
 
       const cartProductsCountText = `현재 ${cartsProducts.length}종류의 상품이 담겨있습니다.`;
 
@@ -41,7 +43,7 @@ describe("장바구니 페이지 테스트", () => {
     test("장바구니 상품 수량을 수정한다", async () => {
       // ARRANGE
       const user = userEvent.setup();
-      render(<Carts />);
+      renderProvider(<Carts />);
 
       const targetProduct = cartsProducts[0];
       const expectedCartAmount =
@@ -68,7 +70,7 @@ describe("장바구니 페이지 테스트", () => {
     test("장바구니 상품을 삭제한다", async () => {
       // ARRANGE
       const user = userEvent.setup();
-      render(<Carts />);
+      renderProvider(<Carts />);
 
       const targetProduct = cartsProducts[0];
       const expectedCartProductsCountText = `현재 ${
@@ -98,7 +100,7 @@ describe("장바구니 페이지 테스트", () => {
     test("선택한 상품만 주문 금액에 포함하여 계산한다", async () => {
       // ARRANGE
       const user = userEvent.setup();
-      render(<Carts />);
+      renderProvider(<Carts />);
 
       const unselectedProduct = cartsProducts[0];
       const selectedProduct = cartsProducts[1];
@@ -110,9 +112,7 @@ describe("장바구니 페이지 테스트", () => {
       );
 
       // ACT
-      await user.click(
-        within(unselectedProductElement).getByRole("checkbox"),
-      );
+      await user.click(within(unselectedProductElement).getByRole("checkbox"));
 
       // ASSERT
       await waitFor(() => {
@@ -123,7 +123,7 @@ describe("장바구니 페이지 테스트", () => {
     test("주문금액이 배송비 무료 기준 미만이면 배송비를 포함해서 계산한다", async () => {
       // ARRANGE
       const user = userEvent.setup();
-      render(<Carts />);
+      renderProvider(<Carts />);
 
       const unselectedProduct = cartsProducts[0];
       const selectedProduct = cartsProducts[1];
@@ -136,9 +136,7 @@ describe("장바구니 페이지 테스트", () => {
       );
 
       // ACT
-      await user.click(
-        within(unselectedProductElement).getByRole("checkbox"),
-      );
+      await user.click(within(unselectedProductElement).getByRole("checkbox"));
 
       // ASSERT
       await waitFor(() => {
@@ -152,7 +150,7 @@ describe("장바구니 페이지 테스트", () => {
 
     test("주문금액이 배송비 무료 기준 이상이면 배송비를 없이 계산한다", async () => {
       // ARRANGE
-      render(<Carts />);
+      renderProvider(<Carts />);
 
       const expectedCartAmount = cartsProducts.reduce((acc, product) => {
         return acc + product.price * product.quantity;
