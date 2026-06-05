@@ -14,6 +14,7 @@ import { NumberStepper } from "@/core/components/NumberStepper";
 import { ContentBox } from "@/core/components/ContentBox";
 import { Notice } from "@/core/components/Notice";
 import { Loading } from "@/core/components/Loading";
+import { Alert } from "@/core/components/Alert";
 
 import { ROUTES } from "@/constants/routes";
 
@@ -30,6 +31,9 @@ export const Carts = () => {
     deleteProduct,
     updateProductSelection,
     updateAllProductSelection,
+
+    openAlert,
+    onAlertClose,
   } = useCartsActions();
 
   const handleChangeQuantity = ({
@@ -190,6 +194,7 @@ export const Carts = () => {
       >
         주문 확인
       </Button>
+      {openAlert && <Alert onClose={onAlertClose}>Alert</Alert>}
     </Layout>
   );
 };

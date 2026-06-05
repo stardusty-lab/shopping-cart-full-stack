@@ -1,5 +1,7 @@
 import { useEffect, useCallback } from "react";
 
+import { useAlert } from "@/core/components/Alert";
+
 import { useLoadData } from "@/services/core/useLoadData";
 import { useExecute } from "@/services/core/useExecute";
 
@@ -63,8 +65,6 @@ export const useCartsActions = () => {
       if (error instanceof RequestAjaxError) {
         const { errorCode } = error.data as { errorCode: string };
 
-        console.log("errorCode", errorCode);
-
         if (errorCode === "MISSING_FIELD") {
           return;
         }
@@ -82,6 +82,7 @@ export const useCartsActions = () => {
           errorCode === "NO_JSON" ||
           errorCode === "ROUTE_NOT_FOUND"
         ) {
+          onOpen();
           return;
         }
       }
@@ -135,5 +136,8 @@ export const useCartsActions = () => {
     deleteProduct: executeDeleteProduct,
     updateProductSelection,
     updateAllProductSelection,
+
+    openAlert: open,
+    onAlertClose: onClose,
   };
 };
