@@ -2,13 +2,17 @@ import { http, HttpResponse } from "msw";
 
 import { ENV } from "@/configs/env";
 
-import { cartsProducts } from "@/mocks/data/carts";
+import { cartsProducts as initialCartsProducts } from "@/mocks/data/carts";
 
 const createCartsProducts = () => {
-  return cartsProducts.map((cartsProduct) => ({ ...cartsProduct }));
+  return initialCartsProducts.map((cartsProduct) => ({ ...cartsProduct }));
 };
 
-const mockCartsProducts = createCartsProducts();
+let cartsProducts = createCartsProducts();
+
+export const resetCartsProducts = () => {
+  cartsProducts = createCartsProducts();
+};
 
 export const handlers = [
   http.get(ENV.API_URL + "/carts/:cartId", async ({ params }) => {
@@ -16,7 +20,7 @@ export const handlers = [
 
     return HttpResponse.json(
       {
-        data: { id: cartId, products: mockCartsProducts },
+        data: { id: cartId, products: cartsProducts },
         status: 200,
       },
       { status: 200 },
@@ -29,7 +33,7 @@ export const handlers = [
 
       const data = (await request.clone().json()) as { quantity: number };
 
-      const productData = mockCartsProducts.find(
+      const productData = cartsProducts.find(
         (product) => product.id === productId,
       ) as { quantity: number };
 

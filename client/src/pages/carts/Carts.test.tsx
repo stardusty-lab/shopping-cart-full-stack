@@ -5,6 +5,7 @@ import "@testing-library/jest-dom";
 import { renderProvider } from "../../../tests/utils/render";
 
 import { cartsProducts } from "@/mocks/data/carts";
+import { resetCartsProducts } from "@/mocks/msw/handlers/carts";
 
 import { DELIVERY_FEE, FREE_DELIVERY_FEE_THRESHOLD } from "./constants";
 import { Carts } from "./";
@@ -24,6 +25,9 @@ const getCartProductElement = async (productName: string) => {
 };
 
 describe("장바구니 페이지 테스트", () => {
+  beforeEach(() => {
+    resetCartsProducts();
+  });
   describe("성공 케이스", () => {
     test("장바구니 목록을 불러온다", async () => {
       // ARRANGE
