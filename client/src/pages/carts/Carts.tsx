@@ -16,7 +16,7 @@ import { Notice } from "@/core/components/Notice";
 import { Loading } from "@/core/components/Loading";
 import { Alert } from "@/core/components/Alert";
 
-import { toLocaleString } from "@/core/utils/format";
+import { formatNumber } from "@/core/utils/format";
 
 import { ROUTES } from "@/constants/routes";
 
@@ -157,7 +157,7 @@ export const Carts = () => {
                 }
                 left={<ImgBox img={product.imgUrl || ""} />}
                 title={product.name}
-                content={`${toLocaleString(product.price)}원`}
+                content={`${formatNumber(product.price)}원`}
                 description={
                   <NumberStepper
                     value={product.quantity}
@@ -192,15 +192,15 @@ export const Carts = () => {
             <DataInfo>
               <DataInfo.Item
                 title="주문금액"
-                content={`${toLocaleString(cartAmount)}원`}
+                content={`${formatNumber(cartAmount)}원`}
               />
               <DataInfo.Item
                 title="배송비"
-                content={`${toLocaleString(deliveryFee)}원`}
+                content={`${formatNumber(deliveryFee)}원`}
               />
               <DataInfo.Item
                 title="총결제금액"
-                content={`${toLocaleString(paymentAmount)}원`}
+                content={`${formatNumber(paymentAmount)}원`}
               />
             </DataInfo>
           </>
