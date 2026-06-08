@@ -100,9 +100,14 @@ export const Carts = () => {
     acc += selectedProduct.price * selectedProduct.quantity;
     return acc;
   }, 0);
-  const deliveryFee =
-    cartAmount >= FREE_DELIVERY_FEE_THRESHOLD ? 0 : DELIVERY_FEE;
-  const paymentAmount = cartAmount + deliveryFee;
+  const deliveryFee = filteredCartProducts.length
+    ? cartAmount >= FREE_DELIVERY_FEE_THRESHOLD
+      ? 0
+      : DELIVERY_FEE
+    : 0;
+  const paymentAmount = filteredCartProducts.length
+    ? cartAmount + deliveryFee
+    : 0;
 
   return (
     <Layout>
