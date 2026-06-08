@@ -7,8 +7,6 @@ import { renderProvider } from "../../../tests/utils/render";
 import { cartsProducts } from "@/mocks/data/carts";
 import { resetCartsProducts } from "@/mocks/msw/handlers/carts";
 
-import { formatNumber } from "../../core/utils/format";
-
 import { DELIVERY_FEE, FREE_DELIVERY_FEE_THRESHOLD } from "./constants";
 import { Carts } from "./";
 
@@ -46,7 +44,7 @@ describe("장바구니 페이지 테스트", () => {
       cartsProducts.forEach((product) => {
         expect(screen.getByText(product.name)).toBeInTheDocument();
         expect(
-          screen.getByText(`${formatNumber(product.price)}원`),
+          screen.getByText(`${product.price.toLocaleString("ko-KR")}원`),
         ).toBeInTheDocument();
       });
     });
@@ -75,7 +73,9 @@ describe("장바구니 페이지 테스트", () => {
       // ASSERT
       await waitFor(() => {
         expect(
-          screen.getAllByText(`${formatNumber(expectedCartAmount)}원`),
+          screen.getAllByText(
+            `${expectedCartAmount.toLocaleString("ko-KR")}원`,
+          ),
         ).toHaveLength(2);
       });
     });
@@ -130,7 +130,7 @@ describe("장바구니 페이지 테스트", () => {
       // ASSERT
       await waitFor(() => {
         expect(
-          screen.getByText(`${formatNumber(expectedCartAmount)}원`),
+          screen.getByText(`${expectedCartAmount.toLocaleString("ko-KR")}원`),
         ).toBeInTheDocument();
       });
     });
@@ -156,13 +156,15 @@ describe("장바구니 페이지 테스트", () => {
       // ASSERT
       await waitFor(() => {
         expect(
-          screen.getByText(`${formatNumber(expectedCartAmount)}원`),
+          screen.getByText(`${expectedCartAmount.toLocaleString("ko-KR")}원`),
         ).toBeInTheDocument();
         expect(
-          screen.getByText(`${formatNumber(DELIVERY_FEE)}원`),
+          screen.getByText(`${DELIVERY_FEE.toLocaleString("ko-KR")}원`),
         ).toBeInTheDocument();
         expect(
-          screen.getByText(`${formatNumber(expectedPaymentAmount)}원`),
+          screen.getByText(
+            `${expectedPaymentAmount.toLocaleString("ko-KR")}원`,
+          ),
         ).toBeInTheDocument();
       });
     });
@@ -185,10 +187,10 @@ describe("장바구니 페이지 테스트", () => {
 
       // ASSERT
       expect(
-        screen.getByText(`${formatNumber(expectedDeliveryFee)}원`),
+        screen.getByText(`${expectedDeliveryFee.toLocaleString("ko-KR")}원`),
       ).toBeInTheDocument();
       expect(
-        screen.getAllByText(`${formatNumber(expectedCartAmount)}원`),
+        screen.getAllByText(`${expectedCartAmount.toLocaleString("ko-KR")}원`),
       ).toHaveLength(2);
     });
   });
