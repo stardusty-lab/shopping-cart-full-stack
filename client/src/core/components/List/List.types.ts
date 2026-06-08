@@ -1,4 +1,4 @@
-import type { ElementType, HTMLAttributes, ReactNode } from "react";
+import type { ElementType, ReactNode } from "react";
 
 import type { PolymorphicProps } from "@/core/components/View";
 
