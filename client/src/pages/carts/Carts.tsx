@@ -81,9 +81,9 @@ export const Carts = () => {
     updateProductSelection({ id, selected: checked });
   };
 
-  const naviate = useNavigate();
+  const navigate = useNavigate();
   const handleClickOrderReview = () => {
-    naviate(ROUTES.ORDER_REVIEW, {
+    navigate(ROUTES.ORDER_REVIEW, {
       state: {
         products: filteredCartProducts.map((product) => product.quantity),
         paymentAmount,
