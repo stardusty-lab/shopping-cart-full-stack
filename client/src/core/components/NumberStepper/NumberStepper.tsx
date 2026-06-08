@@ -8,7 +8,7 @@ import styles from "./NumberStepper.module.css";
 
 import type { Props } from "./";
 
-const classnameDefault = "ui-";
+const classnameDefault = "ui-number-stepper";
 
 export const NumberStepper = <T extends ElementType>(props: Props<T>) => {
   const {
