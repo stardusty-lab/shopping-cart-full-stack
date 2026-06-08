@@ -4,7 +4,7 @@ export type Props<T extends React.ElementType = "div"> = {
 
 export type PolymorphicProps<
   T extends React.ElementType = "div",
-  P = Record<string, unknown>,
+  P extends object = object,
 > = {
   as?: T;
 } & Omit<React.ComponentPropsWithoutRef<T>, keyof P | "as"> &
