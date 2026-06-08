@@ -17,14 +17,19 @@ export const Default: Story = {
     children: (
       <>
         <List.Item
-          headerLeft="headerLeft"
-          headerRight="headerRight"
-          left="left"
-          right="right"
-          title="title"
-          content="content"
-          description="description"
-        />
+          header={{
+            left: "headerLeft",
+            right: "headerRight",
+          }}
+        >
+          <List.Item.Left>left</List.Item.Left>
+          <List.Item.Box
+            title="title"
+            content="content"
+            description="description"
+          />
+          <List.Item.Right>right</List.Item.Right>
+        </List.Item>
       </>
     ),
   },

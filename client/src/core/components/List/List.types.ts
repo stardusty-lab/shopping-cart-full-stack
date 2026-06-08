@@ -8,19 +8,40 @@ export type OwnProps = {
   children: ReactNode;
 };
 
+export type Props<T extends ElementType = AS> = PolymorphicProps<T, OwnProps>;
+
+type ItemHeaderProps = {
+  left?: ReactNode;
+  right?: ReactNode;
+};
+
 export type ItemProps = PolymorphicProps<
   "div",
   {
-    headerLeft?: React.ReactNode;
-    headerRight?: React.ReactNode;
+    header?: ItemHeaderProps;
+    children?: ReactNode;
+  }
+>;
 
-    left?: ReactNode;
-    right?: ReactNode;
+export type ItemLeftProps = PolymorphicProps<
+  "div",
+  {
+    children?: ReactNode;
+  }
+>;
 
+export type ItemBoxProps = PolymorphicProps<
+  "div",
+  {
     title?: ReactNode;
     content?: ReactNode;
     description?: ReactNode;
   }
 >;
 
-export type Props<T extends ElementType = AS> = PolymorphicProps<T, OwnProps>;
+export type ItemRightProps = PolymorphicProps<
+  "div",
+  {
+    children?: ReactNode;
+  }
+>;

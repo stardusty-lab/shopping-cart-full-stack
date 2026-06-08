@@ -2,40 +2,29 @@ import styles from "./List.module.css";
 
 import type { ItemProps } from ".";
 
-export const Item = ({
-  headerLeft,
-  headerRight,
+import { Left } from "./Left";
+import { Box } from "./Box";
+import { Right } from "./Right";
 
-  left,
-  right,
-
-  title,
-  content,
-  description,
-  ...restProps
-}: ItemProps) => {
+export const Item = ({ header, children, ...restProps }: ItemProps) => {
   return (
     <div className={styles.item} {...restProps}>
-      {(headerLeft || headerRight) && (
+      {header && (
         <div className={styles.header}>
-          {headerLeft && <div className={styles.headerLeft}>{headerLeft}</div>}
-          {headerRight && (
-            <div className={styles.headerRight}>{headerRight}</div>
+          {header.left && (
+            <div className={styles.headerLeft}>{header.left}</div>
+          )}
+          {header.right && (
+            <div className={styles.headerRight}>{header.right}</div>
           )}
         </div>
       )}
 
-      <div className={styles.body}>
-        {left && <div className={styles.left}>{left}</div>}
-        <div className={styles.box}>
-          {title && <div className={styles.title}>{title}</div>}
-          {content && <div className={styles.content}>{content}</div>}
-          {description && (
-            <div className={styles.description}>{description}</div>
-          )}
-        </div>
-        {right && <div className={styles.right}>{right}</div>}
-      </div>
+      <div className={styles.body}>{children}</div>
     </div>
   );
 };
+
+Item.Left = Left;
+Item.Box = Box;
+Item.Right = Right;
