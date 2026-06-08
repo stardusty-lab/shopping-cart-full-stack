@@ -50,7 +50,16 @@ export const handlers = [
       );
     },
   ),
-  http.delete(ENV.API_URL + "/carts/:cartId/products/:productId", async () => {
-    return new HttpResponse(null, { status: 204 });
-  }),
+  http.delete(
+    ENV.API_URL + "/carts/:cartId/products/:productId",
+    async ({ params }) => {
+      const productId = Number(params.productId);
+
+      cartsProducts = cartsProducts.filter((cartsProduct) => {
+        return cartsProduct.id !== productId;
+      });
+
+      return new HttpResponse(null, { status: 204 });
+    },
+  ),
 ];
