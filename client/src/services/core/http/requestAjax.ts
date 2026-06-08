@@ -20,7 +20,7 @@ export const requestAjax = async (
   let finalUrl = `${ENV.API_URL || ""}${configUrl || url}`;
 
   if (pathParams) {
-    const paramsString = Object.values(pathParams).join("/");
+    const paramsString = pathParams.map(({ value }) => value).join("/");
     finalUrl += `/${paramsString}`;
   }
 
