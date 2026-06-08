@@ -25,6 +25,12 @@
   border: none;
 }
 
+.button-plus:disabled,
+.button-minus:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
 .button-plus {
   background: url('./imgs/number-step-plus.svg') center center no-repeat;
 }

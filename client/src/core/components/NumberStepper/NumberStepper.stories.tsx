@@ -19,3 +19,21 @@ export const Default: Story = {
     onDecrement: () => {},
   },
 };
+
+export const MinDisabled: Story = {
+  args: {
+    min: 1,
+    value: 1,
+    onIncrement: () => {},
+    onDecrement: () => {},
+  },
+};
+
+export const MaxDisabled: Story = {
+  args: {
+    max: 99,
+    value: 99,
+    onIncrement: () => {},
+    onDecrement: () => {},
+  },
+};
