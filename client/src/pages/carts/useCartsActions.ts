@@ -14,11 +14,11 @@ import type { GetCarts } from "@/services/apis/carts/repository.types";
 
 import { useCarts } from "./useCarts";
 import type {
-  UpdateProductQuauntityCommand,
+  UpdateProductQuantityCommand,
   DeleteProductParams,
 } from "./useCarts";
 
-import { validateUpdateProductQuauntity } from "./validate";
+import { validateUpdateProductQuantity } from "./validate";
 import { RequestAjaxError } from "@/services/core/http/error";
 
 const CART_ID = 1;
@@ -27,7 +27,7 @@ export const useCartsActions = () => {
   const {
     cartProducts,
     setCartProducts,
-    updateProductQuauntity,
+    updateProductQuantity,
     deleteProduct,
     updateProductSelection,
     updateAllProductSelection,
@@ -89,11 +89,11 @@ export const useCartsActions = () => {
     },
   });
 
-  const executeUpdateProductQuauntity = async ({
+  const executeUpdateProductQuantity = async ({
     id: productId,
     quantity,
-  }: UpdateProductQuauntityCommand) => {
-    if (!validateUpdateProductQuauntity(quantity)) return false;
+  }: UpdateProductQuantityCommand) => {
+    if (!validateUpdateProductQuantity(quantity)) return false;
 
     try {
       await patchCartsProductsMutate({
@@ -102,7 +102,7 @@ export const useCartsActions = () => {
         quantity,
       });
 
-      updateProductQuauntity({
+      updateProductQuantity({
         id: productId,
         quantity,
       });
@@ -131,8 +131,8 @@ export const useCartsActions = () => {
   return {
     loadCartsProductsStatus,
     cartProducts,
-    updateProductQuauntityError: patchCartsProductsError,
-    updateProductQuauntity: executeUpdateProductQuauntity,
+    updateProductQuantityError: patchCartsProductsError,
+    updateProductQuantity: executeUpdateProductQuantity,
     deleteProduct: executeDeleteProduct,
     updateProductSelection,
     updateAllProductSelection,

@@ -22,13 +22,13 @@ export const OrderReview = () => {
     return acc;
   }, 0);
 
-  const handlelickBack = () => {
+  const handleClickBack = () => {
     navigate(-1);
   };
 
   return (
     <Layout>
-      <Header leading={<Header.Back onClick={handlelickBack} />} />
+      <Header leading={<Header.Back onClick={handleClickBack} />} />
       <Notice>
         <p>주문</p>
         <p>

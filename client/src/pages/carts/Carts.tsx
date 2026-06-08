@@ -20,7 +20,7 @@ import { ROUTES } from "@/constants/routes";
 
 import { useCartsActions } from "./useCartsActions";
 
-import { DEVERLY_FEE, FREE_DEVERLY_FEE_THRESHOLD } from "./constants";
+import { DELIVERY_FEE, FREE_DELIVERY_FEE_THRESHOLD } from "./constants";
 
 const ERROR_MESSAGES = {
   TYPE_MISMATCH: "잘못된 형식의 요청입니다. 입력값을 확인해주세요.",
@@ -32,8 +32,8 @@ export const Carts = () => {
   const {
     loadCartsProductsStatus,
     cartProducts,
-    updateProductQuauntityError,
-    updateProductQuauntity,
+    updateProductQuantityError,
+    updateProductQuantity,
     deleteProduct,
     updateProductSelection,
     updateAllProductSelection,
@@ -42,9 +42,8 @@ export const Carts = () => {
     onAlertClose,
   } = useCartsActions();
 
-  const errorCode = (
-    updateProductQuauntityError as { errorCode: string } | null
-  )?.errorCode;
+  const errorCode = (updateProductQuantityError as { errorCode: string } | null)
+    ?.errorCode;
 
   const errorMessage =
     errorCode && errorCode in ERROR_MESSAGES
@@ -58,7 +57,7 @@ export const Carts = () => {
     id: number;
     quantity: number;
   }) => {
-    updateProductQuauntity({ id, quantity });
+    updateProductQuantity({ id, quantity });
   };
 
   const handleClickDeleteProduct = ({ id }: { id: number }) => {
@@ -99,8 +98,9 @@ export const Carts = () => {
     acc += selectedProduct.price * selectedProduct.quantity;
     return acc;
   }, 0);
-  const delveryFee = cartAmount >= FREE_DEVERLY_FEE_THRESHOLD ? 0 : DEVERLY_FEE;
-  const paymentAmount = cartAmount + delveryFee;
+  const deliveryFee =
+    cartAmount >= FREE_DELIVERY_FEE_THRESHOLD ? 0 : DELIVERY_FEE;
+  const paymentAmount = cartAmount + deliveryFee;
 
   return (
     <Layout>
@@ -183,13 +183,13 @@ export const Carts = () => {
         {!!cartProducts.length && (
           <>
             <p>
-              총 주문 금액이 {FREE_DEVERLY_FEE_THRESHOLD}원 이상일 경우 무료
+              총 주문 금액이 {FREE_DELIVERY_FEE_THRESHOLD}원 이상일 경우 무료
               배송됩니다.
             </p>
 
             <DataInfo>
               <DataInfo.Item title="주문금액" content={`${cartAmount}원`} />
-              <DataInfo.Item title="배송비" content={`${delveryFee}원`} />
+              <DataInfo.Item title="배송비" content={`${deliveryFee}원`} />
               <DataInfo.Item
                 title="총결제금액"
                 content={`${paymentAmount}원`}

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { validateUpdateProductQuauntity } from "./validate";
+import { validateUpdateProductQuantity } from "./validate";
 
 export interface CartProduct {
   id: number;
@@ -11,7 +11,7 @@ export interface CartProduct {
   selected: boolean;
 }
 
-export interface UpdateProductQuauntityCommand {
+export interface UpdateProductQuantityCommand {
   id: number;
   quantity: number;
 }
@@ -23,11 +23,11 @@ export interface DeleteProductParams {
 export const useCarts = () => {
   const [cartProducts, setCartProducts] = useState<CartProduct[]>([]);
 
-  const updateProductQuauntity = ({
+  const updateProductQuantity = ({
     id: productId,
     quantity,
-  }: UpdateProductQuauntityCommand) => {
-    if (!validateUpdateProductQuauntity(quantity)) return false;
+  }: UpdateProductQuantityCommand) => {
+    if (!validateUpdateProductQuantity(quantity)) return false;
 
     const changedCartProducts = cartProducts.map((product) => {
       return product.id !== productId ? product : { ...product, quantity };
@@ -69,7 +69,7 @@ export const useCarts = () => {
   return {
     cartProducts,
     setCartProducts,
-    updateProductQuauntity,
+    updateProductQuantity,
     deleteProduct,
     updateProductSelection,
     updateAllProductSelection,

@@ -6,7 +6,7 @@ import { renderProvider } from "../../../tests/utils/render";
 
 import { cartsProducts } from "@/mocks/data/carts";
 
-import { DEVERLY_FEE, FREE_DEVERLY_FEE_THRESHOLD } from "./constants";
+import { DELIVERY_FEE, FREE_DELIVERY_FEE_THRESHOLD } from "./constants";
 import { Carts } from "./";
 
 const getCartProductElement = async (productName: string) => {
@@ -132,7 +132,7 @@ describe("장바구니 페이지 테스트", () => {
       const selectedProduct = cartsProducts[1];
       const expectedCartAmount =
         selectedProduct.price * selectedProduct.quantity;
-      const expectedPaymentAmount = expectedCartAmount + DEVERLY_FEE;
+      const expectedPaymentAmount = expectedCartAmount + DELIVERY_FEE;
 
       const unselectedProductElement = await getCartProductElement(
         unselectedProduct.name,
@@ -144,7 +144,7 @@ describe("장바구니 페이지 테스트", () => {
       // ASSERT
       await waitFor(() => {
         expect(screen.getByText(`${expectedCartAmount}원`)).toBeInTheDocument();
-        expect(screen.getByText(`${DEVERLY_FEE}원`)).toBeInTheDocument();
+        expect(screen.getByText(`${DELIVERY_FEE}원`)).toBeInTheDocument();
         expect(
           screen.getByText(`${expectedPaymentAmount}원`),
         ).toBeInTheDocument();
@@ -161,7 +161,7 @@ describe("장바구니 페이지 테스트", () => {
       const expectedDeliveryFee = 0;
 
       expect(expectedCartAmount).toBeGreaterThanOrEqual(
-        FREE_DEVERLY_FEE_THRESHOLD,
+        FREE_DELIVERY_FEE_THRESHOLD,
       );
 
       // ACT
