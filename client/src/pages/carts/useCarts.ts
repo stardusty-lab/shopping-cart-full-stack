@@ -27,6 +27,7 @@ export const useCarts = () => {
     id: productId,
     quantity,
   }: UpdateProductQuantityCommand) => {
+    // 장바구니 상태(SSOT)에 유효하지 않은 수량이 저장되지 않도록 방어
     if (!validateUpdateProductQuantity(quantity)) return false;
 
     const changedCartProducts = cartProducts.map((product) => {

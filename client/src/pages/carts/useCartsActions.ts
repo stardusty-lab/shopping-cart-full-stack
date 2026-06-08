@@ -93,6 +93,7 @@ export const useCartsActions = () => {
     id: productId,
     quantity,
   }: UpdateProductQuantityCommand) => {
+    // 서버에 유효하지 않은 수량 변경 요청을 보내지 않기 위한 방어 코드
     if (!validateUpdateProductQuantity(quantity)) return false;
 
     try {
