@@ -4,13 +4,19 @@ import { ENV } from "@/configs/env";
 
 import { cartsProducts } from "@/mocks/data/carts";
 
+const createCartsProducts = () => {
+  return cartsProducts.map((cartsProduct) => ({ ...cartsProduct }));
+};
+
+const mockCartsProducts = createCartsProducts();
+
 export const handlers = [
   http.get(ENV.API_URL + "/carts/:cartId", async ({ params }) => {
     const { cartId } = params;
 
     return HttpResponse.json(
       {
-        data: { id: cartId, products: cartsProducts },
+        data: { id: cartId, products: mockCartsProducts },
         status: 200,
       },
       { status: 200 },
@@ -23,7 +29,7 @@ export const handlers = [
 
       const data = (await request.clone().json()) as { quantity: number };
 
-      const productData = cartsProducts.find(
+      const productData = mockCartsProducts.find(
         (product) => product.id === productId,
       ) as { quantity: number };
 
@@ -31,9 +37,7 @@ export const handlers = [
 
       return HttpResponse.json(
         {
-          data: {
-            ...productData,
-          },
+          data: productData,
           status: 200,
         },
         {
