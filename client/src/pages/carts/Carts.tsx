@@ -127,52 +127,59 @@ export const Carts = () => {
               <List.Item
                 key={product.id}
                 data-testid={`cart-product-${product.id}`}
-                headerLeft={
-                  <Checkbox
-                    id={String(product.id)}
-                    name={String(product.id)}
-                    empty
-                    checked={product.selected}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                      handleToggleProductChecked({
-                        id: product.id,
-                        checked: e.target.checked,
-                      });
-                    }}
-                  />
-                }
-                headerRight={
-                  <Button
-                    variant="secondary"
-                    size="small"
-                    onClick={() => {
-                      handleClickDeleteProduct({ id: product.id });
-                    }}
-                  >
-                    삭제
-                  </Button>
-                }
-                left={<ImgBox img={product.imgUrl || ""} />}
-                title={product.name}
-                content={`${formatNumber(product.price)}원`}
-                description={
-                  <NumberStepper
-                    value={product.quantity}
-                    onDecrement={() => {
-                      handleChangeQuantity({
-                        id: product.id,
-                        quantity: product.quantity - 1,
-                      });
-                    }}
-                    onIncrement={() => {
-                      handleChangeQuantity({
-                        id: product.id,
-                        quantity: product.quantity + 1,
-                      });
-                    }}
-                  />
-                }
-              />
+                header={{
+                  left: (
+                    <Checkbox
+                      id={String(product.id)}
+                      name={String(product.id)}
+                      empty
+                      checked={product.selected}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                        handleToggleProductChecked({
+                          id: product.id,
+                          checked: e.target.checked,
+                        });
+                      }}
+                    />
+                  ),
+                  right: (
+                    <Button
+                      variant="secondary"
+                      size="small"
+                      onClick={() => {
+                        handleClickDeleteProduct({ id: product.id });
+                      }}
+                    >
+                      삭제
+                    </Button>
+                  ),
+                }}
+              >
+                <List.Item.Box
+                  title={product.name}
+                  content={`${formatNumber(product.price)}원`}
+                  description={
+                    <NumberStepper
+                      value={product.quantity}
+                      onDecrement={() => {
+                        handleChangeQuantity({
+                          id: product.id,
+                          quantity: product.quantity - 1,
+                        });
+                      }}
+                      onIncrement={() => {
+                        handleChangeQuantity({
+                          id: product.id,
+                          quantity: product.quantity + 1,
+                        });
+                      }}
+                    />
+                  }
+                />
+                <List.Item.Left>
+                  <ImgBox img={product.imgUrl || ""} />
+                </List.Item.Left>
+              </List.Item>
             );
           })}
         </List>
