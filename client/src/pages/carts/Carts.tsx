@@ -16,6 +16,8 @@ import { Notice } from "@/core/components/Notice";
 import { Loading } from "@/core/components/Loading";
 import { Alert } from "@/core/components/Alert";
 
+import { toLocaleString } from "@/core/utils/format";
+
 import { ROUTES } from "@/constants/routes";
 
 import { useCartsActions } from "./useCartsActions";
@@ -155,7 +157,7 @@ export const Carts = () => {
                 }
                 left={<ImgBox img={product.imgUrl || ""} />}
                 title={product.name}
-                content={`${product.price}원`}
+                content={`${toLocaleString(product.price)}원`}
                 description={
                   <NumberStepper
                     value={product.quantity}
@@ -188,11 +190,17 @@ export const Carts = () => {
             </p>
 
             <DataInfo>
-              <DataInfo.Item title="주문금액" content={`${cartAmount}원`} />
-              <DataInfo.Item title="배송비" content={`${deliveryFee}원`} />
+              <DataInfo.Item
+                title="주문금액"
+                content={`${toLocaleString(cartAmount)}원`}
+              />
+              <DataInfo.Item
+                title="배송비"
+                content={`${toLocaleString(deliveryFee)}원`}
+              />
               <DataInfo.Item
                 title="총결제금액"
-                content={`${paymentAmount}원`}
+                content={`${toLocaleString(paymentAmount)}원`}
               />
             </DataInfo>
           </>
