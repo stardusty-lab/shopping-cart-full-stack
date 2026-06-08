@@ -183,7 +183,7 @@ export const Carts = () => {
             );
           })}
         </List>
-        {!cartProducts.length && (
+        {loadCartsProductsStatus === "success" && !cartProducts.length && (
           <Notice>장바구니에 담은 상품이 없습니다.</Notice>
         )}
         {!!cartProducts.length && (
