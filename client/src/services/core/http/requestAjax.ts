@@ -1,26 +1,38 @@
-import { ENV } from '@/configs/env';
+import { ENV } from "@/configs/env";
 
-import type { Configs, RequestFetchResponse } from './requestAjax.types';
+import type { Configs, RequestFetchResponse } from "./requestAjax.types";
 
-import { RequestAjaxError, RequestNetworkError } from './error';
+import { RequestAjaxError, RequestNetworkError } from "./error";
 
-export const requestAjax = async (url: string, config?: Configs): Promise<RequestFetchResponse> => {
-  const { method = 'get', url: configUrl, pathParams, query, data, headers } = config || {};
+export const requestAjax = async (
+  url: string,
+  config?: Configs,
+): Promise<RequestFetchResponse> => {
+  const {
+    method = "get",
+    url: configUrl,
+    pathParams,
+    query,
+    data,
+    headers,
+  } = config || {};
 
-  let finalUrl = `${ENV.API_URL || ''}${configUrl || url}`;
+  let finalUrl = `${ENV.API_URL || ""}${configUrl || url}`;
 
   if (pathParams) {
-    const paramsstring = Object.values(pathParams).join('/');
+    const paramsstring = Object.values(pathParams).join("/");
     finalUrl += `/${paramsstring}`;
   }
 
   if (query) {
-    const querystring = new URLSearchParams(query as Record<string, string>).toString();
+    const querystring = new URLSearchParams(
+      query as Record<string, string>,
+    ).toString();
     finalUrl += `?${querystring}`;
   }
 
   const customHeaders = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
     ...headers,
   };
 
