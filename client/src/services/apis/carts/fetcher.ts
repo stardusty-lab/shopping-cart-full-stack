@@ -9,33 +9,34 @@ import type {
 } from "./dto";
 
 export const getCarts = async ({
-  pathParams: { cartId },
+  pathParams: [{ value: cartId }],
 }: GetCartsRequestDto): Promise<GetCartsResponseDto> => {
   const response = await requestAjax("/carts", {
     method: "get",
-    pathParams: { cartId },
+    pathParams: [{ name: "cartId", value: cartId }],
   });
+
   return response.data;
 };
 
 export const patchCartsProducts = async ({
-  pathParams: { cartId, productId },
+  pathParams: [{ value: cartId }, { value: productId }],
   data: { quantity },
 }: PatchCartsProductsRequestDto): Promise<PatchCartsProductsResponseDto> => {
   const response = await requestAjax(`/carts/${cartId}/products`, {
     method: "patch",
-    pathParams: { productId },
+    pathParams: [{ name: "productId", value: productId }],
     data: { quantity },
   });
   return response.data;
 };
 
 export const deleteCartsProducts = async ({
-  pathParams: { cartId, productId },
+  pathParams: [{ value: cartId }, { value: productId }],
 }: DeleteCartsProductsRequestDto) => {
   const response = await requestAjax(`/carts/${cartId}/products`, {
     method: "delete",
-    pathParams: { productId },
+    pathParams: [{ name: "productId", value: productId }],
   });
   return response.data;
 };

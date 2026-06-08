@@ -17,7 +17,9 @@ import type {
 export const getCarts: GetCarts = async (model) => {
   const { cartId } = mapGetCartsModelToRequestDTO(model);
 
-  const responseDTO = await fetcher.getCarts({ pathParams: { cartId } });
+  const responseDTO = await fetcher.getCarts({
+    pathParams: [{ name: "cartId", value: cartId }],
+  });
 
   return mapGetCartsResponseDTOToModel(responseDTO);
 };
@@ -27,7 +29,10 @@ export const patchCartsProducts: PatchCartsProducts = async (model) => {
     mapPatchCartsProductsModelToRequestDTO(model);
 
   const responseDTO = await fetcher.patchCartsProducts({
-    pathParams: { cartId, productId },
+    pathParams: [
+      { name: "cartId", value: cartId },
+      { name: "productId", value: productId },
+    ],
     data: { quantity },
   });
 
@@ -38,7 +43,10 @@ export const deleteCartsProducts: DeleteCartsProducts = async (model) => {
   const { cartId, productId } = mapDeleteCartsProductsModelToRequestDTO(model);
 
   const responseDTO = await fetcher.deleteCartsProducts({
-    pathParams: { cartId, productId },
+    pathParams: [
+      { name: "cartId", value: cartId },
+      { name: "productId", value: productId },
+    ],
   });
 
   return mapDeleteCartsProductsResponseDTOToModel(responseDTO);

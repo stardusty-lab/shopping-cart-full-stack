@@ -1,7 +1,7 @@
 import type { RepsonseDTO } from "@/services/apis/api.types";
 
 export interface GetCartsRequestDto {
-  pathParams: { cartId: number };
+  pathParams: { name: "cartId"; value: number }[];
 }
 
 export type GetCartsResponseDto = RepsonseDTO<
@@ -19,7 +19,7 @@ export type GetCartsResponseDto = RepsonseDTO<
 >;
 
 export interface PatchCartsProductsRequestDto {
-  pathParams: { cartId: number; productId: number };
+  pathParams: { name: "cartId" | "productId"; value: number }[];
   data: { quantity: number };
 }
 
@@ -35,7 +35,7 @@ export type PatchCartsProductsResponseDto = RepsonseDTO<
 >;
 
 export interface DeleteCartsProductsRequestDto {
-  pathParams: { cartId: number; productId: number };
+  pathParams: { name: "cartId" | "productId"; value: number }[];
 }
 
 // 장바구니 상품 삭제
