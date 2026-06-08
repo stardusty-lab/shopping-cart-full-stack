@@ -7,6 +7,8 @@ import { renderProvider } from "../../../tests/utils/render";
 import { cartsProducts } from "@/mocks/data/carts";
 import { resetCartsProducts } from "@/mocks/msw/handlers/carts";
 
+import { formatNumber } from "../../core/utils/format";
+
 import { DELIVERY_FEE, FREE_DELIVERY_FEE_THRESHOLD } from "./constants";
 import { Carts } from "./";
 
@@ -43,7 +45,9 @@ describe("장바구니 페이지 테스트", () => {
 
       cartsProducts.forEach((product) => {
         expect(screen.getByText(product.name)).toBeInTheDocument();
-        expect(screen.getByText(`${product.price}원`)).toBeInTheDocument();
+        expect(
+          screen.getByText(`${formatNumber(product.price)}원`),
+        ).toBeInTheDocument();
       });
     });
 
@@ -70,7 +74,9 @@ describe("장바구니 페이지 테스트", () => {
 
       // ASSERT
       await waitFor(() => {
-        expect(screen.getAllByText(`${expectedCartAmount}원`)).toHaveLength(2);
+        expect(
+          screen.getAllByText(`${formatNumber(expectedCartAmount)}원`),
+        ).toHaveLength(2);
       });
     });
 
@@ -123,7 +129,9 @@ describe("장바구니 페이지 테스트", () => {
 
       // ASSERT
       await waitFor(() => {
-        expect(screen.getByText(`${expectedCartAmount}원`)).toBeInTheDocument();
+        expect(
+          screen.getByText(`${formatNumber(expectedCartAmount)}원`),
+        ).toBeInTheDocument();
       });
     });
 
@@ -147,10 +155,14 @@ describe("장바구니 페이지 테스트", () => {
 
       // ASSERT
       await waitFor(() => {
-        expect(screen.getByText(`${expectedCartAmount}원`)).toBeInTheDocument();
-        expect(screen.getByText(`${DELIVERY_FEE}원`)).toBeInTheDocument();
         expect(
-          screen.getByText(`${expectedPaymentAmount}원`),
+          screen.getByText(`${formatNumber(expectedCartAmount)}원`),
+        ).toBeInTheDocument();
+        expect(
+          screen.getByText(`${formatNumber(DELIVERY_FEE)}원`),
+        ).toBeInTheDocument();
+        expect(
+          screen.getByText(`${formatNumber(expectedPaymentAmount)}원`),
         ).toBeInTheDocument();
       });
     });
@@ -172,8 +184,12 @@ describe("장바구니 페이지 테스트", () => {
       await screen.findByText(cartsProducts[0].name);
 
       // ASSERT
-      expect(screen.getByText(`${expectedDeliveryFee}원`)).toBeInTheDocument();
-      expect(screen.getAllByText(`${expectedCartAmount}원`)).toHaveLength(2);
+      expect(
+        screen.getByText(`${formatNumber(expectedDeliveryFee)}원`),
+      ).toBeInTheDocument();
+      expect(
+        screen.getAllByText(`${formatNumber(expectedCartAmount)}원`),
+      ).toHaveLength(2);
     });
   });
 });
