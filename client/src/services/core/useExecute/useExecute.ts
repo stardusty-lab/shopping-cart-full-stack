@@ -1,18 +1,22 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
-import type { Options, Result } from './useExecute.types';
-import { RequestAjaxError } from '../http/error';
+import type { Options, Result } from "./useExecute.types";
+import { RequestAjaxError } from "../http/error";
 
-export const useExecute = <T = unknown>({ executeFn, onSuccess, onError }: Options) => {
+export const useExecute = <T = unknown>({
+  executeFn,
+  onSuccess,
+  onError,
+}: Options) => {
   const [status, setStatus] = useState<Result<T>>({
-    status: 'idle',
+    status: "idle",
     data: null,
     error: null,
   });
   const mutate = useCallback(
     async (...rest: any) => {
       setStatus({
-        status: 'loading',
+        status: "loading",
         data: null,
         error: null,
       });
@@ -20,7 +24,7 @@ export const useExecute = <T = unknown>({ executeFn, onSuccess, onError }: Optio
       try {
         const data = (await executeFn(...rest)) as T;
         setStatus({
-          status: 'success',
+          status: "success",
           data,
           error: null,
         });
@@ -28,7 +32,7 @@ export const useExecute = <T = unknown>({ executeFn, onSuccess, onError }: Optio
         return data;
       } catch (error: unknown) {
         setStatus({
-          status: 'error',
+          status: "error",
           data: null,
           error: error instanceof RequestAjaxError ? error?.data : error,
         });

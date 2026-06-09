@@ -1,1 +1,1 @@
-export { useLoadData } from './useLoadData';
+export { useLoadData } from "./useLoadData";
