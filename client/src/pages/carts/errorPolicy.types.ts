@@ -5,6 +5,10 @@ export type ErrorPolicy =
       type: "ignore";
     }
   | {
+      type: "field";
+      message: ReactNode;
+    }
+  | {
       type: "alert";
       message: ReactNode;
     };

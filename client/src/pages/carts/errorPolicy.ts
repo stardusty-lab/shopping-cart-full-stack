@@ -1,5 +1,10 @@
 import type { ErrorPolicy, ErrorPolicyMap } from "./errorPolicy.types";
 
+export const LOAD_ERROR_POLICY: ErrorPolicyMap = {
+  RESOURCE_NOT_FOUND: { type: "field", message: "" },
+  ROUTE_NOT_FOUND: { type: "field", message: "" },
+} as const;
+
 export const ERROR_POLICY: ErrorPolicyMap = {
   MISSING_FIELD: { type: "ignore" },
   INVALID: { type: "ignore" },
@@ -27,6 +32,6 @@ export const applyErrorPolicy = (
   if (!handler) return;
 
   if ("message" in policy) {
-    handler(policy);
+    return handler(policy);
   }
 };
