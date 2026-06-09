@@ -1,7 +1,7 @@
 export type StatusType = "idle" | "loading" | "success" | "error";
 
-export type Options<TData = unknown> = {
-  executeFn: (...rest: any) => Promise<TData>;
+export type Options<TArgs extends unknown[], TData = unknown> = {
+  executeFn: (...rest: TArgs) => Promise<TData>;
   onSuccess?: (data: TData) => void;
   onError?: (error: unknown) => void;
 };
@@ -36,7 +36,7 @@ export type Status<TData = unknown> =
   | ErrorStatus
   | LoadingStatus;
 
-export type Result<TData = unknown> = {
+export type Result<TArgs extends unknown[], TData = unknown> = {
   status: Status<TData>;
-  mutate: (...rest: any[]) => Promise<TData | void>;
+  mutate: (...rest: TArgs) => Promise<TData | void>;
 };
