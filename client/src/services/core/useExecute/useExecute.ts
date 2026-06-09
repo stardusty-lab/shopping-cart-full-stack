@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 
-import type { Options, Result } from "./useExecute.types";
+import type { Options, Status } from "./useExecute.types";
 import { RequestAjaxError } from "../http/error";
 
 export const useExecute = <TData = unknown>({
@@ -8,7 +8,7 @@ export const useExecute = <TData = unknown>({
   onSuccess,
   onError,
 }: Options<TData>) => {
-  const [status, setStatus] = useState<Result<TData>>({
+  const [status, setStatus] = useState<Status<TData>>({
     status: "idle",
     data: null,
     error: null,
