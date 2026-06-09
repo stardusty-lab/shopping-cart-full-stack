@@ -37,6 +37,22 @@ const ERROR_POLICY = {
   },
 } as const;
 
+const executeErrorPolicy = (
+  policy: (typeof ERROR_POLICY)[keyof typeof ERROR_POLICY],
+  { alert: onAlert }: { alert: (message: ReactNode) => void },
+) => {
+  if (!policy) return;
+
+  switch (policy.type) {
+    case "ignore":
+      return;
+
+    case "alert":
+      onAlert(policy.message);
+      return;
+  }
+};
+
 const CART_ID = 1;
 
 export const useCartsActions = () => {
@@ -71,22 +87,6 @@ export const useCartsActions = () => {
   }, [data]);
 
   const { open, message, onOpen, onClose } = useAlert();
-
-  const executeErrorPolicy = (
-    policy: (typeof ERROR_POLICY)[keyof typeof ERROR_POLICY],
-    { alert: onAlert }: { alert: (message: ReactNode) => void },
-  ) => {
-    if (!policy) return;
-
-    switch (policy.type) {
-      case "ignore":
-        return;
-
-      case "alert":
-        onAlert(policy.message);
-        return;
-    }
-  };
 
   const { mutate: patchCartsProductsMutate } = useExecute({
     executeFn: patchCartsProducts,
