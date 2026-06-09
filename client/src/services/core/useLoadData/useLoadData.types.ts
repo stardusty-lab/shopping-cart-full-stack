@@ -19,7 +19,7 @@ type SuccessStatus<TData> = {
 type ErrorStatus = {
   status: "error";
   data: null;
-  error: true;
+  error: unknown;
 };
 
 type LoadingStatus = {

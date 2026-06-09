@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 
 import type { Options, Status, Result } from "./useLoadData.types";
+import { RequestAjaxError } from "../http/error";
 
 export const useLoadData = <TData = unknown>({
   queryFn,
@@ -26,11 +27,11 @@ export const useLoadData = <TData = unknown>({
         error: null,
       });
       return data;
-    } catch {
+    } catch (error) {
       setStatus({
         status: "error",
         data: null,
-        error: true,
+        error: error instanceof RequestAjaxError ? error?.data : error,
       });
     }
   }, [queryFn]);
