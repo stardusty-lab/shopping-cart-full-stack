@@ -21,7 +21,11 @@ import type {
 
 import { validateUpdateProductQuantity } from "./validate";
 
-import { applyErrorPolicy, ERROR_POLICY } from "./errorPolicy";
+import {
+  applyErrorPolicy,
+  LOAD_ERROR_POLICY,
+  ERROR_POLICY,
+} from "./errorPolicy";
 
 import { RequestAjaxError } from "@/services/core/http/error";
 
@@ -38,11 +42,25 @@ export const useCartsActions = () => {
   } = useCarts();
 
   const {
-    status: { status: loadCartsProductsStatus, data },
+    status: {
+      status: loadCartsProductsStatus,
+      data,
+      error: loadProductQuantityError,
+    },
   } = useLoadData<Awaited<ReturnType<GetCarts>>>({
     queryFn: useCallback(async () => {
       return await getCarts({ cartId: CART_ID });
     }, []),
+  });
+
+  const policy =
+    LOAD_ERROR_POLICY[
+      (loadProductQuantityError as { errorCode: string })
+        ?.errorCode as keyof typeof ERROR_POLICY
+    ];
+
+  const loadProductQuantityErrorMessage = applyErrorPolicy(policy, {
+    field: (policy: { message: ReactNode }) => policy.message,
   });
 
   useEffect(() => {
@@ -117,6 +135,7 @@ export const useCartsActions = () => {
 
   return {
     loadCartsProductsStatus,
+    loadProductQuantityErrorMessage,
     cartProducts,
     updateProductQuantity: executeUpdateProductQuantity,
     deleteProduct: executeDeleteProduct,

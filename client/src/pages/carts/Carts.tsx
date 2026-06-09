@@ -29,6 +29,7 @@ import { FREE_DELIVERY_FEE_THRESHOLD } from "./constants";
 export const Carts = () => {
   const {
     loadCartsProductsStatus,
+    loadProductQuantityErrorMessage,
     cartProducts,
     updateProductQuantity,
     deleteProduct,
@@ -175,6 +176,9 @@ export const Carts = () => {
               );
             })}
           </List>
+        )}
+        {loadProductQuantityErrorMessage && (
+          <Notice>{loadProductQuantityErrorMessage}</Notice>
         )}
         {shouldShowEmptyCartProducts && (
           <Notice>장바구니에 담은 상품이 없습니다.</Notice>
