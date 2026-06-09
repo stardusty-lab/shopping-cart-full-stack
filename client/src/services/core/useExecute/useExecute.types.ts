@@ -1,8 +1,8 @@
 export type Status = "idle" | "loading" | "success" | "error";
 
-export type Options<T = unknown> = {
-  executeFn: (...rest: any) => Promise<T>;
-  onSuccess?: (data: T) => void;
+export type Options<TData = unknown> = {
+  executeFn: (...rest: any) => Promise<TData>;
+  onSuccess?: (data: TData) => void;
   onError?: (error: unknown) => void;
 };
 
@@ -12,9 +12,9 @@ type IdleStatus = {
   error: null;
 };
 
-type SuccessStatus<T> = {
+type SuccessStatus<TData> = {
   status: "success";
-  data: T;
+  data: TData;
   error: null;
 };
 
@@ -30,8 +30,8 @@ type LoadingStatus = {
   error: null;
 };
 
-export type Result<T = unknown> =
+export type Result<TData = unknown> =
   | IdleStatus
-  | SuccessStatus<T>
+  | SuccessStatus<TData>
   | ErrorStatus
   | LoadingStatus;

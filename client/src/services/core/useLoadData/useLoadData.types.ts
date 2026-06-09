@@ -1,7 +1,7 @@
 export type StatusType = "idle" | "loading" | "success" | "error";
 
-export type Options<T = unknown> = {
-  queryFn: () => Promise<T>;
+export type Options<TData = unknown> = {
+  queryFn: () => Promise<TData>;
 };
 
 type IdleStatus = {
@@ -10,9 +10,9 @@ type IdleStatus = {
   error: null;
 };
 
-type SuccessStatus<T> = {
+type SuccessStatus<TData> = {
   status: "success";
-  data: T;
+  data: TData;
   error: null;
 };
 
@@ -28,13 +28,13 @@ type LoadingStatus = {
   error: null;
 };
 
-export type Status<T = unknown> =
+export type Status<TData = unknown> =
   | IdleStatus
-  | SuccessStatus<T>
+  | SuccessStatus<TData>
   | ErrorStatus
   | LoadingStatus;
 
-export type Result<T = unknown> = {
-  status: Status<T>;
-  refetch: () => Promise<T | void>;
+export type Result<TData = unknown> = {
+  status: Status<TData>;
+  refetch: () => Promise<TData | void>;
 };

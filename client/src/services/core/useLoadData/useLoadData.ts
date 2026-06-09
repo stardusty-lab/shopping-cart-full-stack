@@ -2,14 +2,16 @@ import { useState, useEffect, useCallback } from "react";
 
 import type { Options, Status, Result } from "./useLoadData.types";
 
-export const useLoadData = <T = unknown>({ queryFn }: Options): Result<T> => {
-  const [status, setStatus] = useState<Status<T>>({
+export const useLoadData = <TData = unknown>({
+  queryFn,
+}: Options): Result<TData> => {
+  const [status, setStatus] = useState<Status<TData>>({
     status: "idle",
     data: null,
     error: null,
   });
 
-  const fetchData = useCallback(async (): Promise<T | void> => {
+  const fetchData = useCallback(async (): Promise<TData | void> => {
     setStatus({
       status: "loading",
       data: null,
@@ -17,7 +19,7 @@ export const useLoadData = <T = unknown>({ queryFn }: Options): Result<T> => {
     });
 
     try {
-      const data = (await queryFn()) as T;
+      const data = (await queryFn()) as TData;
       setStatus({
         status: "success",
         data: data,

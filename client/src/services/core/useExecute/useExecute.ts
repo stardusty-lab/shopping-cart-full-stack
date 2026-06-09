@@ -3,12 +3,12 @@ import { useState, useCallback } from "react";
 import type { Options, Result } from "./useExecute.types";
 import { RequestAjaxError } from "../http/error";
 
-export const useExecute = <T = unknown>({
+export const useExecute = <TData = unknown>({
   executeFn,
   onSuccess,
   onError,
 }: Options) => {
-  const [status, setStatus] = useState<Result<T>>({
+  const [status, setStatus] = useState<Result<TData>>({
     status: "idle",
     data: null,
     error: null,
@@ -22,7 +22,7 @@ export const useExecute = <T = unknown>({
       });
 
       try {
-        const data = (await executeFn(...rest)) as T;
+        const data = (await executeFn(...rest)) as TData;
         setStatus({
           status: "success",
           data,
