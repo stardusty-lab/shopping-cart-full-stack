@@ -37,7 +37,7 @@ const ERROR_POLICY = {
   },
 } as const;
 
-const executeErrorPolicy = (
+const applyErrorPolicy = (
   policy: (typeof ERROR_POLICY)[keyof typeof ERROR_POLICY],
   { alert: onAlert }: { alert: (message: ReactNode) => void },
 ) => {
@@ -96,7 +96,7 @@ export const useCartsActions = () => {
 
         const policy = ERROR_POLICY[errorCode as keyof typeof ERROR_POLICY];
 
-        executeErrorPolicy(policy, { alert: onOpen });
+        applyErrorPolicy(policy, { alert: onOpen });
       }
     },
   });
