@@ -7,7 +7,7 @@ export const useExecute = <TData = unknown>({
   executeFn,
   onSuccess,
   onError,
-}: Options) => {
+}: Options<TData>) => {
   const [status, setStatus] = useState<Result<TData>>({
     status: "idle",
     data: null,

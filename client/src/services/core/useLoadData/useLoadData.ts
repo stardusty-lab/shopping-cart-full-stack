@@ -4,7 +4,7 @@ import type { Options, Status, Result } from "./useLoadData.types";
 
 export const useLoadData = <TData = unknown>({
   queryFn,
-}: Options): Result<TData> => {
+}: Options<TData>): Result<TData> => {
   const [status, setStatus] = useState<Status<TData>>({
     status: "idle",
     data: null,
