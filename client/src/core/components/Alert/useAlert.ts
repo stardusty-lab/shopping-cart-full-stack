@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
 export const useAlert = () => {
-  const [open, setOpen] = useState(false);
-  const onOpen = () => {
-    setOpen(true);
+  const [message, setMessage] = useState<ReactNode | null>(null);
+  const onOpen = (message: ReactNode) => {
+    setMessage(message);
   };
   const onClose = () => {
-    setOpen(false);
+    setMessage(null);
   };
-  return { open, onOpen, onClose };
+  return { open: message !== null, message, onOpen, onClose };
 };
