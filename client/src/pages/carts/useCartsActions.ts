@@ -71,6 +71,21 @@ export const useCartsActions = () => {
 
   const { open, message, onOpen, onClose } = useAlert();
 
+  const executeErrorPolicy = (
+    policy: (typeof ERROR_POLICY)[keyof typeof ERROR_POLICY],
+  ) => {
+    if (!policy) return;
+
+    switch (policy.type) {
+      case "ignore":
+        return;
+
+      case "alert":
+        onOpen(policy.message);
+        return;
+    }
+  };
+
   const { mutate: patchCartsProductsMutate } = useExecute({
     executeFn: patchCartsProducts,
     onError: (error: unknown) => {
@@ -79,15 +94,7 @@ export const useCartsActions = () => {
 
         const policy = ERROR_POLICY[errorCode as keyof typeof ERROR_POLICY];
 
-        if (!policy) return;
-        if (policy.type === "ignore") return;
-
-        if (policy.type === "alert") {
-          const message = policy.message;
-          onOpen(message);
-
-          return;
-        }
+        executeErrorPolicy(policy);
       }
     },
   });
