@@ -1,4 +1,5 @@
 import { useEffect, useCallback } from "react";
+import type { ReactNode } from "react";
 
 import { useAlert } from "@/core/components/Alert";
 
@@ -73,6 +74,7 @@ export const useCartsActions = () => {
 
   const executeErrorPolicy = (
     policy: (typeof ERROR_POLICY)[keyof typeof ERROR_POLICY],
+    { alert: onAlert }: { alert: (message: ReactNode) => void },
   ) => {
     if (!policy) return;
 
@@ -81,7 +83,7 @@ export const useCartsActions = () => {
         return;
 
       case "alert":
-        onOpen(policy.message);
+        onAlert(policy.message);
         return;
     }
   };
@@ -94,7 +96,7 @@ export const useCartsActions = () => {
 
         const policy = ERROR_POLICY[errorCode as keyof typeof ERROR_POLICY];
 
-        executeErrorPolicy(policy);
+        executeErrorPolicy(policy, { alert: onOpen });
       }
     },
   });
