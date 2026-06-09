@@ -60,12 +60,9 @@ export const useCartsActions = () => {
     );
   }, [data]);
 
-  const { open, onOpen, onClose } = useAlert();
+  const { open, message, onOpen, onClose } = useAlert();
 
-  const {
-    status: { error: patchCartsProductsError },
-    mutate: patchCartsProductsMutate,
-  } = useExecute({
+  const { mutate: patchCartsProductsMutate } = useExecute({
     executeFn: patchCartsProducts,
     onError: (error: unknown) => {
       if (error instanceof RequestAjaxError) {
@@ -88,7 +85,11 @@ export const useCartsActions = () => {
           errorCode === "NO_JSON" ||
           errorCode === "ROUTE_NOT_FOUND"
         ) {
-          onOpen();
+          const updateProductQuantityErrorMessage =
+            errorCode in ERROR_MESSAGES
+              ? ERROR_MESSAGES[errorCode as keyof typeof ERROR_MESSAGES]
+              : "";
+          onOpen(updateProductQuantityErrorMessage);
           return;
         }
       }
@@ -118,14 +119,6 @@ export const useCartsActions = () => {
     }
   };
 
-  const errorCode = (patchCartsProductsError as { errorCode: string } | null)
-    ?.errorCode;
-
-  const updateProductQuantityErrorMessage =
-    errorCode && errorCode in ERROR_MESSAGES
-      ? ERROR_MESSAGES[errorCode as keyof typeof ERROR_MESSAGES]
-      : "";
-
   const { mutate: deleteCartsProductsMutate } = useExecute({
     executeFn: deleteCartsProducts,
   });
@@ -151,7 +144,7 @@ export const useCartsActions = () => {
     updateProductSelection,
     updateAllProductSelection,
 
-    updateProductQuantityErrorMessage,
+    updateProductQuantityErrorMessage: message,
     openAlert: open,
     onAlertClose: onClose,
   };
