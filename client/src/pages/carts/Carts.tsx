@@ -26,22 +26,16 @@ import { calculateCartAmounts } from "./calculateCartAmounts";
 
 import { FREE_DELIVERY_FEE_THRESHOLD } from "./constants";
 
-const ERROR_MESSAGES = {
-  TYPE_MISMATCH: "잘못된 형식의 요청입니다. 입력값을 확인해주세요.",
-  NO_JSON: "잘못된 요청입니다. 다시 시도해주세요.",
-  ROUTE_NOT_FOUND: "요청한 기능을 찾을 수 없습니다. 잠시 후 다시 시도해주세요.",
-};
-
 export const Carts = () => {
   const {
     loadCartsProductsStatus,
     cartProducts,
-    updateProductQuantityError,
     updateProductQuantity,
     deleteProduct,
     updateProductSelection,
     updateAllProductSelection,
 
+    updateProductQuantityErrorMessage,
     openAlert,
     onAlertClose,
   } = useCartsActions();
@@ -50,14 +44,6 @@ export const Carts = () => {
   const shouldShowCartProducts = cartProducts.length !== 0;
   const shouldShowEmptyCartProducts =
     loadCartsProductsStatus === "success" && cartProducts.length === 0;
-
-  const errorCode = (updateProductQuantityError as { errorCode: string } | null)
-    ?.errorCode;
-
-  const errorMessage =
-    errorCode && errorCode in ERROR_MESSAGES
-      ? ERROR_MESSAGES[errorCode as keyof typeof ERROR_MESSAGES]
-      : "";
 
   const handleChangeQuantity = ({
     id,
@@ -226,7 +212,11 @@ export const Carts = () => {
       >
         주문 확인
       </Button>
-      {openAlert && <Alert onClose={onAlertClose}>{errorMessage}</Alert>}
+      {openAlert && (
+        <Alert onClose={onAlertClose}>
+          {updateProductQuantityErrorMessage}
+        </Alert>
+      )}
     </Layout>
   );
 };

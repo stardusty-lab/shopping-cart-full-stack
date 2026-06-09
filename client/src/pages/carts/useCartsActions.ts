@@ -21,6 +21,12 @@ import type {
 import { validateUpdateProductQuantity } from "./validate";
 import { RequestAjaxError } from "@/services/core/http/error";
 
+const ERROR_MESSAGES = {
+  TYPE_MISMATCH: "잘못된 형식의 요청입니다. 입력값을 확인해주세요.",
+  NO_JSON: "잘못된 요청입니다. 다시 시도해주세요.",
+  ROUTE_NOT_FOUND: "요청한 기능을 찾을 수 없습니다. 잠시 후 다시 시도해주세요.",
+};
+
 const CART_ID = 1;
 
 export const useCartsActions = () => {
@@ -112,6 +118,14 @@ export const useCartsActions = () => {
     }
   };
 
+  const errorCode = (patchCartsProductsError as { errorCode: string } | null)
+    ?.errorCode;
+
+  const updateProductQuantityErrorMessage =
+    errorCode && errorCode in ERROR_MESSAGES
+      ? ERROR_MESSAGES[errorCode as keyof typeof ERROR_MESSAGES]
+      : "";
+
   const { mutate: deleteCartsProductsMutate } = useExecute({
     executeFn: deleteCartsProducts,
   });
@@ -132,12 +146,12 @@ export const useCartsActions = () => {
   return {
     loadCartsProductsStatus,
     cartProducts,
-    updateProductQuantityError: patchCartsProductsError,
     updateProductQuantity: executeUpdateProductQuantity,
     deleteProduct: executeDeleteProduct,
     updateProductSelection,
     updateAllProductSelection,
 
+    updateProductQuantityErrorMessage,
     openAlert: open,
     onAlertClose: onClose,
   };
