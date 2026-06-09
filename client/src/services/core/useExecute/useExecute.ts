@@ -1,13 +1,13 @@
 import { useState, useCallback } from "react";
 
-import type { Options, Status } from "./useExecute.types";
+import type { Options, Status, Result } from "./useExecute.types";
 import { RequestAjaxError } from "../http/error";
 
 export const useExecute = <TData = unknown>({
   executeFn,
   onSuccess,
   onError,
-}: Options<TData>) => {
+}: Options<TData>): Result<TData> => {
   const [status, setStatus] = useState<Status<TData>>({
     status: "idle",
     data: null,

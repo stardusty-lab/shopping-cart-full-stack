@@ -35,3 +35,8 @@ export type Status<TData = unknown> =
   | SuccessStatus<TData>
   | ErrorStatus
   | LoadingStatus;
+
+export type Result<TData = unknown> = {
+  status: Status<TData>;
+  mutate: (...rest: any[]) => Promise<TData | void>;
+};
