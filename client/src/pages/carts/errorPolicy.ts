@@ -1,4 +1,6 @@
-export const ERROR_POLICY = {
+import type { ErrorPolicy, ErrorPolicyMap } from "./errorPolicy.types";
+
+export const ERROR_POLICY: ErrorPolicyMap = {
   MISSING_FIELD: { type: "ignore" },
   INVALID: { type: "ignore" },
   RESOURCE_NOT_FOUND: { type: "ignore" },
@@ -14,19 +16,14 @@ export const ERROR_POLICY = {
 } as const;
 
 export const applyErrorPolicy = (
-  policy: (typeof ERROR_POLICY)[keyof typeof ERROR_POLICY],
+  policy: ErrorPolicy,
   options: {
-    [policyKey in (typeof ERROR_POLICY)[keyof typeof ERROR_POLICY]["type"]]: (
-      policy?: (typeof ERROR_POLICY)[keyof typeof ERROR_POLICY],
-    ) => void;
+    [policyKey in ErrorPolicy["type"]]: (policy: ErrorPolicy) => void;
   },
 ) => {
   if (!policy) return;
 
-  const handler =
-    options[
-      policy.type as (typeof ERROR_POLICY)[keyof typeof ERROR_POLICY]["type"]
-    ];
+  const handler = options[policy.type];
   if (!handler) return;
 
   if ("message" in policy) {
