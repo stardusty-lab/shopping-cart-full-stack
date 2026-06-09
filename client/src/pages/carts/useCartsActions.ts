@@ -21,11 +21,20 @@ import type {
 import { validateUpdateProductQuantity } from "./validate";
 import { RequestAjaxError } from "@/services/core/http/error";
 
-const ERROR_MESSAGES = {
-  TYPE_MISMATCH: "잘못된 형식의 요청입니다. 입력값을 확인해주세요.",
-  NO_JSON: "잘못된 요청입니다. 다시 시도해주세요.",
-  ROUTE_NOT_FOUND: "요청한 기능을 찾을 수 없습니다. 잠시 후 다시 시도해주세요.",
-};
+const ERROR_POLICY = {
+  MISSING_FIELD: { type: "ignore" },
+  INVALID: { type: "ignore" },
+  RESOURCE_NOT_FOUND: { type: "ignore" },
+  TYPE_MISMATCH: {
+    type: "alert",
+    message: "잘못된 형식의 요청입니다. 입력값을 확인해주세요.",
+  },
+  NO_JSON: { type: "alert", message: "잘못된 요청입니다. 다시 시도해주세요." },
+  ROUTE_NOT_FOUND: {
+    type: "alert",
+    message: "요청한 기능을 찾을 수 없습니다. 잠시 후 다시 시도해주세요.",
+  },
+} as const;
 
 const CART_ID = 1;
 
@@ -68,26 +77,15 @@ export const useCartsActions = () => {
       if (error instanceof RequestAjaxError) {
         const { errorCode } = error.data as { errorCode: string };
 
-        if (errorCode === "MISSING_FIELD") {
-          return;
-        }
+        const policy = ERROR_POLICY[errorCode as keyof typeof ERROR_POLICY];
 
-        if (errorCode === "INVALID") {
-          return;
-        }
+        if (!policy) return;
+        if (policy.type === "ignore") return;
 
-        if (errorCode === "RESOURCE_NOT_FOUND") {
-          return;
-        }
+        if (policy.type === "alert") {
+          const message = policy.message;
+          onOpen(message);
 
-        if (
-          errorCode === "TYPE_MISMATCH" ||
-          errorCode === "NO_JSON" ||
-          errorCode === "ROUTE_NOT_FOUND"
-        ) {
-          const updateProductQuantityErrorMessage = ERROR_MESSAGES[errorCode];
-
-          onOpen(updateProductQuantityErrorMessage);
           return;
         }
       }
