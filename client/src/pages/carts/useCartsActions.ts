@@ -85,10 +85,8 @@ export const useCartsActions = () => {
           errorCode === "NO_JSON" ||
           errorCode === "ROUTE_NOT_FOUND"
         ) {
-          const updateProductQuantityErrorMessage =
-            errorCode in ERROR_MESSAGES
-              ? ERROR_MESSAGES[errorCode as keyof typeof ERROR_MESSAGES]
-              : "";
+          const updateProductQuantityErrorMessage = ERROR_MESSAGES[errorCode];
+
           onOpen(updateProductQuantityErrorMessage);
           return;
         }
