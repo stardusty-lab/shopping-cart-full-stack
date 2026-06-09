@@ -39,17 +39,22 @@ const ERROR_POLICY = {
 
 const applyErrorPolicy = (
   policy: (typeof ERROR_POLICY)[keyof typeof ERROR_POLICY],
-  { alert: onAlert }: { alert: (message: ReactNode) => void },
+  options: {
+    [policyKey in (typeof ERROR_POLICY)[keyof typeof ERROR_POLICY]["type"]]: (
+      policy?: (typeof ERROR_POLICY)[keyof typeof ERROR_POLICY],
+    ) => void;
+  },
 ) => {
   if (!policy) return;
 
-  switch (policy.type) {
-    case "ignore":
-      return;
+  const handler =
+    options[
+      policy.type as (typeof ERROR_POLICY)[keyof typeof ERROR_POLICY]["type"]
+    ];
+  if (!handler) return;
 
-    case "alert":
-      onAlert(policy.message);
-      return;
+  if ("message" in policy) {
+    handler(policy);
   }
 };
 
@@ -96,7 +101,9 @@ export const useCartsActions = () => {
 
         const policy = ERROR_POLICY[errorCode as keyof typeof ERROR_POLICY];
 
-        applyErrorPolicy(policy, { alert: onOpen });
+        applyErrorPolicy(policy, {
+          alert: (policy: { message: ReactNode }) => onOpen(policy.message),
+        });
       }
     },
   });
