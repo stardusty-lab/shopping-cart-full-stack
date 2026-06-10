@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { ErrorPolicy, ErrorPolicyMap } from "./errorPolicy.types";
 
 export const LOAD_ERROR_POLICY: ErrorPolicyMap = {
@@ -23,7 +24,9 @@ export const UPDATE_QUANTITY_ERROR_POLICY: ErrorPolicyMap = {
 export const applyErrorPolicy = (
   policy: ErrorPolicy,
   options: {
-    [policyKey in ErrorPolicy["type"]]: (policy: ErrorPolicy) => void;
+    [policyKey in ErrorPolicy["type"]]: (
+      policy: ErrorPolicy,
+    ) => ReactNode | void;
   },
 ) => {
   if (!policy) return;
