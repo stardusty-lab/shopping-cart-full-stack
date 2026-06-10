@@ -153,6 +153,8 @@ export const Carts = () => {
                     content={`${formatNumber(product.price)}원`}
                     description={
                       <NumberStepper
+                        min={1}
+                        max={99}
                         value={product.quantity}
                         onDecrement={() => {
                           handleChangeQuantity({
