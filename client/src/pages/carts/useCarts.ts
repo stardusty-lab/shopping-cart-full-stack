@@ -58,8 +58,14 @@ export const useCarts = () => {
     const filteredCartProducts = cartProducts.filter((product) => {
       return product.id !== productId;
     });
-
     setCartProducts(filteredCartProducts);
+
+    const filteredSelectionProducts = selectionProducts.filter(
+      (selectionProduct) => {
+        return selectionProduct.id !== productId;
+      },
+    );
+    setSelectionProducts(filteredSelectionProducts);
   };
 
   const updateProductSelection = ({
