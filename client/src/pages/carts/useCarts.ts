@@ -34,9 +34,11 @@ export const useCarts = () => {
   const updateCartProducts = (products: CartProduct[]) => {
     setCartProducts(products);
 
-    const selectionProducts = products.map(
-      (product: CartProduct) => product.id,
-    );
+    const savedSelections = cartSelectionStorage.load();
+    const selectionProducts = savedSelections.length
+      ? savedSelections
+      : products.map((product: CartProduct) => product.id);
+
     setSelectionProducts(selectionProducts);
     cartSelectionStorage.save(selectionProducts);
   };
