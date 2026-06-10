@@ -1,0 +1,40 @@
+.ui-number-stepper {
+  display: inline-flex;
+  align-items: center;
+}
+
+.value-item {
+  display: inline-block;
+  width: 24px;
+  margin-right: 4px;
+  margin-left: 4px;
+
+  color: #0A0D13;
+  text-align: center;
+  vertical-align: super;
+
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 15px;
+}
+
+.button-plus,
+.button-minus {
+  width: 24px;
+  height: 24px;
+  border: none;
+}
+
+.button-plus:disabled,
+.button-minus:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.button-plus {
+  background: url('./imgs/number-step-plus.svg') center center no-repeat;
+}
+
+.button-minus {
+  background: url('./imgs/number-step-minus.svg') center center no-repeat;
+}

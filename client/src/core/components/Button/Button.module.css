@@ -1,0 +1,48 @@
+.ui-button {
+  display: inline-block;
+  border: 1px solid transparent;
+  background: transparent;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+
+  box-sizing: border-box;
+
+  font-family: Noto Sans;
+}
+
+.ui-button:disabled {
+  background: #BEBEBE;
+}
+
+.variant-default {
+  color: #000000;
+}
+
+.variant-primary {
+  color: #ffffff;
+  background: #000000;
+}
+
+.variant-secondary {
+  color: #0A0D13;
+  background: #ffffff;
+  border: 1px solid #0000001A;
+}
+
+.size-small {
+  height: 24px;
+
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.size-large {
+  height: 64px;
+  font-weight: Bold;
+  font-size: 16px;
+}
+
+.is-block {
+  width: 100%;
+}

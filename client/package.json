@@ -1,0 +1,65 @@
+{
+  "name": "client",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "template:copy": "cp -r ./src/core/components/_component ./src/core/components/__component",
+    "template:rename-file": "find ./src/core/components/__component -type f -exec sed -i '' \"s/Component/$npm_config_to/g\" {} +",
+    "template:rename-code": "find ./src/core/components/__component -type f -name '*Component*' | while read file; do mv \"$file\" \"${file/Component/$npm_config_to}\"; done",
+    "template:rename-folder": "mv ./src/core/components/__component ./src/core/components/\"$npm_config_to\"",
+    "generate:template": "npm run template:copy && npm run template:rename-file --to=$npm_config_to && npm run template:rename-code --to=$npm_config_to && npm run template:rename-folder --to=$npm_config_to",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "deploy": "vite build --base=/shopping-cart-full-stack/ --minify=false && cp dist/index.html dist/404.html && npx gh-pages -d dist"
+  },
+  "dependencies": {
+    "classnames": "^2.5.1",
+    "msw": "^2.14.6",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-router-dom": "^7.16.0"
+  },
+  "devDependencies": {
+    "@chromatic-com/storybook": "^5.2.1",
+    "@eslint/js": "^10.0.1",
+    "@storybook/addon-mcp": "^0.6.0",
+    "@storybook/addon-vitest": "^10.4.1",
+    "@storybook/react-vite": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.12.3",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "@vitest/browser-playwright": "^4.1.8",
+    "@vitest/coverage-v8": "^4.1.8",
+    "eslint": "^10.3.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "eslint-plugin-storybook": "^10.4.1",
+    "globals": "^17.6.0",
+    "jest": "^30.4.2",
+    "jest-environment-jsdom": "^30.4.1",
+    "playwright": "^1.60.0",
+    "storybook": "^10.4.1",
+    "ts-jest": "^29.4.11",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.59.2",
+    "vite": "^8.0.12",
+    "vitest": "^4.1.8"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
+  }
+}

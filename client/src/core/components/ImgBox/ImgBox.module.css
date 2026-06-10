@@ -1,0 +1,8 @@
+.ui-img-box {
+  display: inline-block;
+  width: 112px;
+  height: 112px;
+  border-radius: 8px;
+  background: #DCE3EA;
+  overflow: hidden;
+}

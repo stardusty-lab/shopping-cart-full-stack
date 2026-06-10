@@ -1,0 +1,18 @@
+.ui-data-info {}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  min-height: 42px;
+  align-items: center;
+}
+
+.item .item-title {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.item .item-content {
+  font-weight: 700;
+  font-size: 24px;
+}
