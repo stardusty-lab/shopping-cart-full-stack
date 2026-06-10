@@ -60,7 +60,9 @@ export const Carts = () => {
     deleteProduct({ id });
   };
 
-  const isAllChecked = cartProducts.every((product) => product.selected);
+  const isAllChecked = cartProducts.length
+    ? cartProducts.every((product) => product.selected)
+    : false;
 
   const handleAllToogleProductChecked = ({ checked }: { checked: boolean }) => {
     updateAllProductSelection({ selected: checked });
