@@ -8,7 +8,6 @@ export interface CartProduct {
   name: string;
   price: number;
   imgUrl: string;
-  selected: boolean;
 }
 
 export interface UpdateProductQuantityCommand {
@@ -20,8 +19,26 @@ export interface DeleteProductParams {
   id: number;
 }
 
+export interface SelectionProduct {
+  id: number;
+  selected: boolean;
+}
+
 export const useCarts = () => {
   const [cartProducts, setCartProducts] = useState<CartProduct[]>([]);
+
+  const [selectionProducts, setSelectionProducts] = useState<
+    SelectionProduct[]
+  >([]);
+
+  const updateCartProducts = (products: CartProduct[]) => {
+    setCartProducts(products);
+    setSelectionProducts(
+      products.map((product: CartProduct) => {
+        return { id: product.id, selected: true };
+      }),
+    );
+  };
 
   const updateProductQuantity = ({
     id: productId,
@@ -52,24 +69,36 @@ export const useCarts = () => {
     id: number;
     selected: boolean;
   }) => {
-    const changedCartProducts = cartProducts.map((product) => {
-      return product.id !== productId ? product : { ...product, selected };
-    });
+    const changedSelectionProducts = selectionProducts.map(
+      (selectionProduct) => {
+        return selectionProduct.id !== productId
+          ? selectionProduct
+          : { ...selectionProduct, selected };
+      },
+    );
 
-    setCartProducts(changedCartProducts);
+    setSelectionProducts(changedSelectionProducts);
   };
 
   const updateAllProductSelection = ({ selected }: { selected: boolean }) => {
-    const changedCartProducts = cartProducts.map((product) => {
+    const changedSelectionProducts = selectionProducts.map((product) => {
       return { ...product, selected };
     });
 
-    setCartProducts(changedCartProducts);
+    setSelectionProducts(changedSelectionProducts);
   };
 
+  const resolvedCartProducts = cartProducts.map((cartProduct) => {
+    const selectionProduct = selectionProducts.find(
+      (selectionProduct) => selectionProduct.id === cartProduct.id,
+    );
+
+    return { ...cartProduct, selected: selectionProduct?.selected };
+  });
+
   return {
-    cartProducts,
-    setCartProducts,
+    cartProducts: resolvedCartProducts,
+    updateCartProducts,
     updateProductQuantity,
     deleteProduct,
     updateProductSelection,

@@ -7,14 +7,14 @@ import { useCartsUpdateQuantityAction } from "./useCartsUpdateQuantityAction";
 export const useCartsActions = () => {
   const {
     cartProducts,
-    setCartProducts,
+    updateCartProducts,
     updateProductQuantity,
     deleteProduct,
     updateProductSelection,
     updateAllProductSelection,
   } = useCarts();
 
-  const loadAction = useCartsLoadAction({ setCartProducts });
+  const loadAction = useCartsLoadAction({ updateCartProducts });
 
   const updateQuantityAction = useCartsUpdateQuantityAction({
     updateProductQuantity,

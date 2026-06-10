@@ -12,10 +12,12 @@ import type { CartProduct } from "../useCarts";
 const CART_ID = 1;
 
 export interface LoadActionOptions {
-  setCartProducts: (params: CartProduct[]) => void;
+  updateCartProducts: (params: CartProduct[]) => void;
 }
 
-export const useCartsLoadAction = ({ setCartProducts }: LoadActionOptions) => {
+export const useCartsLoadAction = ({
+  updateCartProducts,
+}: LoadActionOptions) => {
   const {
     status: { status, data, error },
   } = useLoadData<Awaited<ReturnType<GetCarts>>>({
@@ -37,14 +39,7 @@ export const useCartsLoadAction = ({ setCartProducts }: LoadActionOptions) => {
   useEffect(() => {
     if (!data?.products) return;
 
-    setCartProducts(
-      data?.products.map(
-        (product: Awaited<ReturnType<GetCarts>>["products"][number]) => ({
-          ...product,
-          selected: true,
-        }),
-      ),
-    );
+    updateCartProducts(data.products);
   }, [data]);
 
   return {
