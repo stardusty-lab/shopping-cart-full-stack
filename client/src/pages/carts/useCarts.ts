@@ -27,17 +27,11 @@ export interface SelectionProduct {
 export const useCarts = () => {
   const [cartProducts, setCartProducts] = useState<CartProduct[]>([]);
 
-  const [selectionProducts, setSelectionProducts] = useState<
-    SelectionProduct[]
-  >([]);
+  const [selectionProducts, setSelectionProducts] = useState<number[]>([]);
 
   const updateCartProducts = (products: CartProduct[]) => {
     setCartProducts(products);
-    setSelectionProducts(
-      products.map((product: CartProduct) => {
-        return { id: product.id, selected: true };
-      }),
-    );
+    setSelectionProducts(products.map((product: CartProduct) => product.id));
   };
 
   const updateProductQuantity = ({
@@ -61,9 +55,7 @@ export const useCarts = () => {
     setCartProducts(filteredCartProducts);
 
     const filteredSelectionProducts = selectionProducts.filter(
-      (selectionProduct) => {
-        return selectionProduct.id !== productId;
-      },
+      (id) => id !== productId,
     );
     setSelectionProducts(filteredSelectionProducts);
   };
@@ -75,31 +67,25 @@ export const useCarts = () => {
     id: number;
     selected: boolean;
   }) => {
-    const changedSelectionProducts = selectionProducts.map(
-      (selectionProduct) => {
-        return selectionProduct.id !== productId
-          ? selectionProduct
-          : { ...selectionProduct, selected };
-      },
-    );
+    const changedSelectionProducts = selected
+      ? [...selectionProducts, productId]
+      : selectionProducts.filter((id) => id !== productId);
 
     setSelectionProducts(changedSelectionProducts);
   };
 
   const updateAllProductSelection = ({ selected }: { selected: boolean }) => {
-    const changedSelectionProducts = selectionProducts.map((product) => {
-      return { ...product, selected };
-    });
+    const changedSelectionProducts = selected
+      ? cartProducts.map((product: CartProduct) => product.id)
+      : [];
 
     setSelectionProducts(changedSelectionProducts);
   };
 
   const cartProductsWithSelection = cartProducts.map((cartProduct) => {
-    const selectionProduct = selectionProducts.find(
-      (selectionProduct) => selectionProduct.id === cartProduct.id,
-    );
+    const selected = selectionProducts.includes(cartProduct.id);
 
-    return { ...cartProduct, selected: selectionProduct?.selected };
+    return { ...cartProduct, selected };
   });
 
   return {
