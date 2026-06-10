@@ -64,7 +64,7 @@ export const Carts = () => {
     ? cartProducts.every((product) => product.selected)
     : false;
 
-  const handleAllToogleProductChecked = ({ checked }: { checked: boolean }) => {
+  const handleAllToggleProductChecked = ({ checked }: { checked: boolean }) => {
     updateAllProductSelection({ selected: checked });
   };
 
@@ -109,7 +109,7 @@ export const Carts = () => {
           label="전체선택"
           checked={isAllChecked}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            handleAllToogleProductChecked({ checked: e.target.checked });
+            handleAllToggleProductChecked({ checked: e.target.checked });
           }}
         />
 
