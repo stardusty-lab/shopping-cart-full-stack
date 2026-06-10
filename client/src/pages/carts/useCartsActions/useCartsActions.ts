@@ -13,19 +13,19 @@ import {
 } from "@/services/apis/carts/repository";
 import type { GetCarts } from "@/services/apis/carts/repository.types";
 
-import { useCarts } from "./useCarts";
+import { useCarts } from "../useCarts";
 import type {
   UpdateProductQuantityCommand,
   DeleteProductParams,
-} from "./useCarts";
+} from "../useCarts";
 
-import { validateUpdateProductQuantity } from "./validate";
+import { validateUpdateProductQuantity } from "../validate";
 
 import {
   applyErrorPolicy,
   LOAD_ERROR_POLICY,
   UPDATE_QUANTITY_ERROR_POLICY,
-} from "./errorPolicy";
+} from "../errorPolicy";
 
 import { RequestAjaxError } from "@/services/core/http/error";
 
@@ -139,13 +139,17 @@ export const useCartsActions = () => {
   return {
     loadCartsProductsStatus,
     loadProductQuantityErrorMessage,
+
     cartProducts,
+
+    updateProductQuantityErrorMessage: message,
+
     updateProductQuantity: executeUpdateProductQuantity,
     deleteProduct: executeDeleteProduct,
+
     updateProductSelection,
     updateAllProductSelection,
 
-    updateProductQuantityErrorMessage: message,
     openAlert: open,
     onAlertClose: onClose,
   };
