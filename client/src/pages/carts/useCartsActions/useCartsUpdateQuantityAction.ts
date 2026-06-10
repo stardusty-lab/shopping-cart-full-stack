@@ -14,7 +14,7 @@ import { applyErrorPolicy, UPDATE_QUANTITY_ERROR_POLICY } from "../errorPolicy";
 
 import { RequestAjaxError } from "@/services/core/http/error";
 
-const CART_ID = 1;
+import { MISSION_CART_ID } from "../constants";
 
 export interface UpdateQuantityActionOptions {
   updateProductQuantity: (command: UpdateProductQuantityCommand) => void;
@@ -52,7 +52,7 @@ export const useCartsUpdateQuantityAction = ({
 
     try {
       await patchCartsProductsMutate({
-        cartId: CART_ID,
+        cartId: MISSION_CART_ID,
         productId,
         quantity,
       });

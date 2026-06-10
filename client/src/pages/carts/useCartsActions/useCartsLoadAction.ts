@@ -9,7 +9,7 @@ import type { GetCarts } from "@/services/apis/carts/repository.types";
 import { applyErrorPolicy, LOAD_ERROR_POLICY } from "../errorPolicy";
 import type { CartProduct } from "../useCarts";
 
-const CART_ID = 1;
+import { MISSION_CART_ID } from "../constants";
 
 export interface LoadActionOptions {
   updateCartProducts: (params: CartProduct[]) => void;
@@ -22,7 +22,7 @@ export const useCartsLoadAction = ({
     status: { status, data, error },
   } = useLoadData<Awaited<ReturnType<GetCarts>>>({
     queryFn: useCallback(async () => {
-      return await getCarts({ cartId: CART_ID });
+      return await getCarts({ cartId: MISSION_CART_ID });
     }, []),
   });
 

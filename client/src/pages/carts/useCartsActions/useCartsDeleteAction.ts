@@ -4,7 +4,7 @@ import { deleteCartsProducts } from "@/services/apis/carts/repository";
 
 import type { DeleteProductParams } from "../useCarts";
 
-const CART_ID = 1;
+import { MISSION_CART_ID } from "../constants";
 
 export interface DeleteActionOptions {
   deleteProduct: (params: DeleteProductParams) => void;
@@ -21,7 +21,7 @@ export const useCartsDeleteAction = ({
     id: productId,
   }: DeleteProductParams) => {
     await deleteCartsProductsMutate({
-      cartId: CART_ID,
+      cartId: MISSION_CART_ID,
       productId,
     });
 
