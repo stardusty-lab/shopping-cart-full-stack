@@ -24,7 +24,7 @@ import { validateUpdateProductQuantity } from "./validate";
 import {
   applyErrorPolicy,
   LOAD_ERROR_POLICY,
-  ERROR_POLICY,
+  UPDATE_QUANTITY_ERROR_POLICY,
 } from "./errorPolicy";
 
 import { RequestAjaxError } from "@/services/core/http/error";
@@ -56,7 +56,7 @@ export const useCartsActions = () => {
   const policy =
     LOAD_ERROR_POLICY[
       (loadProductQuantityError as { errorCode: string })
-        ?.errorCode as keyof typeof ERROR_POLICY
+        ?.errorCode as keyof typeof LOAD_ERROR_POLICY
     ];
 
   const loadProductQuantityErrorMessage = applyErrorPolicy(policy, {
@@ -84,7 +84,10 @@ export const useCartsActions = () => {
       if (error instanceof RequestAjaxError) {
         const { errorCode } = error.data as { errorCode: string };
 
-        const policy = ERROR_POLICY[errorCode as keyof typeof ERROR_POLICY];
+        const policy =
+          UPDATE_QUANTITY_ERROR_POLICY[
+            errorCode as keyof typeof UPDATE_QUANTITY_ERROR_POLICY
+          ];
 
         applyErrorPolicy(policy, {
           alert: (policy: { message: ReactNode }) => onOpen(policy.message),

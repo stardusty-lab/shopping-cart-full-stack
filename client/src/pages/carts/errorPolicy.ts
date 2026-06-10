@@ -5,7 +5,7 @@ export const LOAD_ERROR_POLICY: ErrorPolicyMap = {
   ROUTE_NOT_FOUND: { type: "field", message: "" },
 } as const;
 
-export const ERROR_POLICY: ErrorPolicyMap = {
+export const UPDATE_QUANTITY_ERROR_POLICY: ErrorPolicyMap = {
   MISSING_FIELD: { type: "ignore" },
   INVALID: { type: "ignore" },
   RESOURCE_NOT_FOUND: { type: "ignore" },
