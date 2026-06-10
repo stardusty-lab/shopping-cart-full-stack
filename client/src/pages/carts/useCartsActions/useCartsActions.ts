@@ -6,18 +6,13 @@ import { useAlert } from "@/core/components/Alert";
 import { useLoadData } from "@/services/core/useLoadData";
 import { useExecute } from "@/services/core/useExecute";
 
-import {
-  getCarts,
-  patchCartsProducts,
-  deleteCartsProducts,
-} from "@/services/apis/carts/repository";
+import { getCarts, patchCartsProducts } from "@/services/apis/carts/repository";
 import type { GetCarts } from "@/services/apis/carts/repository.types";
 
 import { useCarts } from "../useCarts";
-import type {
-  UpdateProductQuantityCommand,
-  DeleteProductParams,
-} from "../useCarts";
+import type { UpdateProductQuantityCommand } from "../useCarts";
+
+import { useCartsDeleteAction } from "./useCartsDeleteAction";
 
 import { validateUpdateProductQuantity } from "../validate";
 
@@ -119,22 +114,7 @@ export const useCartsActions = () => {
     }
   };
 
-  const { mutate: deleteCartsProductsMutate } = useExecute({
-    executeFn: deleteCartsProducts,
-  });
-
-  const executeDeleteProduct = async ({
-    id: productId,
-  }: DeleteProductParams) => {
-    await deleteCartsProductsMutate({
-      cartId: CART_ID,
-      productId,
-    });
-
-    deleteProduct({
-      id: productId,
-    });
-  };
+  const deleteAction = useCartsDeleteAction({ deleteProduct });
 
   return {
     loadCartsProductsStatus,
@@ -145,7 +125,7 @@ export const useCartsActions = () => {
     updateProductQuantityErrorMessage: message,
 
     updateProductQuantity: executeUpdateProductQuantity,
-    deleteProduct: executeDeleteProduct,
+    deleteProduct: deleteAction.deleteProduct,
 
     updateProductSelection,
     updateAllProductSelection,
