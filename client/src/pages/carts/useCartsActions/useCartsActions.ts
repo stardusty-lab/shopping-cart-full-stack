@@ -1,26 +1,20 @@
-import { useEffect, useCallback } from "react";
 import type { ReactNode } from "react";
 
 import { useAlert } from "@/core/components/Alert";
 
-import { useLoadData } from "@/services/core/useLoadData";
 import { useExecute } from "@/services/core/useExecute";
 
-import { getCarts, patchCartsProducts } from "@/services/apis/carts/repository";
-import type { GetCarts } from "@/services/apis/carts/repository.types";
+import { patchCartsProducts } from "@/services/apis/carts/repository";
 
 import { useCarts } from "../useCarts";
 import type { UpdateProductQuantityCommand } from "../useCarts";
 
 import { useCartsDeleteAction } from "./useCartsDeleteAction";
+import { useCartsLoadAction } from "./useCartsLoadAction";
 
 import { validateUpdateProductQuantity } from "../validate";
 
-import {
-  applyErrorPolicy,
-  LOAD_ERROR_POLICY,
-  UPDATE_QUANTITY_ERROR_POLICY,
-} from "../errorPolicy";
+import { applyErrorPolicy, UPDATE_QUANTITY_ERROR_POLICY } from "../errorPolicy";
 
 import { RequestAjaxError } from "@/services/core/http/error";
 
@@ -36,40 +30,7 @@ export const useCartsActions = () => {
     updateAllProductSelection,
   } = useCarts();
 
-  const {
-    status: {
-      status: loadCartsProductsStatus,
-      data,
-      error: loadProductQuantityError,
-    },
-  } = useLoadData<Awaited<ReturnType<GetCarts>>>({
-    queryFn: useCallback(async () => {
-      return await getCarts({ cartId: CART_ID });
-    }, []),
-  });
-
-  const policy =
-    LOAD_ERROR_POLICY[
-      (loadProductQuantityError as { errorCode: string })
-        ?.errorCode as keyof typeof LOAD_ERROR_POLICY
-    ];
-
-  const loadProductQuantityErrorMessage = applyErrorPolicy(policy, {
-    field: (policy: { message: ReactNode }) => policy.message,
-  });
-
-  useEffect(() => {
-    if (!data?.products) return;
-
-    setCartProducts(
-      data?.products.map(
-        (product: Awaited<ReturnType<GetCarts>>["products"][number]) => ({
-          ...product,
-          selected: true,
-        }),
-      ),
-    );
-  }, [data]);
+  const loadAction = useCartsLoadAction({ setCartProducts });
 
   const { open, message, onOpen, onClose } = useAlert();
 
@@ -117,8 +78,8 @@ export const useCartsActions = () => {
   const deleteAction = useCartsDeleteAction({ deleteProduct });
 
   return {
-    loadCartsProductsStatus,
-    loadProductQuantityErrorMessage,
+    loadCartsProductsStatus: loadAction.status,
+    loadProductQuantityErrorMessage: loadAction.errorMessage,
 
     cartProducts,
 
