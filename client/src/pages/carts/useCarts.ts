@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { cartSelectionStorage } from "./cartSelectionStorage";
+
 import { validateUpdateProductQuantity } from "./validate";
 
 export interface CartProduct {
@@ -31,7 +33,12 @@ export const useCarts = () => {
 
   const updateCartProducts = (products: CartProduct[]) => {
     setCartProducts(products);
-    setSelectionProducts(products.map((product: CartProduct) => product.id));
+
+    const selectionProducts = products.map(
+      (product: CartProduct) => product.id,
+    );
+    setSelectionProducts(selectionProducts);
+    cartSelectionStorage.save(selectionProducts);
   };
 
   const updateProductQuantity = ({
@@ -72,6 +79,7 @@ export const useCarts = () => {
       : selectionProducts.filter((id) => id !== productId);
 
     setSelectionProducts(changedSelectionProducts);
+    cartSelectionStorage.save(changedSelectionProducts);
   };
 
   const updateAllProductSelection = ({ selected }: { selected: boolean }) => {
@@ -80,6 +88,7 @@ export const useCarts = () => {
       : [];
 
     setSelectionProducts(changedSelectionProducts);
+    cartSelectionStorage.save(changedSelectionProducts);
   };
 
   const cartProductsWithSelection = cartProducts.map((cartProduct) => {
