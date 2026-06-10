@@ -94,7 +94,7 @@ export const useCarts = () => {
     setSelectionProducts(changedSelectionProducts);
   };
 
-  const resolvedCartProducts = cartProducts.map((cartProduct) => {
+  const cartProductsWithSelection = cartProducts.map((cartProduct) => {
     const selectionProduct = selectionProducts.find(
       (selectionProduct) => selectionProduct.id === cartProduct.id,
     );
@@ -103,7 +103,7 @@ export const useCarts = () => {
   });
 
   return {
-    cartProducts: resolvedCartProducts,
+    cartProducts: cartProductsWithSelection,
     updateCartProducts,
     updateProductQuantity,
     deleteProduct,
