@@ -1,19 +1,19 @@
 // discount
-interface DiscountFixedAmount {
+interface FixedAmountDiscount {
   type: "fixedAmount";
   amount: number;
 }
 
-interface DiscountPercent {
+interface PercentDiscount {
   type: "percent";
   rate: number;
 }
 
-interface DiscountFreeShippingFee {
+interface FreeShippingFeeDiscount {
   type: "freeShippingFee";
 }
 
-interface DiscountBOGO {
+interface BOGODiscount {
   type: "bogo";
   buyQuantity: number;
   freeQuantity: number;
@@ -25,10 +25,10 @@ interface RawCoupon {
   name: string;
 
   discount:
-    | DiscountFixedAmount
-    | DiscountPercent
-    | DiscountFreeShippingFee
-    | DiscountBOGO;
+    | FixedAmountDiscount
+    | PercentDiscount
+    | FreeShippingFeeDiscount
+    | BOGODiscount;
 
   expirationDate: Date;
 
