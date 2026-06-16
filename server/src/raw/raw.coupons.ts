@@ -19,6 +19,16 @@ interface BuyXGetYDiscount {
   freeQuantity: number;
 }
 
+// condition
+
+interface CouponCondition {
+  minOrderAmount?: number;
+  validTime?: {
+    start: string;
+    end: string;
+  };
+}
+
 interface RawCoupon {
   id: number;
   code: string;
@@ -32,11 +42,7 @@ interface RawCoupon {
 
   expirationDate: string;
 
-  minOrderAmount?: number;
-  validTime?: {
-    start: string;
-    end: string;
-  };
+  condition?: CouponCondition;
 }
 
 const createCoupons = () => {
