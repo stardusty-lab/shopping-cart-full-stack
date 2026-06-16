@@ -13,8 +13,8 @@ interface FreeShippingFeeDiscount {
   type: "freeShippingFee";
 }
 
-interface BOGODiscount {
-  type: "bogo";
+interface BuyXGetYDiscount {
+  type: "buyXGetY";
   buyQuantity: number;
   freeQuantity: number;
 }
@@ -28,7 +28,7 @@ interface RawCoupon {
     | FixedAmountDiscount
     | PercentDiscount
     | FreeShippingFeeDiscount
-    | BOGODiscount;
+    | BuyXGetYDiscount;
 
   expirationDate: Date;
 
