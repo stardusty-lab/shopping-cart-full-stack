@@ -30,7 +30,7 @@ interface RawCoupon {
     | FreeShippingFeeDiscount
     | BuyXGetYDiscount;
 
-  expirationDate: Date;
+  expirationDate: string;
 
   minOrderAmount?: number;
   validTime?: {
