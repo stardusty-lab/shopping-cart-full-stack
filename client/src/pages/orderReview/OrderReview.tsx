@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Layout } from "@/core/components/Layout";
@@ -13,45 +12,24 @@ import { ContentBox } from "@/core/components/ContentBox";
 
 import { formatNumber } from "@/core/utils/format";
 
+import { useOrderSheet } from "./useOrderSheet";
+
 export const OrderReview = () => {
   const navigate = useNavigate();
-
-  const [products] = useState([
-    {
-      id: 1,
-      quantity: 1,
-      price: 18000,
-      name: "Shopping Basket",
-      imgUrl: "https://example.com/images/shopping-basket.png",
-    },
-    {
-      id: 3,
-      quantity: 2,
-      price: 9900,
-      name: "Reusable Cup",
-      imgUrl: "https://example.com/images/reusable-cup.png",
-    },
-  ]);
-
-  const totalCount = products.reduce((acc, product) => {
-    acc += product.quantity;
-    return acc;
-  }, 0);
-
-  const [isRemoteArea] = useState(false);
-
-  const [pricing] = useState({
-    orderSheetAmount: 0,
-    discountAmount: 0,
-    shippingFee: 0,
-  });
-
-  const paymentAmount =
-    pricing.orderSheetAmount - pricing.discountAmount + pricing.shippingFee;
 
   const handleClickBack = () => {
     navigate(-1);
   };
+
+  const {
+    products,
+    totalCount,
+
+    isRemoteArea,
+
+    pricing,
+    paymentAmount,
+  } = useOrderSheet();
 
   return (
     <Layout>
