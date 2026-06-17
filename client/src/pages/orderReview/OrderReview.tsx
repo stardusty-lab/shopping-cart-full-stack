@@ -1,4 +1,5 @@
-import type { ChangeEvent } from "react";
+import { useState } from "react";
+import { type ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Layout } from "@/core/components/Layout";
@@ -14,6 +15,7 @@ import { ContentBox } from "@/core/components/ContentBox";
 import { formatNumber } from "@/core/utils/format";
 
 import { useOrderSheet } from "./useOrderSheet";
+import { CouponModal } from "./modals/CouponModal";
 
 export const OrderReview = () => {
   const navigate = useNavigate();
@@ -38,6 +40,11 @@ export const OrderReview = () => {
 
   const handleChangeIsRemoteArea = (e: ChangeEvent<HTMLInputElement>) => {
     updateIsRemoteArea({ isRemoteArea: e.target.checked });
+  };
+
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const handleClickOpenModal = () => {
+    setIsOpenModal(true);
   };
 
   return (
@@ -73,7 +80,13 @@ export const OrderReview = () => {
           })}
         </List>
 
-        <Button variant="secondary" size="medium" edge="rounded" block>
+        <Button
+          variant="secondary"
+          size="medium"
+          edge="rounded"
+          block
+          onClick={handleClickOpenModal}
+        >
           쿠폰 적용
         </Button>
 
@@ -105,6 +118,8 @@ export const OrderReview = () => {
       <Button variant="primary" size="large" block>
         결제하기
       </Button>
+
+      {isOpenModal && <CouponModal />}
     </Layout>
   );
 };
