@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { type ChangeEvent } from "react";
 
 import { Modal } from "@/core/components/Modal";
 import { Button } from "@/core/components/Button";
@@ -57,6 +58,14 @@ export const CouponModal = () => {
     return { ...coupon, isAble, isSelected };
   });
 
+  const handleChangeCouponSelection = (e: ChangeEvent<HTMLInputElement>) => {
+    const newCouponSelection: number[] = e.target.checked
+      ? [...couponSelection, Number(e.target.id)]
+      : couponSelection.filter((couponId) => couponId !== Number(e.target.id));
+
+    updateCouponSelection({ couponSelection: newCouponSelection });
+  };
+
   return (
     <Modal>
       <Modal.Header>쿠폰을 선택해 주세요</Modal.Header>
@@ -78,6 +87,7 @@ export const CouponModal = () => {
                     id={coupon.id}
                     label={coupon.name}
                     checked={coupon.isSelected}
+                    onChange={handleChangeCouponSelection}
                   />
                 }
                 description={
