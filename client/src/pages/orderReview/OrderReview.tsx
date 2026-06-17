@@ -1,3 +1,4 @@
+import type { ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Layout } from "@/core/components/Layout";
@@ -26,10 +27,15 @@ export const OrderReview = () => {
     totalCount,
 
     isRemoteArea,
+    updateIsRemoteArea,
 
     pricing,
     paymentAmount,
   } = useOrderSheet();
+
+  const handleChangeIsRemoteArea = (e: ChangeEvent<HTMLInputElement>) => {
+    updateIsRemoteArea({ isRemoteArea: e.target.checked });
+  };
 
   return (
     <Layout>
@@ -70,7 +76,12 @@ export const OrderReview = () => {
 
         <Title title={"배송 정보"} level={2} />
 
-        <Checkbox label="제주도 및 도서 산간 지역" value={isRemoteArea} />
+        <Checkbox
+          id="isRemoteArea"
+          label="제주도 및 도서 산간 지역"
+          checked={isRemoteArea}
+          onChange={handleChangeIsRemoteArea}
+        />
 
         <p>총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다.</p>
 

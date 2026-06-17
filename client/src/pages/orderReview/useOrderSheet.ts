@@ -23,7 +23,10 @@ export const useOrderSheet = () => {
     return acc;
   }, 0);
 
-  const [isRemoteArea] = useState(false);
+  const [isRemoteArea, setIsRemoteArea] = useState(false);
+  const updateIsRemoteArea = ({ isRemoteArea }: { isRemoteArea: boolean }) => {
+    setIsRemoteArea(isRemoteArea);
+  };
 
   const [pricing] = useState({
     orderSheetAmount: 0,
@@ -39,6 +42,7 @@ export const useOrderSheet = () => {
     totalCount,
 
     isRemoteArea,
+    updateIsRemoteArea,
 
     pricing,
     paymentAmount,
