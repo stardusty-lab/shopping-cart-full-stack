@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Layout } from "@/core/components/Layout";
@@ -10,15 +11,43 @@ import { DataInfo } from "@/core/components/DataInfo";
 import { Checkbox } from "@/core/components/Checkbox";
 import { ContentBox } from "@/core/components/ContentBox";
 
+import { formatNumber } from "@/core/utils/format";
+
 export const OrderReview = () => {
   const navigate = useNavigate();
 
-  const { products, paymentAmount } = { products: [], paymentAmount: 0 };
+  const [products] = useState([
+    {
+      id: 1,
+      quantity: 1,
+      price: 18000,
+      name: "Shopping Basket",
+      imgUrl: "https://example.com/images/shopping-basket.png",
+    },
+    {
+      id: 3,
+      quantity: 2,
+      price: 9900,
+      name: "Reusable Cup",
+      imgUrl: "https://example.com/images/reusable-cup.png",
+    },
+  ]);
 
   const totalCount = products.reduce((acc, product) => {
-    acc += product;
+    acc += product.quantity;
     return acc;
   }, 0);
+
+  const [isRemoteArea] = useState(false);
+
+  const [pricing] = useState({
+    orderSheetAmount: 0,
+    discountAmount: 0,
+    shippingFee: 0,
+  });
+
+  const paymentAmount =
+    pricing.orderSheetAmount - pricing.discountAmount + pricing.shippingFee;
 
   const handleClickBack = () => {
     navigate(-1);
@@ -41,26 +70,20 @@ export const OrderReview = () => {
         />
 
         <List>
-          <List.Item>
-            <List.Item.Left>
-              <ImgBox img="" />
-            </List.Item.Left>
-            <List.Item.Box
-              title="상품이름A"
-              content="35000원"
-              description="2개"
-            />
-          </List.Item>
-          <List.Item>
-            <List.Item.Left>
-              <ImgBox img="" />
-            </List.Item.Left>
-            <List.Item.Box
-              title="상품이름A"
-              content="35000원"
-              description="2개"
-            />
-          </List.Item>
+          {products.map((product) => {
+            return (
+              <List.Item>
+                <List.Item.Left>
+                  <ImgBox img={product.imgUrl} />
+                </List.Item.Left>
+                <List.Item.Box
+                  title={product.name}
+                  content={`${formatNumber(product.price)}원`}
+                  description={`${product.quantity}개`}
+                />
+              </List.Item>
+            );
+          })}
         </List>
 
         <Button variant="secondary" size="medium" edge="rounded" block>
@@ -69,14 +92,20 @@ export const OrderReview = () => {
 
         <Title title={"배송 정보"} level={2} />
 
-        <Checkbox label="제주도 및 도서 산간 지역" />
+        <Checkbox label="제주도 및 도서 산간 지역" value={isRemoteArea} />
 
         <p>총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다.</p>
 
         <DataInfo>
-          <DataInfo.Item title="주문 금액" content="70,000원" />
-          <DataInfo.Item title="쿠폰 할인 금액" content="6,000원" />
-          <DataInfo.Item title="배송비" content="6,000원" />
+          <DataInfo.Item
+            title="주문 금액"
+            content={`${pricing.orderSheetAmount}원`}
+          />
+          <DataInfo.Item
+            title="쿠폰 할인 금액"
+            content={`${pricing.discountAmount}원`}
+          />
+          <DataInfo.Item title="배송비" content={`${pricing.shippingFee}원`} />
           <DataInfo.Item title="총 결제 금액" content={`${paymentAmount}원`} />
         </DataInfo>
       </ContentBox>
