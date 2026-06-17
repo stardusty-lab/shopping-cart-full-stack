@@ -39,17 +39,30 @@ export const CouponModal = () => {
     },
   ]);
 
+  const [ableCoupons] = useState([1, 2]);
+
+  const couponViewModels = coupons.map((coupon) => {
+    const isAble = ableCoupons.includes(coupon.id);
+    return { ...coupon, isAble };
+  });
+
   return (
     <Modal>
       <Modal.Header>쿠폰을 선택해 주세요</Modal.Header>
       <p>쿠폰은 최대 2개까지 사용할 수 있습니다.</p>
 
       <List>
-        {coupons.map((coupon) => {
+        {couponViewModels.map((coupon) => {
           return (
             <List.Item>
               <List.Item.Box
-                title={<Checkbox label={coupon.name} />}
+                style={{
+                  ...(!coupon.isAble && {
+                    opacity: 0.5,
+                    pointerEvents: "none",
+                  }),
+                }}
+                title={<Checkbox id={coupon.id} label={coupon.name} />}
                 description={
                   <>
                     {coupon.expirationDate && (
