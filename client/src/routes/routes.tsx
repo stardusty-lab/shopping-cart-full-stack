@@ -6,6 +6,7 @@ import { ROUTES } from "@/constants/routes";
 
 import { Carts } from "@/pages/carts/Carts";
 import { OrderReview } from "@/pages/orderReview";
+import { PaymentReview } from "@/pages/paymentReview";
 
 export interface RouteItem {
   path: string;
@@ -17,4 +18,5 @@ export const routes: RouteItem[] = [
   { path: ROUTES.HOME, element: <Navigate to={ROUTES.CARTS} replace /> },
   { path: ROUTES.CARTS, element: <Carts /> },
   { path: ROUTES.ORDER_REVIEW, element: <OrderReview /> },
+  { path: ROUTES.PAYMENT_REVIEW, element: <PaymentReview /> },
 ];
