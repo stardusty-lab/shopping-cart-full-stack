@@ -119,7 +119,13 @@ export const OrderReview = () => {
         결제하기
       </Button>
 
-      {isOpenModal && <CouponModal />}
+      {isOpenModal && (
+        <CouponModal
+          couponSelection={couponSelection}
+          onUpdateCouponSelection={updateCouponSelection}
+          onClose={() => setIsOpenModal(false)}
+        />
+      )}
     </Layout>
   );
 };

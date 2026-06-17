@@ -6,7 +6,21 @@ import { Button } from "@/core/components/Button";
 import { List } from "@/core/components/List";
 import { Checkbox } from "@/core/components/Checkbox";
 
-export const CouponModal = () => {
+interface Props {
+  couponSelection: number[];
+  onUpdateCouponSelection: ({
+    couponSelection,
+  }: {
+    couponSelection: number[];
+  }) => void;
+  onClose: () => void;
+}
+
+export const CouponModal = ({
+  couponSelection: couponSelectionProp = [],
+  onUpdateCouponSelection: onUpdateCouponSelectionProp,
+  onClose,
+}: Props) => {
   const [coupons] = useState([
     {
       id: 1,
@@ -42,7 +56,7 @@ export const CouponModal = () => {
 
   const [ableCoupons] = useState([1, 2]);
 
-  const [couponSelection, setCouponSelection] = useState([1, 2]);
+  const [couponSelection, setCouponSelection] = useState(couponSelectionProp);
   const updateCouponSelection = ({
     couponSelection,
   }: {
@@ -66,8 +80,13 @@ export const CouponModal = () => {
     updateCouponSelection({ couponSelection: newCouponSelection });
   };
 
+  const handleSubmit = () => {
+    onUpdateCouponSelectionProp({ couponSelection: couponSelection });
+    onClose();
+  };
+
   return (
-    <Modal>
+    <Modal onClose={onClose}>
       <Modal.Header>쿠폰을 선택해 주세요</Modal.Header>
       <p>쿠폰은 최대 2개까지 사용할 수 있습니다.</p>
 
@@ -114,7 +133,7 @@ export const CouponModal = () => {
         })}
       </List>
 
-      <Button variant="primary" size="medium" block>
+      <Button variant="primary" size="medium" block onClick={handleSubmit}>
         총 6,000원 할인 쿠폰 사용하기
       </Button>
     </Modal>
