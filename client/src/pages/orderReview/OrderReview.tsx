@@ -29,6 +29,9 @@ export const OrderReview = () => {
     isRemoteArea,
     updateIsRemoteArea,
 
+    couponSelection,
+    updateCouponSelection,
+
     pricing,
     paymentAmount,
   } = useOrderSheet();

@@ -28,6 +28,15 @@ export const useOrderSheet = () => {
     setIsRemoteArea(isRemoteArea);
   };
 
+  const [couponSelection, setCouponSelection] = useState<number[]>([]);
+  const updateCouponSelection = ({
+    couponSelection,
+  }: {
+    couponSelection: number[];
+  }) => {
+    setCouponSelection(couponSelection);
+  };
+
   const [pricing] = useState({
     orderSheetAmount: 0,
     discountAmount: 0,
@@ -43,6 +52,9 @@ export const useOrderSheet = () => {
 
     isRemoteArea,
     updateIsRemoteArea,
+
+    couponSelection,
+    updateCouponSelection,
 
     pricing,
     paymentAmount,
