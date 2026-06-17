@@ -41,9 +41,20 @@ export const CouponModal = () => {
 
   const [ableCoupons] = useState([1, 2]);
 
+  const [couponSelection, setCouponSelection] = useState([1, 2]);
+  const updateCouponSelection = ({
+    couponSelection,
+  }: {
+    couponSelection: number[];
+  }) => {
+    setCouponSelection(couponSelection);
+  };
+
   const couponViewModels = coupons.map((coupon) => {
     const isAble = ableCoupons.includes(coupon.id);
-    return { ...coupon, isAble };
+    const isSelected = couponSelection.includes(coupon.id);
+
+    return { ...coupon, isAble, isSelected };
   });
 
   return (
@@ -62,7 +73,13 @@ export const CouponModal = () => {
                     pointerEvents: "none",
                   }),
                 }}
-                title={<Checkbox id={coupon.id} label={coupon.name} />}
+                title={
+                  <Checkbox
+                    id={coupon.id}
+                    label={coupon.name}
+                    checked={coupon.isSelected}
+                  />
+                }
                 description={
                   <>
                     {coupon.expirationDate && (
