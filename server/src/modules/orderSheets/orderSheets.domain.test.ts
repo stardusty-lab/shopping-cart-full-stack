@@ -115,7 +115,7 @@ describe("주문서 금액 요약 정보 계산", () => {
         { price: 32000, quantity: 2 },
       ];
       const coupons = ["FIXED5000"];
-      const shippingFree = 3000;
+      const shippingFreeBeforeCoupon = 3000;
 
       const expectedDiscountCouponAmount = 5000;
 
@@ -123,7 +123,7 @@ describe("주문서 금액 요약 정보 계산", () => {
       const result = calculateCouponDiscountAmount(
         products,
         coupons,
-        shippingFree,
+        shippingFreeBeforeCoupon,
       );
 
       // Assert
