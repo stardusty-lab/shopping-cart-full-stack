@@ -1,6 +1,6 @@
 import {
   calculateOrderSheetAmount,
-  calculateFinalShippingFeeAmount,
+  calculateAppliedShippingFee,
 } from "./orderSheets.domain.ts";
 
 describe("주문서 금액 요약 정보 계산", () => {
@@ -31,7 +31,7 @@ describe("주문서 금액 요약 정보 계산", () => {
       const expectedShippingFee = 3000;
 
       // Act
-      const result = calculateFinalShippingFeeAmount(
+      const result = calculateAppliedShippingFee(
         orderSheetAmount,
         isRemoteArea,
         hasFreeShippingFeeCoupon,
