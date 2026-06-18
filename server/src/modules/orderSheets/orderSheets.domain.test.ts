@@ -129,7 +129,7 @@ describe("주문서 금액 요약 정보 계산", () => {
       // Assert
       expect(result).toBe(expectedDiscountCouponAmount);
     });
-    it("2 + 1 BOGO 쿠폰을 사용하면 할인금액에 반영한다", () => {
+    it("2 + 1 BOGO 쿠폰은 상품 3개 구매시 1개 가격 만큼 할인한다", () => {
       // Arrange
       const products = [{ price: 9900, quantity: 3 }];
       const coupons = ["BOGO"];
