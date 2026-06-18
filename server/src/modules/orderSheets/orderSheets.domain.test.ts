@@ -129,7 +129,24 @@ describe("주문서 금액 요약 정보 계산", () => {
       // Assert
       expect(result).toBe(expectedDiscountCouponAmount);
     });
-    it("2 + 1 BOGO 쿠폰을 사용하면 할인금액에 반영한다", () => {});
+    it("2 + 1 BOGO 쿠폰을 사용하면 할인금액에 반영한다", () => {
+      // Arrange
+      const products = [{ price: 9900, quantity: 3 }];
+      const coupons = ["BOGO"];
+      const shippingFreeBeforeCoupon = 3000;
+
+      const expectedDiscountCouponAmount = 9900;
+
+      // Act
+      const result = calculateCouponDiscountAmount(
+        products,
+        coupons,
+        shippingFreeBeforeCoupon,
+      );
+
+      // Assert
+      expect(result).toBe(expectedDiscountCouponAmount);
+    });
     it("30% 할인 쿠폰을 사용하면 할인금액에 반영한다", () => {});
   });
 
