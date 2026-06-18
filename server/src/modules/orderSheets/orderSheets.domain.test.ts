@@ -3,6 +3,12 @@ import {
   calculateAppliedShippingFee,
 } from "./orderSheets.domain.ts";
 
+const DEFAULT_SHIPPING_POLICY = {
+  baseShippingFee: 3000,
+  remoteAreaAdditionalFee: 3000,
+  freeShippingThreshold: 50000,
+};
+
 describe("주문서 금액 요약 정보 계산", () => {
   describe("주문금액 계산", () => {
     it("상품 가격과 수량을 곱해 주문금액을 계산한다", () => {
@@ -35,6 +41,7 @@ describe("주문서 금액 요약 정보 계산", () => {
         orderSheetAmount,
         isRemoteArea,
         hasFreeShippingFeeCoupon,
+        DEFAULT_SHIPPING_POLICY,
       );
 
       // Assert
