@@ -33,9 +33,16 @@ export const calculateCouponDiscountAmount = (
   coupons: string[],
   shippingFreeBeforeCoupon: number,
 ): number => {
+  const couponOrder = ["FIXED5000", "BOGO", "MIRACLESALE", "FREESHIPPING"];
+
+  const orderedCoupons: string[] = [];
+  couponOrder.forEach((order) => {
+    if (coupons.includes(order)) orderedCoupons.push(order);
+  });
+
   let couponDiscountAmount = 0;
 
-  coupons.forEach((coupon) => {
+  orderedCoupons.forEach((coupon) => {
     const getMaxPriceProductPrice = (
       products: { price: number; quantity: number }[],
     ): number => {
@@ -54,12 +61,12 @@ export const calculateCouponDiscountAmount = (
         const maxPriceProduct = getMaxPriceProductPrice(products);
         couponDiscountAmount += maxPriceProduct;
         break;
-      case "FREESHIPPING":
-        couponDiscountAmount += shippingFreeBeforeCoupon;
-        break;
       case "MIRACLESALE":
         const orderSheetAmount = calculateOrderSheetAmount(products);
         couponDiscountAmount += orderSheetAmount * 0.3;
+        break;
+      case "FREESHIPPING":
+        couponDiscountAmount += shippingFreeBeforeCoupon;
         break;
       default:
         break;
