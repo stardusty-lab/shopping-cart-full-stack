@@ -1,4 +1,7 @@
-import { calculateOrderSheetAmount } from "./orderSheets.domain.ts";
+import {
+  calculateOrderSheetAmount,
+  calculateFinalShippingFeeAmount,
+} from "./orderSheets.domain.ts";
 
 describe("주문서 금액 요약 정보 계산", () => {
   describe("주문금액 계산", () => {
@@ -19,7 +22,27 @@ describe("주문서 금액 요약 정보 계산", () => {
   });
 
   describe("최종 배송비 계산", () => {
-    it("무료 배송 기준에 못 미치는 경우 기본 배송비가 적용된다", () => {});
+    it("무료 배송 기준에 못 미치는 경우 기본 배송비가 적용된다", () => {
+      // Arrange
+      const products = [
+        { price: 18000, quantity: 2 },
+        { price: 9900, quantity: 1 },
+      ];
+      const isRemoteArea = false;
+      const couponIds: number[] = [];
+
+      const expectedShippingFee = 3000;
+
+      // Act
+      const result = calculateFinalShippingFeeAmount(
+        products,
+        isRemoteArea,
+        couponIds,
+      );
+
+      // Assert
+      expect(result).toBe(expectedShippingFee);
+    });
     it("도서산간 지역인 경우 추가 배송비가 적용된다", () => {});
     it("무료 배송 조건을 만족하면 배송비가 면제된다", () => {});
     it("무료 배송 쿠폰을 사용하면 배송비가 면제된다", () => {});
