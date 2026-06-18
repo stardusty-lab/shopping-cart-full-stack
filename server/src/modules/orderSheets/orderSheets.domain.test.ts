@@ -29,7 +29,7 @@ describe("주문서 금액 요약 정보 계산", () => {
         { price: 9900, quantity: 1 },
       ];
       const isRemoteArea = false;
-      const couponIds: number[] = [];
+      const hasFreeShippingFeeCoupon = false;
 
       const expectedShippingFee = 3000;
 
@@ -37,7 +37,7 @@ describe("주문서 금액 요약 정보 계산", () => {
       const result = calculateFinalShippingFeeAmount(
         products,
         isRemoteArea,
-        couponIds,
+        hasFreeShippingFeeCoupon,
       );
 
       // Assert
