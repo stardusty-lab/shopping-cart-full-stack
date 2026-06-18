@@ -24,10 +24,7 @@ describe("주문서 금액 요약 정보 계산", () => {
   describe("최종 배송비 계산", () => {
     it("무료 배송 기준에 못 미치는 경우 기본 배송비가 적용된다", () => {
       // Arrange
-      const products = [
-        { price: 18000, quantity: 2 },
-        { price: 9900, quantity: 1 },
-      ];
+      const orderSheetAmount = 45900;
       const isRemoteArea = false;
       const hasFreeShippingFeeCoupon = false;
 
@@ -35,7 +32,7 @@ describe("주문서 금액 요약 정보 계산", () => {
 
       // Act
       const result = calculateFinalShippingFeeAmount(
-        products,
+        orderSheetAmount,
         isRemoteArea,
         hasFreeShippingFeeCoupon,
       );
