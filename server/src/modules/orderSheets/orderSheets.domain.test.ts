@@ -66,7 +66,25 @@ describe("주문서 금액 요약 정보 계산", () => {
       // Assert
       expect(result).toBe(expectedShippingFee);
     });
-    it("무료 배송 조건을 만족하면 배송비가 면제된다", () => {});
+    it("무료 배송 조건을 만족하면 배송비가 면제된다", () => {
+      // Arrange
+      const orderSheetAmount = 50000;
+      const isRemoteArea = false;
+      const hasFreeShippingFeeCoupon = false;
+
+      const expectedShippingFee = 0;
+
+      // Act
+      const result = calculateAppliedShippingFee(
+        orderSheetAmount,
+        isRemoteArea,
+        hasFreeShippingFeeCoupon,
+        DEFAULT_SHIPPING_POLICY,
+      );
+
+      // Assert
+      expect(result).toBe(expectedShippingFee);
+    });
     it("무료 배송 쿠폰을 사용하면 배송비가 면제된다", () => {});
   });
 
