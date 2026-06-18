@@ -1,6 +1,7 @@
 import {
   calculateOrderSheetAmount,
   calculateAppliedShippingFee,
+  calculateCouponDiscountAmount,
 } from "./orderSheets.domain.ts";
 
 const DEFAULT_SHIPPING_POLICY = {
@@ -107,7 +108,27 @@ describe("주문서 금액 요약 정보 계산", () => {
   });
 
   describe("쿠폰 할인금액 계산", () => {
-    it("5000원 할인 쿠폰을 사용하면 할인금액에 반영한다", () => {});
+    it("5000원 할인 쿠폰을 사용하면 할인금액에 반영한다", () => {
+      // Arrange
+      const products = [
+        { price: 18000, quantity: 2 },
+        { price: 32000, quantity: 2 },
+      ];
+      const coupons = ["FIXED5000"];
+      const shippingFree = 3000;
+
+      const expectedDiscountCouponAmount = 5000;
+
+      // Act
+      const result = calculateCouponDiscountAmount(
+        products,
+        coupons,
+        shippingFree,
+      );
+
+      // Assert
+      expect(result).toBe(expectedDiscountCouponAmount);
+    });
     it("2 + 1 BOGO 쿠폰을 사용하면 할인금액에 반영한다", () => {});
     it("30% 할인 쿠폰을 사용하면 할인금액에 반영한다", () => {});
   });
