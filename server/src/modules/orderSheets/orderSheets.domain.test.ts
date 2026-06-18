@@ -1,6 +1,21 @@
+import { calculateOrderSheetAmount } from "./orderSheets.domain.ts";
+
 describe("주문서 금액 요약 정보 계산", () => {
   describe("주문금액 계산", () => {
-    it("상품 가격과 수량을 곱해 주문금액을 계산한다", () => {});
+    it("상품 가격과 수량을 곱해 주문금액을 계산한다", () => {
+      // Arrange
+      const products = [
+        { price: 18000, quantity: 2 },
+        { price: 9900, quantity: 1 },
+      ];
+      const expectedOrderSheetAmount = 45900;
+
+      // Act
+      const result = calculateOrderSheetAmount(products);
+
+      // Assert
+      expect(result).toBe(expectedOrderSheetAmount);
+    });
   });
 
   describe("최종 배송비 계산", () => {
