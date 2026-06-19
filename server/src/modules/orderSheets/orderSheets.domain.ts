@@ -118,3 +118,11 @@ export const calculateCouponDiscountAmount = (
     return prevDiscountAmount;
   }, 0);
 };
+
+export const calculatePaymentAmount = (
+  orderSheetAmount: number,
+  couponDiscountAmount: number,
+  appliedShippingFee: number,
+): number => {
+  return orderSheetAmount - couponDiscountAmount + appliedShippingFee;
+};
