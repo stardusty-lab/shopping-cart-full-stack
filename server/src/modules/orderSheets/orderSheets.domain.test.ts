@@ -4,6 +4,7 @@ import {
   calculateCouponDiscountAmount,
   calculatePaymentAmount,
   canUseCoupon,
+  calculateBestCouponCombination,
 } from "./orderSheets.domain.ts";
 
 const DEFAULT_SHIPPING_POLICY = {
@@ -418,4 +419,23 @@ describe("사용 가능한 쿠폰 계산", () => {
   });
 });
 
-describe("최대 2개의 최적 쿠폰 조합 계산", () => {});
+describe("최대 2개의 최적 쿠폰 조합 계산", () => {
+  it("전체 쿠폰 중 사용 가능한 쿠폰을 기준으로 할인 금액이 가장 큰 2개의 쿠폰 조합을 반환한다", () => {
+    // Arrange
+    const products = [{ price: 32000, quantity: 4 }];
+    const shippingFeeBeforeCoupon = 3000;
+    const coupons = ["FIXED5000", "BOGO", "MIRACLESALE", "FREESHIPPING"];
+
+    const expectedCoupons = ["BOGO", "MIRACLESALE"];
+    // Act
+
+    const result = calculateBestCouponCombination(
+      products,
+      coupons,
+      shippingFeeBeforeCoupon,
+    );
+
+    // Assert
+    expect(result).toEqual(expectedCoupons);
+  });
+});
