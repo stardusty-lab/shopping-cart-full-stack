@@ -248,7 +248,7 @@ describe("사용 가능한 쿠폰 계산", () => {
         condition: {
           minOrderAmount: 100000,
         },
-      };
+      } as const;
       const orderSheetAmount = 36000;
 
       // Act
@@ -265,7 +265,7 @@ describe("사용 가능한 쿠폰 계산", () => {
         condition: {
           minOrderAmount: 100000,
         },
-      };
+      } as const;
       const orderSheetAmount = 108000;
 
       // Act
