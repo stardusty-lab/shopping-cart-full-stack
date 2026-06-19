@@ -128,7 +128,7 @@ export const calculatePaymentAmount = (
 };
 
 const isExpired = (expirationDateString: string, now: Date): boolean => {
-  const expirationDate = new Date(expirationDateString);
+  const expirationDate = new Date(`${expirationDateString}T23:59:59`);
 
   return now > expirationDate;
 };
