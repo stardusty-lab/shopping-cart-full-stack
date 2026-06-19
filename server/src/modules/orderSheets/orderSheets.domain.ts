@@ -192,12 +192,12 @@ interface MIRACLESALECoupon {
 }
 interface MIRACLESALECouponContext {}
 
-type CanUseCoupon =
+export type CanUseCoupon =
   | FIXE5000Coupon
   | BOGOCoupon
   | FREESHIPPINGCoupon
   | MIRACLESALECoupon;
-type CanUseCouponContext = (
+export type CanUseCouponContext = (
   | FIXE5000CouponContext
   | BOGOCouponContext
   | FREESHIPPINGCoupontContext
