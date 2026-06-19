@@ -191,27 +191,27 @@ interface MIRACLESALECoupon {
     };
   };
 }
-interface MIRACLESALECouponContext {
-  now: Date;
-}
+interface MIRACLESALECouponContext {}
 
 type CanUseCoupon =
   | FIXE5000Coupon
   | BOGOCoupon
   | FREESHIPPINGCoupon
   | MIRACLESALECoupon;
-type CanUseCouponContext =
+type CanUseCouponContext = (
   | FIXE5000CouponContext
   | BOGOCouponContext
   | FREESHIPPINGCoupontContext
-  | MIRACLESALECouponContext;
+  | MIRACLESALECouponContext
+) & { now: Date };
 
 export const canUseCoupon = (
   coupon: CanUseCoupon,
-  context?: CanUseCouponContext,
+  context: CanUseCouponContext,
 ) => {
   const { expirationDate } = coupon;
-  const now = new Date();
+  const { now } = context;
+
   if (isExpired(expirationDate, now)) return false;
 
   const { condition } = coupon;

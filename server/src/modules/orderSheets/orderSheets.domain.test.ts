@@ -249,10 +249,12 @@ describe("사용 가능한 쿠폰 계산", () => {
           minOrderAmount: 100000,
         },
       } as const;
+
       const orderSheetAmount = 36000;
+      const now = new Date("2026-06-19");
 
       // Act
-      const result = canUseCoupon(coupon, { orderSheetAmount });
+      const result = canUseCoupon(coupon, { orderSheetAmount, now });
 
       // Assert
       expect(result).toBe(false);
@@ -266,10 +268,12 @@ describe("사용 가능한 쿠폰 계산", () => {
           minOrderAmount: 100000,
         },
       } as const;
+
       const orderSheetAmount = 108000;
+      const now = new Date("2026-06-19");
 
       // Act
-      const result = canUseCoupon(coupon, { orderSheetAmount });
+      const result = canUseCoupon(coupon, { orderSheetAmount, now });
 
       // Assert
       expect(result).toBe(true);
@@ -286,15 +290,17 @@ describe("사용 가능한 쿠폰 계산", () => {
           freeQuantity: 1,
         },
       } as const;
+
       const products = [
         {
           price: 18000,
           quantity: 2,
         },
       ];
+      const now = new Date("2026-06-19");
 
       // Act
-      const result = canUseCoupon(coupon, { products });
+      const result = canUseCoupon(coupon, { products, now });
 
       // Assert
       expect(result).toBe(false);
@@ -309,15 +315,17 @@ describe("사용 가능한 쿠폰 계산", () => {
           freeQuantity: 1,
         },
       } as const;
+
       const products = [
         {
           price: 18000,
           quantity: 3,
         },
       ];
+      const now = new Date("2026-06-19");
 
       // Act
-      const result = canUseCoupon(coupon, { products });
+      const result = canUseCoupon(coupon, { products, now });
 
       // Assert
       expect(result).toBe(true);
@@ -333,10 +341,12 @@ describe("사용 가능한 쿠폰 계산", () => {
           minOrderAmount: 50000,
         },
       } as const;
+
       const orderSheetAmount = 36000;
+      const now = new Date("2026-06-19");
 
       // Act
-      const result = canUseCoupon(coupon, { orderSheetAmount });
+      const result = canUseCoupon(coupon, { orderSheetAmount, now });
 
       // Assert
       expect(result).toBe(false);
@@ -350,10 +360,12 @@ describe("사용 가능한 쿠폰 계산", () => {
           minOrderAmount: 50000,
         },
       } as const;
+
       const orderSheetAmount = 54000;
+      const now = new Date("2026-06-19");
 
       // Act
-      const result = canUseCoupon(coupon, { orderSheetAmount });
+      const result = canUseCoupon(coupon, { orderSheetAmount, now });
 
       // Assert
       expect(result).toBe(true);
@@ -374,8 +386,10 @@ describe("사용 가능한 쿠폰 계산", () => {
         },
       } as const;
 
+      const now = new Date("2026-06-19");
+
       // Act
-      const result = canUseCoupon(coupon);
+      const result = canUseCoupon(coupon, { now });
 
       // Assert
       expect(result).toBe(false);
@@ -393,8 +407,10 @@ describe("사용 가능한 쿠폰 계산", () => {
         },
       } as const;
 
+      const now = new Date("2026-06-19T04:30:00");
+
       // Act
-      const result = canUseCoupon(coupon);
+      const result = canUseCoupon(coupon, { now });
 
       // Assert
       expect(result).toBe(true);
