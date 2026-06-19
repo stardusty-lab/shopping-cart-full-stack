@@ -2,6 +2,7 @@ import {
   calculateOrderSheetAmount,
   calculateAppliedShippingFee,
   calculateCouponDiscountAmount,
+  calculatePaymentAmount,
 } from "./orderSheets.domain.ts";
 
 const DEFAULT_SHIPPING_POLICY = {
@@ -215,7 +216,24 @@ describe("주문서 금액 요약 정보 계산", () => {
   });
 
   describe("총 결제 금액 계산", () => {
-    it("주문금액 - 쿠폰 할인 금액 + 최종 배송비로 총 결제 금액을 계산한다", () => {});
+    it("주문금액 - 쿠폰 할인 금액 + 최종 배송비로 총 결제 금액을 계산한다", () => {
+      // Arrange
+      const orderSheetAmount = 83700;
+      const couponDiscountAmount = 37710;
+      const appliedShippingFee = 3000;
+
+      const expectedAmount = 48990;
+
+      // Act
+      const result = calculatePaymentAmount(
+        orderSheetAmount,
+        couponDiscountAmount,
+        appliedShippingFee,
+      );
+
+      // Assert
+      expect(result).toBe(expectedAmount);
+    });
   });
 });
 
