@@ -144,8 +144,20 @@ interface FIXE5000CouponContext {
   orderSheetAmount: number;
 }
 
-type CanUseCoupon = FIXE5000Coupon;
-type CanUseCouponContext = FIXE5000CouponContext;
+interface BOGOCoupon {
+  code: "BOGO";
+  expirationDate: string;
+  condition: {
+    buyQuantity: number;
+    freeQuantity: number;
+  };
+}
+interface BOGOCouponContext {
+  products: { price: number; quantity: number }[];
+}
+
+type CanUseCoupon = FIXE5000Coupon | BOGOCoupon;
+type CanUseCouponContext = FIXE5000CouponContext | BOGOCouponContext;
 
 export const canUseCoupon = (
   coupon: CanUseCoupon,
@@ -159,6 +171,15 @@ export const canUseCoupon = (
   switch (coupon.code) {
     case "FIXED5000":
       return context.orderSheetAmount >= condition.minOrderAmount;
+
+    case "BOGO":
+      const bogoProduct = context.products?.find((product) => {
+        return (
+          product.quantity >= condition.buyQuantity + condition.freeQuantity
+        );
+      });
+      return !!bogoProduct;
+
     default:
       return false;
   }
