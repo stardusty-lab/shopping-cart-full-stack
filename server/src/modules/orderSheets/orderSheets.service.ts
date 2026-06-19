@@ -1,4 +1,7 @@
-import type { OrderSheetResponse } from "./orderSheets.dto.ts";
+import type {
+  OrderSheetResponse,
+  CreateOrderSheetResponse,
+} from "./orderSheets.dto.ts";
 import * as orderSheetStore from "./orderSheets.repository.ts";
 import * as productsStore from "../products/products.repository.ts";
 
@@ -26,4 +29,18 @@ export const getOrderSheetById = (orderSheetId: number): OrderSheetResponse => {
       selectedCoupons: orderSheet.selectedCoupons,
     },
   };
+};
+
+export const createOrderSheet = (
+  products: { id: number; quantity: number }[],
+): CreateOrderSheetResponse => {
+  const selectedCoupons: number[] = [];
+  const orderSheet = {
+    products,
+    remoteArea: false,
+    coupons: selectedCoupons,
+  };
+
+  const newOrderSheet = orderSheetStore.create(orderSheet);
+  return newOrderSheet;
 };

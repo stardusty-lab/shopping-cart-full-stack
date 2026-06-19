@@ -13,3 +13,7 @@ export interface OrderSheetResponse {
     selectedCoupons: number[];
   };
 }
+
+export interface CreateOrderSheetResponse {
+  id: number;
+}

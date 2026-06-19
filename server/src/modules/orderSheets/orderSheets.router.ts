@@ -9,4 +9,6 @@ orderSheetsRouter.get(
   orderSheetsController.getOrderSheetById,
 );
 
+orderSheetsRouter.post("/", orderSheetsController.createOrderSheet);
+
 export default orderSheetsRouter;

@@ -9,3 +9,10 @@ export const getOrderSheetById = (req: Request, res: Response) => {
 
   return success(res, orderSheet);
 };
+
+export const createOrderSheet = (req: Request, res: Response) => {
+  const products = req.body.products;
+  const orderSheet = orderSheetsService.createOrderSheet(products);
+
+  return success(res, { id: orderSheet.id });
+};
