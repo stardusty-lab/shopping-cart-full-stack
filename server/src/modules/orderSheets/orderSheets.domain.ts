@@ -127,23 +127,23 @@ export const calculatePaymentAmount = (
   return orderSheetAmount - couponDiscountAmount + appliedShippingFee;
 };
 
-interface FIXE5000CouponParamCoupon {
+interface FIXE5000Coupon {
   code: "FIXED5000";
   expirationDate: string;
   condition: {
     minOrderAmount: number;
   };
 }
-interface FIXE5000CouponParamContext {
+interface FIXE5000CouponContext {
   orderSheetAmount: number;
 }
 
-type CanUseCouponParamCoupon = FIXE5000CouponParamCoupon;
-type CanUseCouponParamContext = FIXE5000CouponParamContext;
+type CanUseCoupon = FIXE5000Coupon;
+type CanUseCouponContext = FIXE5000CouponContext;
 
 export const canUseCoupon = (
-  coupon: CanUseCouponParamCoupon,
-  context: CanUseCouponParamContext,
+  coupon: CanUseCoupon,
+  context: CanUseCouponContext,
 ) => {
   const { condition } = coupon;
 
