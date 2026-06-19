@@ -62,7 +62,8 @@ export const calculateCouponDiscountAmount = (
         couponDiscountAmount += maxPriceProduct;
         break;
       case "MIRACLESALE":
-        const orderSheetAmount = calculateOrderSheetAmount(products);
+        const orderSheetAmount =
+          calculateOrderSheetAmount(products) - couponDiscountAmount;
         couponDiscountAmount += orderSheetAmount * 0.3;
         break;
       case "FREESHIPPING":
