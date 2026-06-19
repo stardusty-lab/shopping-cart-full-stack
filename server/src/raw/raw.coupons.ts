@@ -23,6 +23,8 @@ interface BuyXGetYDiscount {
 
 interface CouponCondition {
   minOrderAmount?: number;
+  buyQuantity?: number;
+  freeQuantity?: number;
   validTime?: {
     start: string;
     end: string;
@@ -67,6 +69,10 @@ const createCoupons = () => {
       expirationDate: "2026-06-30",
       discount: {
         type: "buyXGetY",
+        buyQuantity: 2,
+        freeQuantity: 1,
+      },
+      condition: {
         buyQuantity: 2,
         freeQuantity: 1,
       },
