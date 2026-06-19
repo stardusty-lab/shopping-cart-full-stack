@@ -156,8 +156,22 @@ interface BOGOCouponContext {
   products: { price: number; quantity: number }[];
 }
 
-type CanUseCoupon = FIXE5000Coupon | BOGOCoupon;
-type CanUseCouponContext = FIXE5000CouponContext | BOGOCouponContext;
+interface FREESHIPPINGCoupon {
+  code: "FREESHIPPING";
+  expirationDate: string;
+  condition: {
+    minOrderAmount: number;
+  };
+}
+interface FREESHIPPINGCoupontContext {
+  orderSheetAmount: number;
+}
+
+type CanUseCoupon = FIXE5000Coupon | BOGOCoupon | FREESHIPPINGCoupon;
+type CanUseCouponContext =
+  | FIXE5000CouponContext
+  | BOGOCouponContext
+  | FREESHIPPINGCoupontContext;
 
 export const canUseCoupon = (
   coupon: CanUseCoupon,
@@ -179,6 +193,9 @@ export const canUseCoupon = (
         );
       });
       return !!bogoProduct;
+
+    case "FREESHIPPING":
+      return context.orderSheetAmount >= condition.minOrderAmount;
 
     default:
       return false;
