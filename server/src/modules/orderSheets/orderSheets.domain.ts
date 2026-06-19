@@ -126,3 +126,31 @@ export const calculatePaymentAmount = (
 ): number => {
   return orderSheetAmount - couponDiscountAmount + appliedShippingFee;
 };
+
+interface FIXE5000CouponParamCoupon {
+  code: "FIXED5000";
+  expirationDate: string;
+  condition: {
+    minOrderAmount: number;
+  };
+}
+interface FIXE5000CouponParamContext {
+  orderSheetAmount: number;
+}
+
+type CanUseCouponParamCoupon = FIXE5000CouponParamCoupon;
+type CanUseCouponParamContext = FIXE5000CouponParamContext;
+
+export const canUseCoupon = (
+  coupon: CanUseCouponParamCoupon,
+  context: CanUseCouponParamContext,
+) => {
+  const { condition } = coupon;
+
+  switch (coupon.code) {
+    case "FIXED5000":
+      return context.orderSheetAmount >= condition.minOrderAmount;
+    default:
+      return false;
+  }
+};
