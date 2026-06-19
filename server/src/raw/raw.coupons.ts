@@ -44,7 +44,7 @@ interface RawCoupon {
 
   expirationDate: string;
 
-  condition?: CouponCondition;
+  condition: CouponCondition;
 }
 
 const createCoupons = () => {
