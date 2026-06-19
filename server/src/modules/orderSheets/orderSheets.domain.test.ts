@@ -276,8 +276,52 @@ describe("사용 가능한 쿠폰 계산", () => {
     });
   });
   describe("2 + 1 BOGO 쿠폰", () => {
-    it("동일 상품을 3개 이하 담은 경우 사용할 수 없다", () => {});
-    it("동일 상품을 3개 이상 담은 경우 사용할 수 있다", () => {});
+    it("동일 상품을 3개 이하 담은 경우 사용할 수 없다", () => {
+      // Arrange
+      const coupon = {
+        code: "BOGO",
+        expirationDate: "2026-11-30",
+        condition: {
+          buyQuantity: 2,
+          freeQuantity: 1,
+        },
+      } as const;
+      const products = [
+        {
+          price: 18000,
+          quantity: 2,
+        },
+      ];
+
+      // Act
+      const result = canUseCoupon(coupon, { products });
+
+      // Assert
+      expect(result).toBe(false);
+    });
+    it("동일 상품을 3개 이상 담은 경우 사용할 수 있다", () => {
+      // Arrange
+      const coupon = {
+        code: "BOGO",
+        expirationDate: "2026-11-30",
+        condition: {
+          buyQuantity: 2,
+          freeQuantity: 1,
+        },
+      } as const;
+      const products = [
+        {
+          price: 18000,
+          quantity: 3,
+        },
+      ];
+
+      // Act
+      const result = canUseCoupon(coupon, { products });
+
+      // Assert
+      expect(result).toBe(true);
+    });
   });
   describe("FREESHIPPING 쿠폰", () => {
     it("주문금액이 쿠폰의 최저 주문 금액 미만이면 사용 할 수 없다 ", () => {});
