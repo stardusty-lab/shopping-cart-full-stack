@@ -361,8 +361,44 @@ describe("사용 가능한 쿠폰 계산", () => {
   });
 
   describe("MIRACLESALE 쿠폰", () => {
-    it("현재 시간이 쿠폰의 사용 가능 시간이 아니면 사용 할 수 없다 ", () => {});
-    it("현재 시간이 쿠폰의 사용 가능 시간이면 사용 할 수 있다 ", () => {});
+    it("현재 시간이 쿠폰의 사용 가능 시간이 아니면 사용 할 수 없다 ", () => {
+      // Arrange
+      const coupon = {
+        code: "MIRACLESALE",
+        expirationDate: "2026-11-30",
+        condition: {
+          validTime: {
+            start: "04:00",
+            end: "07:00",
+          },
+        },
+      } as const;
+
+      // Act
+      const result = canUseCoupon(coupon);
+
+      // Assert
+      expect(result).toBe(false);
+    });
+    it("현재 시간이 쿠폰의 사용 가능 시간이면 사용 할 수 있다 ", () => {
+      // Arrange
+      const coupon = {
+        code: "MIRACLESALE",
+        expirationDate: "2026-11-30",
+        condition: {
+          validTime: {
+            start: "04:00",
+            end: "07:00",
+          },
+        },
+      } as const;
+
+      // Act
+      const result = canUseCoupon(coupon);
+
+      // Assert
+      expect(result).toBe(true);
+    });
   });
 });
 
