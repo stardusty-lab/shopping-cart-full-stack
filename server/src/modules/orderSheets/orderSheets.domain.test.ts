@@ -324,9 +324,42 @@ describe("사용 가능한 쿠폰 계산", () => {
     });
   });
   describe("FREESHIPPING 쿠폰", () => {
-    it("주문금액이 쿠폰의 최저 주문 금액 미만이면 사용 할 수 없다 ", () => {});
-    it("주문금액이 쿠폰의 최저 주문 금액 이상이면 사용 할 수 있다 ", () => {});
+    it("주문금액이 쿠폰의 최저 주문 금액 미만이면 사용 할 수 없다 ", () => {
+      // Arrange
+      const coupon = {
+        code: "FREESHIPPING",
+        expirationDate: "2026-11-30",
+        condition: {
+          minOrderAmount: 50000,
+        },
+      } as const;
+      const orderSheetAmount = 36000;
+
+      // Act
+      const result = canUseCoupon(coupon, { orderSheetAmount });
+
+      // Assert
+      expect(result).toBe(false);
+    });
+    it("주문금액이 쿠폰의 최저 주문 금액 이상이면 사용 할 수 있다 ", () => {
+      // Arrange
+      const coupon = {
+        code: "FREESHIPPING",
+        expirationDate: "2026-11-30",
+        condition: {
+          minOrderAmount: 50000,
+        },
+      } as const;
+      const orderSheetAmount = 54000;
+
+      // Act
+      const result = canUseCoupon(coupon, { orderSheetAmount });
+
+      // Assert
+      expect(result).toBe(true);
+    });
   });
+
   describe("MIRACLESALE 쿠폰", () => {
     it("현재 시간이 쿠폰의 사용 가능 시간이 아니면 사용 할 수 없다 ", () => {});
     it("현재 시간이 쿠폰의 사용 가능 시간이면 사용 할 수 있다 ", () => {});
