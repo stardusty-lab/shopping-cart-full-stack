@@ -273,5 +273,7 @@ export const calculateBestCouponCombination = (
   const maxDiscountAmountWithCouponCombination =
     discountAmountWithCouponCombination[0];
 
+  if (!maxDiscountAmountWithCouponCombination) return [];
+
   return maxDiscountAmountWithCouponCombination.coupons;
 };
