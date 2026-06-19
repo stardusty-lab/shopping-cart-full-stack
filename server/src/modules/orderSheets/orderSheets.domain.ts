@@ -40,39 +40,81 @@ export const calculateCouponDiscountAmount = (
     if (coupons.includes(order)) orderedCoupons.push(order);
   });
 
-  let couponDiscountAmount = 0;
-
-  orderedCoupons.forEach((coupon) => {
-    const getMaxPriceProductPrice = (
+  const calculateCouponDiscount = {
+    fixedAmount: (discount: { type: "fixedAmount"; amount: number }) => {
+      return discount.amount;
+    },
+    buyXGetY: (
+      discount: { type: "buyXGetY"; buyQuantity: number; freeQuantity: number },
       products: { price: number; quantity: number }[],
-    ): number => {
-      const bogoProducts = products.filter((product) => product.quantity >= 3);
-      const sortedProduct = bogoProducts.sort((a, b) => b.price - a.price);
+    ) => {
+      const getMaxPriceProductPrice = (
+        products: { price: number; quantity: number }[],
+      ): number => {
+        const bogoProducts = products.filter(
+          (product) =>
+            product.quantity >= discount.buyQuantity + discount.freeQuantity,
+        );
+        const sortedProduct = bogoProducts.sort((a, b) => b.price - a.price);
 
-      const maxPriceProduct = sortedProduct[0];
+        const maxPriceProduct = sortedProduct[0];
 
-      return maxPriceProduct.price;
-    };
-    switch (coupon) {
-      case "FIXED5000":
-        couponDiscountAmount += 5000;
-        break;
-      case "BOGO":
-        const maxPriceProduct = getMaxPriceProductPrice(products);
-        couponDiscountAmount += maxPriceProduct;
-        break;
-      case "MIRACLESALE":
-        const orderSheetAmount =
-          calculateOrderSheetAmount(products) - couponDiscountAmount;
-        couponDiscountAmount += orderSheetAmount * 0.3;
-        break;
-      case "FREESHIPPING":
-        couponDiscountAmount += shippingFreeBeforeCoupon;
-        break;
-      default:
-        break;
-    }
-  });
+        return maxPriceProduct.price * discount.freeQuantity;
+      };
 
-  return couponDiscountAmount;
+      const maxPriceProduct = getMaxPriceProductPrice(products);
+      return maxPriceProduct;
+    },
+    percent: (
+      discount: { type: "percent"; rate: number },
+      products: { price: number; quantity: number }[],
+      prevDiscountAmount: number,
+    ) => {
+      const orderSheetAmount =
+        calculateOrderSheetAmount(products) - prevDiscountAmount;
+      return orderSheetAmount * discount.rate;
+    },
+    freeShippingFee: (
+      discount: { type: "freeShippingFee" },
+      products: { price: number; quantity: number }[],
+      shippingFreeBeforeCoupon: number,
+    ) => {
+      return shippingFreeBeforeCoupon;
+    },
+  };
+
+  const couponCODEs = {
+    FIXED5000: {
+      type: "fixedAmount",
+      amount: 5000,
+    },
+    BOGO: {
+      type: "buyXGetY",
+      buyQuantity: 2,
+      freeQuantity: 1,
+    },
+    MIRACLESALE: {
+      type: "percent",
+      rate: 0.3,
+    },
+    FREESHIPPING: {
+      type: "freeShippingFee",
+    },
+  };
+
+  return orderedCoupons.reduce((prevDiscountAmount: number, coupon: string) => {
+    const discount = couponCODEs[coupon as keyof typeof couponCODEs];
+    if (!discount) return prevDiscountAmount;
+
+    const discountType = discount.type;
+
+    const calculate =
+      calculateCouponDiscount[
+        discountType as keyof typeof calculateCouponDiscount
+      ];
+    if (!calculate) return prevDiscountAmount;
+
+    prevDiscountAmount += calculate(discount, products, prevDiscountAmount);
+    return prevDiscountAmount;
+  }, 0);
 };
