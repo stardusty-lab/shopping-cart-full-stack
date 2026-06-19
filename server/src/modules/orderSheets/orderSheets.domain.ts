@@ -127,6 +127,12 @@ export const calculatePaymentAmount = (
   return orderSheetAmount - couponDiscountAmount + appliedShippingFee;
 };
 
+const isExpired = (expirationDateString: string, now: Date): boolean => {
+  const expirationDate = new Date(expirationDateString);
+
+  return now > expirationDate;
+};
+
 interface FIXE5000Coupon {
   code: "FIXED5000";
   expirationDate: string;
@@ -145,6 +151,9 @@ export const canUseCoupon = (
   coupon: CanUseCoupon,
   context: CanUseCouponContext,
 ) => {
+  const { expirationDate } = coupon;
+  if (isExpired(expirationDate, new Date())) return false;
+
   const { condition } = coupon;
 
   switch (coupon.code) {
