@@ -3,6 +3,7 @@ import {
   calculateAppliedShippingFee,
   calculateCouponDiscountAmount,
   calculatePaymentAmount,
+  canUseCoupon,
 } from "./orderSheets.domain.ts";
 
 const DEFAULT_SHIPPING_POLICY = {
@@ -239,8 +240,40 @@ describe("주문서 금액 요약 정보 계산", () => {
 
 describe("사용 가능한 쿠폰 계산", () => {
   describe("FIXED5000 쿠폰", () => {
-    it("주문금액이 쿠폰의 최저 주문 금액 미만이면 사용 할 수 없다 ", () => {});
-    it("주문금액이 쿠폰의 최저 주문 금액 이상이면 사용 할 수 있다 ", () => {});
+    it("주문금액이 쿠폰의 최저 주문 금액 미만이면 사용 할 수 없다 ", () => {
+      // Arrange
+      const coupon = {
+        code: "FIXED5000",
+        expirationDate: "2026-11-30",
+        condition: {
+          minOrderAmount: 100000,
+        },
+      };
+      const orderSheetAmount = 36000;
+
+      // Act
+      const result = canUseCoupon(coupon, { orderSheetAmount });
+
+      // Assert
+      expect(result).toBe(false);
+    });
+    it("주문금액이 쿠폰의 최저 주문 금액 이상이면 사용 할 수 있다 ", () => {
+      // Arrange
+      const coupon = {
+        code: "FIXED5000",
+        expirationDate: "2026-11-30",
+        condition: {
+          minOrderAmount: 100000,
+        },
+      };
+      const orderSheetAmount = 108000;
+
+      // Act
+      const result = canUseCoupon(coupon, { orderSheetAmount });
+
+      // Assert
+      expect(result).toBe(true);
+    });
   });
   describe("2 + 1 BOGO 쿠폰", () => {
     it("동일 상품을 3개 이하 담은 경우 사용할 수 없다", () => {});
