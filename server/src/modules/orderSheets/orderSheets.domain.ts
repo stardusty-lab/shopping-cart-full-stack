@@ -133,6 +133,20 @@ const isExpired = (expirationDateString: string, now: Date): boolean => {
   return now > expirationDate;
 };
 
+const isValidTime = (
+  validTime: { start: string; end: string },
+  now: Date,
+): boolean => {
+  const [startHour, startMinute] = validTime.start.split(":").map(Number);
+  const [endHour, endMinute] = validTime.end.split(":").map(Number);
+
+  const nowMinute = now.getHours() * 60 + now.getMinutes();
+  const startMinuteTotal = startHour * 60 + startMinute;
+  const endMinuteTotal = endHour * 60 + endMinute;
+
+  return startMinuteTotal <= nowMinute && nowMinute <= endMinuteTotal;
+};
+
 interface FIXE5000Coupon {
   code: "FIXED5000";
   expirationDate: string;
@@ -167,18 +181,38 @@ interface FREESHIPPINGCoupontContext {
   orderSheetAmount: number;
 }
 
-type CanUseCoupon = FIXE5000Coupon | BOGOCoupon | FREESHIPPINGCoupon;
+interface MIRACLESALECoupon {
+  code: "MIRACLESALE";
+  expirationDate: string;
+  condition: {
+    validTime: {
+      start: string;
+      end: string;
+    };
+  };
+}
+interface MIRACLESALECouponContext {
+  now: Date;
+}
+
+type CanUseCoupon =
+  | FIXE5000Coupon
+  | BOGOCoupon
+  | FREESHIPPINGCoupon
+  | MIRACLESALECoupon;
 type CanUseCouponContext =
   | FIXE5000CouponContext
   | BOGOCouponContext
-  | FREESHIPPINGCoupontContext;
+  | FREESHIPPINGCoupontContext
+  | MIRACLESALECouponContext;
 
 export const canUseCoupon = (
   coupon: CanUseCoupon,
-  context: CanUseCouponContext,
+  context?: CanUseCouponContext,
 ) => {
   const { expirationDate } = coupon;
-  if (isExpired(expirationDate, new Date())) return false;
+  const now = new Date();
+  if (isExpired(expirationDate, now)) return false;
 
   const { condition } = coupon;
 
@@ -196,6 +230,9 @@ export const canUseCoupon = (
 
     case "FREESHIPPING":
       return context.orderSheetAmount >= condition.minOrderAmount;
+
+    case "MIRACLESALE":
+      return isValidTime(condition.validTime, now);
 
     default:
       return false;
