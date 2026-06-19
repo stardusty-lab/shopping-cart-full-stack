@@ -237,3 +237,41 @@ export const canUseCoupon = (
       return false;
   }
 };
+
+const getAllCouponCombination = (coupons: string[]): [string, string][] => {
+  const cases: [string, string][] = [];
+  coupons.forEach((coupon: string, index: number) => {
+    for (let i = index; i < coupons.length; i++) {
+      if (coupons[index] !== coupons[i]) {
+        const caseData: [string, string] = [coupons[index], coupons[i]];
+        cases.push(caseData);
+      }
+    }
+  });
+  return cases;
+};
+
+export const calculateBestCouponCombination = (
+  products: { price: number; quantity: number }[],
+  coupons: string[],
+  shippingFeeBeforeCoupon: number,
+) => {
+  const allCouponCase = getAllCouponCombination(coupons);
+
+  const discountAmountWithCouponCombination = allCouponCase
+    .map((coupons) => {
+      const discountAmount = calculateCouponDiscountAmount(
+        products,
+        coupons,
+        shippingFeeBeforeCoupon,
+      );
+
+      return { coupons, discountAmount };
+    })
+    .sort((a, b) => b.discountAmount - a.discountAmount);
+
+  const maxDiscountAmountWithCouponCombination =
+    discountAmountWithCouponCombination[0];
+
+  return maxDiscountAmountWithCouponCombination.coupons;
+};
