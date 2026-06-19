@@ -77,7 +77,6 @@ export const calculateCouponDiscountAmount = (
     freeShippingFee: (
       discount: { type: "freeShippingFee" },
       products: { price: number; quantity: number }[],
-      shippingFreeBeforeCoupon: number,
     ) => {
       return shippingFreeBeforeCoupon;
     },
