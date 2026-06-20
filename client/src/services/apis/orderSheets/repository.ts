@@ -12,16 +12,16 @@ import {
   mapGetOrderSheetPricingResponseDTOToModel,
   // mapPatchOrderSheetShippingArea
   mapPatchOrderSheetShippingAreaModelToRequestDTO,
-  mapPatchOrderSheetShippingAreaResponseDTOToModel,
+
   // mapPatchOrderSheetCoupons
   mapPatchOrderSheetCouponsModelToRequestDTO,
-  mapPatchOrderSheetCouponsResponseDTOToModel,
+
   // mapGetOrderSheetAbleCoupons
   mapGetOrderSheetAbleCouponsModelToRequestDTO,
   mapGetOrderSheetAbleCouponsResponseDTOToModel,
-  // mapGetOrderSheetCouponsDiscountPreview
-  mapGetOrderSheetCouponsDiscountPreviewModelToRequestDTO,
-  mapGetOrderSheetCouponsDiscountPreviewResponseDTOToModel,
+  // mapPostOrderSheetCouponsDiscountPreview
+  mapPostOrderSheetCouponsDiscountPreviewModelToRequestDTO,
+  mapPostOrderSheetCouponsDiscountPreviewResponseDTOToModel,
 } from "./mapper";
 
 import type {
@@ -31,68 +31,88 @@ import type {
   PatchOrderSheetShippingArea,
   PatchOrderSheetCoupons,
   GetOrderSheetAbleCoupons,
-  GetOrderSheetCouponsDiscountPreview,
+  PostOrderSheetCouponsDiscountPreview,
 } from "./repository.types";
 
 export const getOrderSheet: GetOrderSheet = async (model) => {
-  const {} = mapGetOrderSheetModelToRequestDTO(model);
+  const { id } = mapGetOrderSheetModelToRequestDTO(model);
 
-  const responseDTO = await fetcher.getOrderSheet({});
+  const responseDTO = await fetcher.getOrderSheet({
+    pathParams: [{ name: "id", value: id }],
+  });
 
-  return mapGetOrderSheetResponseDTOToModel(responseDTO.data);
+  return mapGetOrderSheetResponseDTOToModel(responseDTO);
 };
 
 export const postOrderSheet: PostOrderSheet = async (model) => {
-  const {} = mapPostOrderSheetModelToRequestDTO(model);
+  const { productIds } = mapPostOrderSheetModelToRequestDTO(model);
 
-  const responseDTO = await fetcher.postOrderSheet({});
+  const responseDTO = await fetcher.postOrderSheet({
+    data: { productIds },
+  });
 
-  return mapPostOrderSheetResponseDTOToModel(responseDTO.data);
+  return mapPostOrderSheetResponseDTOToModel(responseDTO);
 };
 
 export const getOrderSheetPricing: GetOrderSheetPricing = async (model) => {
-  const {} = mapGetOrderSheetPricingModelToRequestDTO(model);
+  const { id } = mapGetOrderSheetPricingModelToRequestDTO(model);
 
-  const responseDTO = await fetcher.getOrderSheetPricing({});
+  const responseDTO = await fetcher.getOrderSheetPricing({
+    pathParams: [{ name: "id", value: id }],
+  });
 
-  return mapGetOrderSheetPricingResponseDTOToModel(responseDTO.data);
+  return mapGetOrderSheetPricingResponseDTOToModel(responseDTO);
 };
 
 export const patchOrderSheetShippingArea: PatchOrderSheetShippingArea = async (
   model,
 ) => {
-  const {} = mapPatchOrderSheetShippingAreaModelToRequestDTO(model);
+  const { id, isRemoteShippingArea } =
+    mapPatchOrderSheetShippingAreaModelToRequestDTO(model);
 
-  const responseDTO = await fetcher.patchOrderSheetShippingArea({});
+  await fetcher.patchOrderSheetShippingArea({
+    pathParams: [{ name: "id", value: id }],
+    data: { isRemoteShippingArea },
+  });
 
-  return mapPatchOrderSheetShippingAreaResponseDTOToModel(responseDTO.data);
+  return;
 };
 
 export const patchOrderSheetCoupons: PatchOrderSheetCoupons = async (model) => {
-  const {} = mapPatchOrderSheetCouponsModelToRequestDTO(model);
+  const { id, selectedCoupons } =
+    mapPatchOrderSheetCouponsModelToRequestDTO(model);
 
-  const responseDTO = await fetcher.patchOrderSheetCoupons({});
+  await fetcher.patchOrderSheetCoupons({
+    pathParams: [{ name: "id", value: id }],
+    data: { selectedCoupons },
+  });
 
-  return mapPatchOrderSheetCouponsResponseDTOToModel(responseDTO.data);
+  return;
 };
 
 export const getOrderSheetAbleCoupons: GetOrderSheetAbleCoupons = async (
   model,
 ) => {
-  const {} = mapGetOrderSheetAbleCouponsModelToRequestDTO(model);
+  const { id } = mapGetOrderSheetAbleCouponsModelToRequestDTO(model);
 
-  const responseDTO = await fetcher.getOrderSheetAbleCoupons({});
+  const responseDTO = await fetcher.getOrderSheetAbleCoupons({
+    pathParams: [{ name: "id", value: id }],
+  });
 
-  return mapGetOrderSheetAbleCouponsResponseDTOToModel(responseDTO.data);
+  return mapGetOrderSheetAbleCouponsResponseDTOToModel(responseDTO);
 };
 
-export const getOrderSheetCouponsDiscountPreview: GetOrderSheetCouponsDiscountPreview =
+export const postOrderSheetCouponsDiscountPreview: PostOrderSheetCouponsDiscountPreview =
   async (model) => {
-    const {} = mapGetOrderSheetCouponsDiscountPreviewModelToRequestDTO(model);
+    const { id, selectedCoupons } =
+      mapPostOrderSheetCouponsDiscountPreviewModelToRequestDTO(model);
 
-    const responseDTO = await fetcher.getOrderSheetCouponsDiscountPreview({});
+    const responseDTO = await fetcher.postOrderSheetCouponsDiscountPreview({
+      pathParams: [{ name: "id", value: id }],
+      data: { selectedCoupons },
+    });
 
-    return mapGetOrderSheetCouponsDiscountPreviewResponseDTOToModel(
-      responseDTO.data,
+    return mapPostOrderSheetCouponsDiscountPreviewResponseDTOToModel(
+      responseDTO,
     );
   };

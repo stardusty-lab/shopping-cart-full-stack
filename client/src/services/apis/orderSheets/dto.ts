@@ -1,67 +1,130 @@
 import type { ResponseDTO } from "@/services/apis/api.types";
 
 // GetOrderSheet
-export interface GetOrderSheetRequestDto {
-  pathParams: {};
-  query: {};
-  data: {};
+export interface GetOrderSheetRequestDTO {
+  pathParams: [
+    {
+      name: "id";
+      value: number;
+    },
+  ];
 }
 
-export type GetOrderSheetResponseDto = ResponseDTO<200, {}>;
+export type GetOrderSheetResponseDTO = ResponseDTO<
+  200,
+  {
+    orderSheet: {
+      items: [
+        {
+          product: {
+            id: number;
+            name: string;
+            price: number;
+            imgUrl: string;
+          };
+          quantity: number;
+        },
+      ];
+      isRemoteShippingArea: boolean;
+      selectedCoupons: number[];
+    };
+  }
+>;
 
 // PostOrderSheet
-export interface PostOrderSheetRequestDto {
-  pathParams: {};
-  query: {};
-  data: {};
+export interface PostOrderSheetRequestDTO {
+  data: {
+    productIds: number[];
+  };
 }
 
-export type PostOrderSheetResponseDto = ResponseDTO<200, {}>;
+export type PostOrderSheetResponseDTO = ResponseDTO<
+  200,
+  {
+    id: number;
+  }
+>;
 
 // GetOrderSheetPricing
-export interface GetOrderSheetPricingRequestDto {
-  pathParams: {};
-  query: {};
-  data: {};
+export interface GetOrderSheetPricingRequestDTO {
+  pathParams: [
+    {
+      name: "id";
+      value: number;
+    },
+  ];
 }
 
-export type GetOrderSheetPricingResponseDto = ResponseDTO<200, {}>;
+export type GetOrderSheetPricingResponseDTO = ResponseDTO<
+  200,
+  {
+    pricing: {
+      orderAmount: number;
+      couponDiscountAmount: number;
+      shippingFee: number;
+    };
+  }
+>;
 
 // PatchOrderSheetShippingArea
-export interface PatchOrderSheetShippingAreaRequestDto {
-  pathParams: {};
-  query: {};
-  data: {};
+export interface PatchOrderSheetShippingAreaRequestDTO {
+  pathParams: [
+    {
+      name: "id";
+      value: number;
+    },
+  ];
+  data: {
+    isRemoteShippingArea: boolean;
+  };
 }
 
-export type PatchOrderSheetShippingAreaResponseDto = ResponseDTO<200, {}>;
+export type PatchOrderSheetShippingAreaResponseDTO = ResponseDTO<200, unknown>;
 
 // PatchOrderSheetCoupons
-export interface PatchOrderSheetCouponsRequestDto {
-  pathParams: {};
-  query: {};
-  data: {};
+export interface PatchOrderSheetCouponsRequestDTO {
+  pathParams: [
+    {
+      name: "id";
+      value: number;
+    },
+  ];
+  data: {
+    selectedCoupons: number[];
+  };
 }
 
-export type PatchOrderSheetCouponsResponseDto = ResponseDTO<200, {}>;
+export type PatchOrderSheetCouponsResponseDTO = ResponseDTO<200, unknown>;
 
 // GetOrderSheetAbleCoupons
-export interface GetOrderSheetAbleCouponsRequestDto {
-  pathParams: {};
-  query: {};
-  data: {};
+export interface GetOrderSheetAbleCouponsRequestDTO {
+  pathParams: [
+    {
+      name: "id";
+      value: number;
+    },
+  ];
 }
 
-export type GetOrderSheetAbleCouponsResponseDto = ResponseDTO<200, {}>;
+export type GetOrderSheetAbleCouponsResponseDTO = ResponseDTO<
+  200,
+  { able: string[] }
+>;
 
 // GetOrderSheetCouponsDiscountPreview
-export interface GetOrderSheetCouponsDiscountPreviewRequestDto {
-  pathParams: {};
-  query: {};
-  data: {};
+export interface PostOrderSheetCouponsDiscountPreviewRequestDTO {
+  pathParams: [
+    {
+      name: "id";
+      value: number;
+    },
+  ];
+  data: {
+    selectedCoupons: number[];
+  };
 }
 
-export type GetOrderSheetCouponsDiscountPreviewResponseDto = ResponseDTO<
+export type PostOrderSheetCouponsDiscountPreviewResponseDTO = ResponseDTO<
   200,
-  {}
+  { couponDiscountAmount: number }
 >;

@@ -1,22 +1,28 @@
 import type {
   GetOrderSheetParams,
-  PostOrderSheetParams,
+  PostOrderSheetCommand,
   GetOrderSheetPricingParams,
-  PatchOrderSheetShippingAreaParams,
-  PatchOrderSheetCouponsParams,
+  PatchOrderSheetShippingAreaCommand,
+  PatchOrderSheetCouponsCommand,
   GetOrderSheetAbleCouponsParams,
-  GetOrderSheetCouponsDiscountPreviewParams,
+  PostOrderSheetCouponsDiscountPreviewParams,
 } from "./repository.types";
 
 import type {
-  GetOrderSheetResponseDto,
-  PostOrderSheetResponseDto,
-  GetOrderSheetPricingResponseDto,
-  PatchOrderSheetShippingAreaResponseDto,
-  PatchOrderSheetCouponsResponseDto,
-  GetOrderSheetAbleCouponsResponseDto,
-  GetOrderSheetCouponsDiscountPreviewResponseDto,
+  GetOrderSheetResponseDTO,
+  PostOrderSheetResponseDTO,
+  GetOrderSheetPricingResponseDTO,
+  PatchOrderSheetShippingAreaResponseDTO,
+  PatchOrderSheetCouponsResponseDTO,
+  GetOrderSheetAbleCouponsResponseDTO,
+  PostOrderSheetCouponsDiscountPreviewResponseDTO,
 } from "./dto";
+
+import type {
+  OrderSheetProduct,
+  IsRemoteArea,
+  SelectedCoupon,
+} from "../../../pages/orderReview/OrderReview.types";
 
 // GetOrderSheet
 export const mapGetOrderSheetModelToRequestDTO = (
@@ -26,21 +32,38 @@ export const mapGetOrderSheetModelToRequestDTO = (
 };
 
 export const mapGetOrderSheetResponseDTOToModel = (
-  response: GetOrderSheetResponseDto,
-) => {
-  return response.data;
+  response: GetOrderSheetResponseDTO,
+): {
+  products: OrderSheetProduct[];
+  isRemoteArea: IsRemoteArea;
+  selectedCoupons: SelectedCoupon[];
+} => {
+  return {
+    products: response.data.orderSheet.items.map((item) => {
+      const { product } = item;
+      return {
+        id: product.id,
+        quantity: item.quantity,
+        name: product.name,
+        price: product.price,
+        imgUrl: product.imgUrl,
+      };
+    }),
+    isRemoteArea: response.data.orderSheet.isRemoteShippingArea,
+    selectedCoupons: response.data.orderSheet.selectedCoupons,
+  };
 };
 
 // PostOrderSheet
 
 export const mapPostOrderSheetModelToRequestDTO = (
-  model: PostOrderSheetParams,
-): PostOrderSheetParams => {
+  model: PostOrderSheetCommand,
+): PostOrderSheetCommand => {
   return model;
 };
 
 export const mapPostOrderSheetResponseDTOToModel = (
-  response: PostOrderSheetResponseDto,
+  response: PostOrderSheetResponseDTO,
 ) => {
   return response.data;
 };
@@ -53,21 +76,28 @@ export const mapGetOrderSheetPricingModelToRequestDTO = (
 };
 
 export const mapGetOrderSheetPricingResponseDTOToModel = (
-  response: GetOrderSheetPricingResponseDto,
+  response: GetOrderSheetPricingResponseDTO,
 ) => {
-  return response.data;
+  return {
+    orderSheetAmount: response.data.pricing.orderAmount,
+    discountAmount: response.data.pricing.couponDiscountAmount,
+    shippingFee: response.data.pricing.shippingFee,
+  };
 };
 
 // PatchOrderSheetShippingArea
 
 export const mapPatchOrderSheetShippingAreaModelToRequestDTO = (
-  model: PatchOrderSheetShippingAreaParams,
-): PatchOrderSheetShippingAreaParams => {
-  return model;
+  model: PatchOrderSheetShippingAreaCommand,
+): { id: number; isRemoteShippingArea: boolean } => {
+  return {
+    id: model.id,
+    isRemoteShippingArea: model.isRemoteArea,
+  };
 };
 
 export const mapPatchOrderSheetShippingAreaResponseDTOToModel = (
-  response: PatchOrderSheetShippingAreaResponseDto,
+  response: PatchOrderSheetShippingAreaResponseDTO,
 ) => {
   return response.data;
 };
@@ -75,13 +105,16 @@ export const mapPatchOrderSheetShippingAreaResponseDTOToModel = (
 // PatchOrderSheetCoupons
 
 export const mapPatchOrderSheetCouponsModelToRequestDTO = (
-  model: PatchOrderSheetCouponsParams,
-): PatchOrderSheetCouponsParams => {
-  return model;
+  model: PatchOrderSheetCouponsCommand,
+): PatchOrderSheetCouponsCommand => {
+  return {
+    id: model.id,
+    selectedCoupons: model.selectedCoupons,
+  };
 };
 
 export const mapPatchOrderSheetCouponsResponseDTOToModel = (
-  response: PatchOrderSheetCouponsResponseDto,
+  response: PatchOrderSheetCouponsResponseDTO,
 ) => {
   return response.data;
 };
@@ -94,20 +127,24 @@ export const mapGetOrderSheetAbleCouponsModelToRequestDTO = (
 };
 
 export const mapGetOrderSheetAbleCouponsResponseDTOToModel = (
-  response: GetOrderSheetAbleCouponsResponseDto,
+  response: GetOrderSheetAbleCouponsResponseDTO,
 ) => {
-  return response.data;
+  return {
+    ableCoupons: response.data.able,
+  };
 };
 
-// GetOrderSheetCouponsDiscountPreview
-export const mapGetOrderSheetCouponsDiscountPreviewModelToRequestDTO = (
-  model: GetOrderSheetCouponsDiscountPreviewParams,
-): GetOrderSheetCouponsDiscountPreviewParams => {
+// PostOrderSheetCouponsDiscountPreview
+export const mapPostOrderSheetCouponsDiscountPreviewModelToRequestDTO = (
+  model: PostOrderSheetCouponsDiscountPreviewParams,
+): PostOrderSheetCouponsDiscountPreviewParams => {
   return model;
 };
 
-export const mapGetOrderSheetCouponsDiscountPreviewResponseDTOToModel = (
-  response: GetOrderSheetCouponsDiscountPreviewResponseDto,
+export const mapPostOrderSheetCouponsDiscountPreviewResponseDTOToModel = (
+  response: PostOrderSheetCouponsDiscountPreviewResponseDTO,
 ) => {
-  return response.data;
+  return {
+    discountAmount: response.data.couponDiscountAmount,
+  };
 };

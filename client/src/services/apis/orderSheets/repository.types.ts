@@ -1,44 +1,79 @@
 // GetOrderSheet
-export interface GetOrderSheetParams {}
+export interface GetOrderSheetParams {
+  id: number;
+}
 
-export type GetOrderSheet = (params: GetOrderSheetParams) => Promise<{}>;
+export type GetOrderSheet = (params: GetOrderSheetParams) => Promise<{
+  products: {
+    id: number;
+    quantity: number;
+    name: string;
+    price: number;
+    imgUrl: string;
+  }[];
+  isRemoteArea: boolean;
+  selectedCoupons: number[];
+}>;
+
 // PostOrderSheet
+export interface PostOrderSheetCommand {
+  productIds: number[];
+}
 
-export interface PostOrderSheetParams {}
+export type PostOrderSheet = (command: PostOrderSheetCommand) => Promise<{
+  id: number;
+}>;
 
-export type PostOrderSheet = (params: PostOrderSheetParams) => Promise<{}>;
 // GetOrderSheetPricing
-
-export interface GetOrderSheetPricingParams {}
+export interface GetOrderSheetPricingParams {
+  id: number;
+}
 
 export type GetOrderSheetPricing = (
   params: GetOrderSheetPricingParams,
-) => Promise<{}>;
-// PatchOrderSheetShippingArea
+) => Promise<{
+  orderSheetAmount: number;
+  discountAmount: number;
+  shippingFee: number;
+}>;
 
-export interface PatchOrderSheetShippingAreaParams {}
+// PatchOrderSheetShippingArea
+export interface PatchOrderSheetShippingAreaCommand {
+  id: number;
+  isRemoteArea: boolean;
+}
 
 export type PatchOrderSheetShippingArea = (
-  params: PatchOrderSheetShippingAreaParams,
-) => Promise<{}>;
-// PatchOrderSheetCoupons
+  params: PatchOrderSheetShippingAreaCommand,
+) => Promise<void>;
 
-export interface PatchOrderSheetCouponsParams {}
+// PatchOrderSheetCoupons
+export interface PatchOrderSheetCouponsCommand {
+  id: number;
+  selectedCoupons: number[];
+}
 
 export type PatchOrderSheetCoupons = (
-  params: PatchOrderSheetCouponsParams,
-) => Promise<{}>;
-// GetOrderSheetAbleCoupons
+  params: PatchOrderSheetCouponsCommand,
+) => Promise<void>;
 
-export interface GetOrderSheetAbleCouponsParams {}
+// GetOrderSheetAbleCoupons
+export interface GetOrderSheetAbleCouponsParams {
+  id: number;
+}
 
 export type GetOrderSheetAbleCoupons = (
   params: GetOrderSheetAbleCouponsParams,
-) => Promise<{}>;
+) => Promise<{
+  ableCoupons: string[];
+}>;
+
 // GetOrderSheetCouponsDiscountPreview
+export interface PostOrderSheetCouponsDiscountPreviewParams {
+  id: number;
+  selectedCoupons: number[];
+}
 
-export interface GetOrderSheetCouponsDiscountPreviewParams {}
-
-export type GetOrderSheetCouponsDiscountPreview = (
-  params: GetOrderSheetCouponsDiscountPreviewParams,
-) => Promise<{}>;
+export type PostOrderSheetCouponsDiscountPreview = (
+  params: PostOrderSheetCouponsDiscountPreviewParams,
+) => Promise<{ discountAmount: number }>;
