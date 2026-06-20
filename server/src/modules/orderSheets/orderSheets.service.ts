@@ -259,3 +259,15 @@ export const postOrderSheetCouponDiscountPreview = (
 
   return couponDiscountAmount;
 };
+
+export const patchOrderSheetCoupons = (
+  orderSheetId: number,
+  selectedCoupons: number[],
+) => {
+  const orderSheet = orderSheetStore.updateSelectedCoupons(
+    orderSheetId,
+    selectedCoupons,
+  );
+
+  return orderSheet;
+};

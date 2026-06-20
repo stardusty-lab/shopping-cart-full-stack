@@ -56,3 +56,18 @@ export const updateIsRemoteShippingArea = (
 
   return orderSheet;
 };
+
+export const updateSelectedCoupons = (
+  orderSheetId: number,
+  selectedCoupons: number[],
+) => {
+  const orderSheet = orderSheetStore.orderSheets.find((orderSheet) => {
+    return orderSheet.id === orderSheetId;
+  });
+
+  if (!orderSheet) return;
+
+  orderSheet.coupons = selectedCoupons;
+
+  return orderSheet;
+};

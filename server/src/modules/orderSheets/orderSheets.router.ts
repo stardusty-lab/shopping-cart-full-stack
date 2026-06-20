@@ -31,4 +31,9 @@ orderSheetsRouter.post(
   orderSheetsController.postOrderSheetCouponDiscountPreview,
 );
 
+orderSheetsRouter.patch(
+  "/:orderSheetId/coupons",
+  orderSheetsController.patchOrderSheetCoupons,
+);
+
 export default orderSheetsRouter;

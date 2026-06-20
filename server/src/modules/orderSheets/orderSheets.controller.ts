@@ -60,3 +60,12 @@ export const postOrderSheetCouponDiscountPreview = (
 
   return success(res, { couponDiscountAmount });
 };
+
+export const patchOrderSheetCoupons = (req: Request, res: Response) => {
+  const orderSheetId = Number(req.params.orderSheetId);
+  const selectedCoupons = req.body.selectedCoupons;
+
+  orderSheetsService.patchOrderSheetCoupons(orderSheetId, selectedCoupons);
+
+  return success(res, undefined);
+};
