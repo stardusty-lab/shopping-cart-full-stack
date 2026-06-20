@@ -1,3 +1,3 @@
-export interface GetShippingFeeParams {}
-
-export type GetShippingFee = (params: GetShippingFeeParams) => Promise<{}>;
+export type GetShippingFee = () => Promise<{
+  shippingFee: number;
+}>;
