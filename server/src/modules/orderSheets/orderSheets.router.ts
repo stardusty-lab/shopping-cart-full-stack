@@ -21,4 +21,9 @@ orderSheetsRouter.patch(
   orderSheetsController.patchOrderSheetShippingArea,
 );
 
+orderSheetsRouter.get(
+  "/:orderSheetId/able-coupons",
+  orderSheetsController.getOrderSheetAbleCoupons,
+);
+
 export default orderSheetsRouter;

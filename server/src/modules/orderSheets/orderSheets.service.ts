@@ -178,3 +178,38 @@ export const patchOrderSheetShippingArea = (
 
   return orderSheet;
 };
+
+export const getOrderSheetAbleCoupons = (orderSheetId: number) => {
+  const orderSheet = orderSheetStore.findById(orderSheetId);
+  if (!orderSheet) throw new Error();
+
+  const products = orderSheet.products;
+
+  const allCoupons = couponsStore.findAll();
+
+  const orderSheetAmount = calculateOrderSheetAmount(
+    products.map((product) => {
+      const productData = productsStore.findById(product.id);
+      if (!productData) throw new Error();
+      return {
+        quantity: product.quantity,
+        price: productData.price,
+      };
+    }),
+  );
+
+  const ableCoupons = allCoupons
+    .filter((coupon) => {
+      return canUseCoupon(
+        coupon as CanUseCoupon,
+        {
+          orderSheetAmount,
+          products,
+          now: new Date(),
+        } as CanUseCouponContext,
+      );
+    })
+    .map((coupon) => coupon.code);
+
+  return ableCoupons;
+};

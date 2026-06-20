@@ -36,3 +36,11 @@ export const patchOrderSheetShippingArea = (req: Request, res: Response) => {
 
   return success(res, undefined);
 };
+
+export const getOrderSheetAbleCoupons = (req: Request, res: Response) => {
+  const orderSheetId = Number(req.params.orderSheetId);
+
+  const able = orderSheetsService.getOrderSheetAbleCoupons(orderSheetId);
+
+  return success(res, { able });
+};
