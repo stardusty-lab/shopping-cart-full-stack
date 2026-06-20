@@ -16,3 +16,11 @@ export const createOrderSheet = (req: Request, res: Response) => {
 
   return success(res, { id: orderSheet.id });
 };
+
+export const getOrderSheetPricing = (req: Request, res: Response) => {
+  const orderSheetId = Number(req.params.orderSheetId);
+
+  const pricing = orderSheetsService.getOrderSheetPricing(orderSheetId);
+
+  return success(res, { pricing });
+};

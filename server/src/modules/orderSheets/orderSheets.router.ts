@@ -11,4 +11,9 @@ orderSheetsRouter.get(
 
 orderSheetsRouter.post("/", orderSheetsController.createOrderSheet);
 
+orderSheetsRouter.get(
+  "/:orderSheetId/pricing",
+  orderSheetsController.getOrderSheetPricing,
+);
+
 export default orderSheetsRouter;

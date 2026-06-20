@@ -8,6 +8,9 @@ import * as productsStore from "../products/products.repository.ts";
 import * as couponsStore from "../coupons/coupons.repository.ts";
 
 import {
+  calculateOrderSheetAmount,
+  calculateAppliedShippingFee,
+  calculateCouponDiscountAmount,
   calculateBestCouponCombination,
   canUseCoupon,
 } from "./orderSheets.domain.ts";
@@ -88,4 +91,67 @@ export const createOrderSheet = (
 
   const newOrderSheet = orderSheetStore.create(orderSheet);
   return newOrderSheet;
+};
+
+export const getOrderSheetPricing = (orderSheetId: number) => {
+  const { orderSheet } = getOrderSheetById(orderSheetId);
+
+  const products = orderSheet.items.map((item) => {
+    const productData = productsStore.findById(item.product.id);
+    if (!productData) throw new Error();
+
+    return {
+      price: productData.price,
+      quantity: item.quantity,
+    };
+  });
+
+  // orderSheetAmount
+  const orderSheetAmount = calculateOrderSheetAmount(products);
+
+  // couponDiscountAmount
+  const allCoupons = couponsStore.findAll();
+  const selectedCoupons = orderSheet.selectedCoupons.map((couponId) => {
+    const coupon = allCoupons.find((couponData) => couponData.id === couponId);
+    if (!coupon) throw new Error();
+
+    return coupon.code;
+  });
+
+  const shippingFreeBeforeCoupon = calculateAppliedShippingFee(
+    orderSheetAmount,
+    orderSheet.isRemoteShippingArea,
+    false,
+    {
+      baseShippingFee: 3000,
+      remoteAreaAdditionalFee: 3000,
+      freeShippingThreshold: 100000,
+    },
+  );
+
+  const couponDiscountAmount = calculateCouponDiscountAmount(
+    products,
+    selectedCoupons,
+    shippingFreeBeforeCoupon,
+  );
+
+  // shippingFee
+  const hasFreeShippingFeeCoupon = selectedCoupons.includes("FREESHIPPING");
+
+  const shippingFreeAfterCoupon = calculateAppliedShippingFee(
+    orderSheetAmount,
+    orderSheet.isRemoteShippingArea,
+    hasFreeShippingFeeCoupon,
+    {
+      baseShippingFee: 3000,
+      remoteAreaAdditionalFee: 3000,
+      freeShippingThreshold: 100000,
+    },
+  );
+
+  return {
+    orderAmount: orderSheetAmount,
+    couponDiscountAmount: couponDiscountAmount,
+    shippingFee: shippingFreeAfterCoupon,
+  };
 };
