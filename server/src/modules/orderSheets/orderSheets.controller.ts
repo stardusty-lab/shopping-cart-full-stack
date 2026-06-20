@@ -24,3 +24,15 @@ export const getOrderSheetPricing = (req: Request, res: Response) => {
 
   return success(res, { pricing });
 };
+
+export const patchOrderSheetShippingArea = (req: Request, res: Response) => {
+  const orderSheetId = Number(req.params.orderSheetId);
+  const isRemoteShippingArea = req.body.isRemoteShippingArea;
+
+  const orderSheet = orderSheetsService.patchOrderSheetShippingArea(
+    orderSheetId,
+    isRemoteShippingArea,
+  );
+
+  return success(res, undefined);
+};

@@ -155,3 +155,15 @@ export const getOrderSheetPricing = (orderSheetId: number) => {
     shippingFee: shippingFreeAfterCoupon,
   };
 };
+
+export const patchOrderSheetShippingArea = (
+  orderSheetId: number,
+  isRemoteShippingArea: boolean,
+) => {
+  const orderSheet = orderSheetStore.updateIsRemoteShippingArea(
+    orderSheetId,
+    isRemoteShippingArea,
+  );
+
+  return orderSheet;
+};

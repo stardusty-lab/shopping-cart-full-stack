@@ -41,3 +41,18 @@ export const create = (orderSheet: {
 
   return newOrderSheet;
 };
+
+export const updateIsRemoteShippingArea = (
+  orderSheetId: number,
+  isRemoteShippingArea: boolean,
+) => {
+  const orderSheet = orderSheetStore.orderSheets.find((orderSheet) => {
+    return orderSheet.id === orderSheetId;
+  });
+
+  if (!orderSheet) return;
+
+  orderSheet.remoteArea = isRemoteShippingArea;
+
+  return orderSheet;
+};

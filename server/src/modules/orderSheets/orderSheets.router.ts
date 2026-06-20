@@ -16,4 +16,9 @@ orderSheetsRouter.get(
   orderSheetsController.getOrderSheetPricing,
 );
 
+orderSheetsRouter.patch(
+  "/:orderSheetId/shipping-area",
+  orderSheetsController.patchOrderSheetShippingArea,
+);
+
 export default orderSheetsRouter;
