@@ -213,3 +213,49 @@ export const getOrderSheetAbleCoupons = (orderSheetId: number) => {
 
   return ableCoupons;
 };
+
+export const postOrderSheetCouponDiscountPreview = (
+  orderSheetId: number,
+  selectedCoupons: number[],
+) => {
+  const orderSheet = orderSheetStore.findById(orderSheetId);
+  if (!orderSheet) throw new Error();
+
+  const products = orderSheet.products.map((product) => {
+    const productData = productsStore.findById(product.id);
+    if (!productData) throw new Error();
+    return {
+      quantity: product.quantity,
+      price: productData.price,
+    };
+  });
+
+  const orderSheetAmount = calculateOrderSheetAmount(products);
+
+  const shippingFreeBeforeCoupon = calculateAppliedShippingFee(
+    orderSheetAmount,
+    orderSheet.isRemoteShippingArea,
+    false,
+    {
+      baseShippingFee: 3000,
+      remoteAreaAdditionalFee: 3000,
+      freeShippingThreshold: 100000,
+    },
+  );
+
+  const allCoupons = couponsStore.findAll();
+  const selectedCouponCodes = selectedCoupons.map((couponId) => {
+    const coupon = allCoupons.find((couponData) => couponData.id === couponId);
+    if (!coupon) throw new Error();
+
+    return coupon.code;
+  });
+
+  const couponDiscountAmount = calculateCouponDiscountAmount(
+    products,
+    selectedCouponCodes,
+    shippingFreeBeforeCoupon,
+  );
+
+  return couponDiscountAmount;
+};

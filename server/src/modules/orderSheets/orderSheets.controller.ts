@@ -44,3 +44,19 @@ export const getOrderSheetAbleCoupons = (req: Request, res: Response) => {
 
   return success(res, { able });
 };
+
+export const postOrderSheetCouponDiscountPreview = (
+  req: Request,
+  res: Response,
+) => {
+  const orderSheetId = Number(req.params.orderSheetId);
+  const selectedCoupons = req.body.selectedCoupons;
+
+  const couponDiscountAmount =
+    orderSheetsService.postOrderSheetCouponDiscountPreview(
+      orderSheetId,
+      selectedCoupons,
+    );
+
+  return success(res, { couponDiscountAmount });
+};

@@ -26,4 +26,9 @@ orderSheetsRouter.get(
   orderSheetsController.getOrderSheetAbleCoupons,
 );
 
+orderSheetsRouter.post(
+  "/:orderSheetId/coupon-discount-preview",
+  orderSheetsController.postOrderSheetCouponDiscountPreview,
+);
+
 export default orderSheetsRouter;
