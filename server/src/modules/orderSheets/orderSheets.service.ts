@@ -50,12 +50,23 @@ export const createOrderSheet = (
 ): CreateOrderSheetResponse => {
   const allCoupons = couponsStore.findAll();
 
+  const orderSheetAmount = calculateOrderSheetAmount(
+    products.map((product) => {
+      const productData = productsStore.findById(product.id);
+      if (!productData) throw new Error();
+      return {
+        quantity: product.quantity,
+        price: productData.price,
+      };
+    }),
+  );
+
   const ableCoupons = allCoupons
     .filter((coupon) => {
       return canUseCoupon(
         coupon as CanUseCoupon,
         {
-          orderSheetAmount: 0,
+          orderSheetAmount,
           products,
           now: new Date(),
         } as CanUseCouponContext,
