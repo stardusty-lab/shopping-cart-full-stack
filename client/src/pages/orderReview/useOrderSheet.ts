@@ -8,6 +8,7 @@ import {
   getOrderSheet,
   getOrderSheetPricing,
   patchOrderSheetShippingArea,
+  patchOrderSheetCoupons,
 } from "@/services/apis/orderSheets/repository";
 
 export const useOrderSheet = () => {
@@ -53,12 +54,28 @@ export const useOrderSheet = () => {
     await updateIsRemoteAreaMutate(isRemoteArea);
   };
 
-  const updateCouponSelection = ({
+  const { mutate: updateSelectedCouponsMutate } = useExecute({
+    executeFn: useCallback(
+      async (selectedCoupons: number[]) => {
+        return await patchOrderSheetCoupons({
+          id: Number(id),
+          selectedCoupons,
+        });
+      },
+      [id],
+    ),
+    onSuccess: () => {
+      orderSheetLoadData.refetch();
+      pricingLoadData.refetch();
+    },
+  });
+
+  const updateCouponSelection = async ({
     couponSelection,
   }: {
     couponSelection: number[];
   }) => {
-    // setCouponSelection(couponSelection);
+    await updateSelectedCouponsMutate(couponSelection);
   };
 
   const pricingLoadData = useLoadData({
