@@ -1,9 +1,12 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useParams } from "react-router-dom";
 
 import { useLoadData } from "@/services/core/useLoadData";
 
-import { getOrderSheet } from "@/services/apis/orderSheets/repository";
+import {
+  getOrderSheet,
+  getOrderSheetPricing,
+} from "@/services/apis/orderSheets/repository";
 
 export const useOrderSheet = () => {
   const { id } = useParams<{ id: string }>();
@@ -36,16 +39,21 @@ export const useOrderSheet = () => {
     // setCouponSelection(couponSelection);
   };
 
-  const [pricing] = useState({
-    orderSheetAmount: 0,
-    discountAmount: 0,
-    shippingFee: 0,
+  const pricingLoadData = useLoadData({
+    queryFn: useCallback(async () => {
+      if (!id) return;
+
+      return await getOrderSheetPricing({ id: Number(id) });
+    }, [id]),
   });
 
-  // const { data: pricingData } = pricingLoadData.status;
+  const { data: pricingData } = pricingLoadData.status;
 
-  const paymentAmount =
-    pricing.orderSheetAmount - pricing.discountAmount + pricing.shippingFee;
+  const paymentAmount = pricingData
+    ? pricingData.orderSheetAmount -
+      pricingData.discountAmount +
+      pricingData.shippingFee
+    : 0;
 
   return {
     status: orderSheetStatus,
@@ -59,7 +67,7 @@ export const useOrderSheet = () => {
     couponSelection: orderSheetData?.selectedCoupons,
     updateCouponSelection,
 
-    pricing,
+    pricing: pricingData,
     paymentAmount,
   };
 };
