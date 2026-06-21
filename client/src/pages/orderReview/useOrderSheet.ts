@@ -2,10 +2,12 @@ import { useCallback } from "react";
 import { useParams } from "react-router-dom";
 
 import { useLoadData } from "@/services/core/useLoadData";
+import { useExecute } from "@/services/core/useExecute";
 
 import {
   getOrderSheet,
   getOrderSheetPricing,
+  patchOrderSheetShippingArea,
 } from "@/services/apis/orderSheets/repository";
 
 export const useOrderSheet = () => {
@@ -27,8 +29,21 @@ export const useOrderSheet = () => {
     return acc;
   }, 0);
 
+  const { mutate: updateIsRemoteAreaMutate } = useExecute({
+    executeFn: useCallback(
+      async (isRemoteArea: boolean) => {
+        return await patchOrderSheetShippingArea({
+          id: Number(id),
+          isRemoteArea,
+        });
+      },
+      [id],
+    ),
+  });
+
   const updateIsRemoteArea = ({ isRemoteArea }: { isRemoteArea: boolean }) => {
     // setIsRemoteArea(isRemoteArea);
+    updateIsRemoteAreaMutate(isRemoteArea);
   };
 
   const updateCouponSelection = ({
