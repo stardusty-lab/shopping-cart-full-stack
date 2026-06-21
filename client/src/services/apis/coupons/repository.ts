@@ -6,5 +6,5 @@ import type { GetCoupons } from "./repository.types";
 export const getCoupons: GetCoupons = async () => {
   const responseDTO = await fetcher.getCoupons();
 
-  return mapGetCouponsResponseDTOToModel(responseDTO.data);
+  return mapGetCouponsResponseDTOToModel(responseDTO);
 };
