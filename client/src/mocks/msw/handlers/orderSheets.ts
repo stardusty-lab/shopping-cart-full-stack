@@ -55,7 +55,7 @@ export const handlers = [
   http.get(ENV.API_URL + "/order-sheet/:id/able-coupons", async () => {
     return HttpResponse.json(
       {
-        data: { able: [4] },
+        data: { able: ["FIXED5000", "MIRACLESALE"] },
         status: 200,
       },
       { status: 200 },
