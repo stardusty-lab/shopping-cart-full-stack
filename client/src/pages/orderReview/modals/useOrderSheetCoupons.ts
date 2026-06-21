@@ -4,7 +4,10 @@ import { useParams } from "react-router-dom";
 import { useLoadData } from "@/services/core/useLoadData";
 
 import { getCoupons } from "@/services/apis/coupons/repository";
-import { getOrderSheetAbleCoupons } from "@/services/apis/orderSheets/repository";
+import {
+  getOrderSheetAbleCoupons,
+  postOrderSheetCouponsDiscountPreview,
+} from "@/services/apis/orderSheets/repository";
 
 interface Props {
   couponSelection: number[];
@@ -50,6 +53,17 @@ export const useOrderSheetCoupons = ({
     setDraftCouponSelection(newDraftCouponSelection);
   };
 
+  const discountPreviewData = useLoadData({
+    queryFn: useCallback(async () => {
+      return await postOrderSheetCouponsDiscountPreview({
+        id,
+        selectedCoupons: draftCouponSelection,
+      });
+    }, [id, draftCouponSelection]),
+  });
+
+  const discountAmount = discountPreviewData.status.data?.discountAmount;
+
   const couponViewModels = coupons?.map((coupon) => {
     const isAble = ableCoupons?.includes(coupon.code);
     const isSelected = draftCouponSelection.includes(coupon.id);
@@ -65,6 +79,7 @@ export const useOrderSheetCoupons = ({
 
   return {
     coupons: couponViewModels,
+    discountAmount,
     changeCouponSelection,
     updateCouponSelection,
   };

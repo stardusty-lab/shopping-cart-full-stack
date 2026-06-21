@@ -24,11 +24,15 @@ export const CouponModal = ({
   onUpdateCouponSelection,
   onClose,
 }: Props) => {
-  const { coupons, changeCouponSelection, updateCouponSelection } =
-    useOrderSheetCoupons({
-      couponSelection,
-      updateCouponSelection: onUpdateCouponSelection,
-    });
+  const {
+    coupons,
+    discountAmount,
+    changeCouponSelection,
+    updateCouponSelection,
+  } = useOrderSheetCoupons({
+    couponSelection,
+    updateCouponSelection: onUpdateCouponSelection,
+  });
 
   const handleChangeCouponSelection = (e: ChangeEvent<HTMLInputElement>) => {
     changeCouponSelection({
@@ -92,7 +96,7 @@ export const CouponModal = ({
       </List>
 
       <Button variant="primary" size="medium" block onClick={handleSubmit}>
-        총 6,000원 할인 쿠폰 사용하기
+        총 {discountAmount}원 할인 쿠폰 사용하기
       </Button>
     </Modal>
   );
