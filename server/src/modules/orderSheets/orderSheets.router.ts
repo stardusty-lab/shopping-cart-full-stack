@@ -9,7 +9,7 @@ orderSheetsRouter.get(
   orderSheetsController.getOrderSheetById,
 );
 
-orderSheetsRouter.post("/", orderSheetsController.createOrderSheet);
+orderSheetsRouter.post("/:cartId", orderSheetsController.createOrderSheet);
 
 orderSheetsRouter.get(
   "/:orderSheetId/pricing",

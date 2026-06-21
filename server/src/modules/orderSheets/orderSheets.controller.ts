@@ -11,8 +11,9 @@ export const getOrderSheetById = (req: Request, res: Response) => {
 };
 
 export const createOrderSheet = (req: Request, res: Response) => {
-  const products = req.body.products;
-  const orderSheet = orderSheetsService.createOrderSheet(products);
+  const cartId = Number(req.params.cartId);
+  const productIds = req.body.productIds;
+  const orderSheet = orderSheetsService.createOrderSheet(cartId, productIds);
 
   return success(res, { id: orderSheet.id });
 };

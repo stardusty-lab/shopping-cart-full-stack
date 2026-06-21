@@ -5,6 +5,7 @@ import type {
 
 import * as orderSheetStore from "./orderSheets.repository.ts";
 import * as productsStore from "../products/products.repository.ts";
+import * as cartsStore from "../carts/carts.repository.ts";
 import * as couponsStore from "../coupons/coupons.repository.ts";
 
 import {
@@ -46,9 +47,23 @@ export const getOrderSheetById = (orderSheetId: number): OrderSheetResponse => {
 };
 
 export const createOrderSheet = (
-  products: { id: number; quantity: number }[],
+  cartId: number,
+  productIds: number[],
 ): CreateOrderSheetResponse => {
   const allCoupons = couponsStore.findAll();
+  const cart = cartsStore.findById(cartId);
+  if (!cart) throw new Error();
+
+  const products = productIds.map((id) => {
+    const cartsProducts = cart.products;
+    const product = cartsProducts.find((cartProduct) => cartProduct.id === id);
+    if (!product) throw new Error();
+
+    return {
+      id: product.id,
+      quantity: product.quantity,
+    };
+  });
 
   const orderSheetAmount = calculateOrderSheetAmount(
     products.map((product) => {
