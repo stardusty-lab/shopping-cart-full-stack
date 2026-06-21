@@ -17,6 +17,6 @@ export interface RouteItem {
 export const routes: RouteItem[] = [
   { path: ROUTES.HOME, element: <Navigate to={ROUTES.CARTS} replace /> },
   { path: ROUTES.CARTS, element: <Carts /> },
-  { path: ROUTES.ORDER_REVIEW, element: <OrderReview /> },
+  { path: `${ROUTES.ORDER_REVIEW}/:id`, element: <OrderReview /> },
   { path: ROUTES.PAYMENT_REVIEW, element: <PaymentReview /> },
 ];
