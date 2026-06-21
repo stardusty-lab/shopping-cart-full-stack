@@ -46,7 +46,7 @@ export const CouponModal = ({
       <p>쿠폰은 최대 2개까지 사용할 수 있습니다.</p>
 
       <List>
-        {coupons.map((coupon) => {
+        {coupons?.map((coupon) => {
           return (
             <List.Item>
               <List.Item.Box
