@@ -45,7 +45,7 @@ export interface PatchOrderSheetShippingAreaCommand {
 }
 
 export type PatchOrderSheetShippingArea = (
-  params: PatchOrderSheetShippingAreaCommand,
+  command: PatchOrderSheetShippingAreaCommand,
 ) => Promise<void>;
 
 // PatchOrderSheetCoupons
