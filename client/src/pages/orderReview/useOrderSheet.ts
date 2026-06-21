@@ -8,7 +8,7 @@ import { getOrderSheet } from "@/services/apis/orderSheets/repository";
 export const useOrderSheet = () => {
   const { id } = useParams<{ id: string }>();
 
-  const loadData = useLoadData({
+  const orderSheetLoadData = useLoadData({
     queryFn: useCallback(async () => {
       if (!id) return;
 
@@ -16,9 +16,10 @@ export const useOrderSheet = () => {
     }, [id]),
   });
 
-  const { status, data } = loadData.status;
+  const { status: orderSheetStatus, data: orderSheetData } =
+    orderSheetLoadData.status;
 
-  const totalCount = data?.products.reduce((acc, product) => {
+  const totalCount = orderSheetData?.products.reduce((acc, product) => {
     acc += product.quantity;
     return acc;
   }, 0);
@@ -41,19 +42,21 @@ export const useOrderSheet = () => {
     shippingFee: 0,
   });
 
+  // const { data: pricingData } = pricingLoadData.status;
+
   const paymentAmount =
     pricing.orderSheetAmount - pricing.discountAmount + pricing.shippingFee;
 
   return {
-    status,
+    status: orderSheetStatus,
 
-    products: data?.products,
+    products: orderSheetData?.products,
     totalCount,
 
-    isRemoteArea: data?.isRemoteArea,
+    isRemoteArea: orderSheetData?.isRemoteArea,
     updateIsRemoteArea,
 
-    couponSelection: data?.selectedCoupons,
+    couponSelection: orderSheetData?.selectedCoupons,
     updateCouponSelection,
 
     pricing,
