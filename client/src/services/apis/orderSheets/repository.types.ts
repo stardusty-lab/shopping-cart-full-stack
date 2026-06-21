@@ -17,6 +17,7 @@ export type GetOrderSheet = (params: GetOrderSheetParams) => Promise<{
 
 // PostOrderSheet
 export interface PostOrderSheetCommand {
+  cartId: number;
   productIds: number[];
 }
 

@@ -33,6 +33,12 @@ export type GetOrderSheetResponseDTO = ResponseDTO<
 
 // PostOrderSheet
 export interface PostOrderSheetRequestDTO {
+  pathParams: [
+    {
+      name: "cartId";
+      value: number;
+    },
+  ];
   data: {
     productIds: number[];
   };

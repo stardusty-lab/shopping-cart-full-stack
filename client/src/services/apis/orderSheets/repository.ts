@@ -45,9 +45,10 @@ export const getOrderSheet: GetOrderSheet = async (model) => {
 };
 
 export const postOrderSheet: PostOrderSheet = async (model) => {
-  const { productIds } = mapPostOrderSheetModelToRequestDTO(model);
+  const { cartId, productIds } = mapPostOrderSheetModelToRequestDTO(model);
 
   const responseDTO = await fetcher.postOrderSheet({
+    pathParams: [{ name: "cartId", value: cartId }],
     data: { productIds },
   });
 

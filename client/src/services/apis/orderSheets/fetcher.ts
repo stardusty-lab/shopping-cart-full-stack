@@ -44,10 +44,12 @@ export const getOrderSheet = async ({
 
 // postOrderSheet
 export const postOrderSheet = async ({
+  pathParams: [{ value: cartId }],
   data: { productIds },
 }: PostOrderSheetRequestDTO): Promise<PostOrderSheetResponseDTO> => {
   const response = await requestAjax("/order-sheet", {
     method: "post",
+    pathParams: [{ name: "cartId", value: cartId }],
     data: {
       productIds,
     },
