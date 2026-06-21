@@ -5,7 +5,7 @@ import { Button } from "@/core/components/Button";
 import { List } from "@/core/components/List";
 import { Checkbox } from "@/core/components/Checkbox";
 
-import { formatNumber } from "@/core/utils/format";
+import { formatNumber, formatDate } from "@/core/utils/format";
 
 import { useOrderSheetCoupons } from "./useOrderSheetCoupons";
 
@@ -69,7 +69,7 @@ export const CouponModal = ({
                 description={
                   <>
                     {coupon.expirationDate && (
-                      <>만료일: {coupon.expirationDate}</>
+                      <>만료일: {formatDate(coupon.expirationDate)}</>
                     )}
                     {coupon.minOrderAmount && (
                       <>
