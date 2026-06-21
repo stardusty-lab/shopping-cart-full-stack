@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { useParams } from "react-router-dom";
 
 import { useLoadData } from "@/services/core/useLoadData";
 
 import { getCoupons } from "@/services/apis/coupons/repository";
+import { getOrderSheetAbleCoupons } from "@/services/apis/orderSheets/repository";
 
 interface Props {
   couponSelection: number[];
@@ -23,7 +25,15 @@ export const useOrderSheetCoupons = ({
 
   const coupons = couponsLoadData.status.data?.coupons;
 
-  const [ableCoupons] = useState([1, 2]);
+  const { id } = useParams<{ id: string }>();
+
+  const ableCouponsLoadData = useLoadData({
+    queryFn: useCallback(async () => {
+      return await getOrderSheetAbleCoupons({ id: Number(id) });
+    }, [id]),
+  });
+
+  const ableCoupons = ableCouponsLoadData.status.data?.ableCoupons;
 
   const [draftCouponSelection, setDraftCouponSelection] =
     useState(couponSelection);
@@ -41,7 +51,7 @@ export const useOrderSheetCoupons = ({
   };
 
   const couponViewModels = coupons?.map((coupon) => {
-    const isAble = ableCoupons.includes(coupon.id);
+    const isAble = ableCoupons?.includes(coupon.code);
     const isSelected = draftCouponSelection.includes(coupon.id);
 
     return { ...coupon, isAble, isSelected };
