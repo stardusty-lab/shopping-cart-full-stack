@@ -56,7 +56,7 @@ export const useOrderSheetCoupons = ({
   const discountPreviewData = useLoadData({
     queryFn: useCallback(async () => {
       return await postOrderSheetCouponsDiscountPreview({
-        id,
+        id: Number(id),
         selectedCoupons: draftCouponSelection,
       });
     }, [id, draftCouponSelection]),
