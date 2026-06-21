@@ -1,34 +1,15 @@
-import { useCallback } from "react";
-import { useParams } from "react-router-dom";
-
-import { useExecute } from "@/services/core/useExecute";
-
-import {
-  patchOrderSheetShippingArea,
-  patchOrderSheetCoupons,
-} from "@/services/apis/orderSheets/repository";
-
 import { useOrderSheetData } from "./useOrderSheetData";
 import { useOrderSheetPricing } from "./useOrderSheetPricing";
+import { useOrderSheetIsRemoteArea } from "./useOrderSheetIsRemoteArea";
+import { useOrderSheetCouponSelection } from "./useOrderSheetCouponSelection";
 
 export const useOrderSheet = () => {
-  const { id } = useParams<{ id: string }>();
-
   const orderSheetLoadData = useOrderSheetData();
   const { products, totalCount, isRemoteArea, couponSelection } =
     orderSheetLoadData;
 
-  const { mutate: updateIsRemoteAreaMutate } = useExecute({
-    executeFn: useCallback(
-      async (isRemoteArea: boolean) => {
-        return await patchOrderSheetShippingArea({
-          id: Number(id),
-          isRemoteArea,
-        });
-      },
-      [id],
-    ),
-    onSuccess: () => {
+  const { updateIsRemoteAreaMutate } = useOrderSheetIsRemoteArea({
+    onUpdate: () => {
       orderSheetLoadData.refetch();
       pricingLoadData.refetch();
     },
@@ -42,17 +23,8 @@ export const useOrderSheet = () => {
     await updateIsRemoteAreaMutate(isRemoteArea);
   };
 
-  const { mutate: updateSelectedCouponsMutate } = useExecute({
-    executeFn: useCallback(
-      async (selectedCoupons: number[]) => {
-        return await patchOrderSheetCoupons({
-          id: Number(id),
-          selectedCoupons,
-        });
-      },
-      [id],
-    ),
-    onSuccess: () => {
+  const { updateSelectedCouponsMutate } = useOrderSheetCouponSelection({
+    onUpdate: () => {
       orderSheetLoadData.refetch();
       pricingLoadData.refetch();
     },
