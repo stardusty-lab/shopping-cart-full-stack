@@ -5,6 +5,8 @@ import { Button } from "@/core/components/Button";
 import { List } from "@/core/components/List";
 import { Checkbox } from "@/core/components/Checkbox";
 
+import { formatNumber } from "@/core/utils/format";
+
 import { useOrderSheetCoupons } from "./useOrderSheetCoupons";
 
 interface Props {
@@ -71,7 +73,8 @@ export const CouponModal = ({
                     )}
                     {coupon.minOrderAmount && (
                       <>
-                        <br /> 최소 주문 금액: {coupon.minOrderAmount}원
+                        <br /> 최소 주문 금액:{" "}
+                        {formatNumber(coupon.minOrderAmount)}원
                       </>
                     )}
                     {coupon.validTime && (
