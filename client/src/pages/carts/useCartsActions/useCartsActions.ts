@@ -1,3 +1,5 @@
+import { postOrderSheet } from "@/services/apis/orderSheets/repository";
+
 import { useCarts } from "../useCarts";
 
 import { useCartsDeleteAction } from "./useCartsDeleteAction";
@@ -7,6 +9,7 @@ import { useCartsUpdateQuantityAction } from "./useCartsUpdateQuantityAction";
 export const useCartsActions = () => {
   const {
     cartProducts,
+    selectionProducts,
     updateCartProducts,
     updateProductQuantity,
     deleteProduct,
@@ -21,6 +24,11 @@ export const useCartsActions = () => {
   });
 
   const deleteAction = useCartsDeleteAction({ deleteProduct });
+
+  const submit = async () => {
+    const res = await postOrderSheet({ productIds: selectionProducts });
+    return res.id;
+  };
 
   return {
     loadCartsProductsStatus: loadAction.status,
@@ -38,5 +46,7 @@ export const useCartsActions = () => {
 
     updateProductSelection,
     updateAllProductSelection,
+
+    submit,
   };
 };
