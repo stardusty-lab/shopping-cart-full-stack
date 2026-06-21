@@ -1,40 +1,38 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { useParams } from "react-router-dom";
+
+import { useLoadData } from "@/services/core/useLoadData";
+
+import { getOrderSheet } from "@/services/apis/orderSheets/repository";
 
 export const useOrderSheet = () => {
-  const [products] = useState([
-    {
-      id: 1,
-      quantity: 1,
-      price: 18000,
-      name: "Shopping Basket",
-      imgUrl: "https://example.com/images/shopping-basket.png",
-    },
-    {
-      id: 3,
-      quantity: 2,
-      price: 9900,
-      name: "Reusable Cup",
-      imgUrl: "https://example.com/images/reusable-cup.png",
-    },
-  ]);
+  const { id } = useParams<{ id: string }>();
 
-  const totalCount = products.reduce((acc, product) => {
+  const loadData = useLoadData({
+    queryFn: useCallback(async () => {
+      if (!id) return;
+
+      return await getOrderSheet({ id: Number(id) });
+    }, [id]),
+  });
+
+  const { status, data } = loadData.status;
+
+  const totalCount = data?.products.reduce((acc, product) => {
     acc += product.quantity;
     return acc;
   }, 0);
 
-  const [isRemoteArea, setIsRemoteArea] = useState(false);
   const updateIsRemoteArea = ({ isRemoteArea }: { isRemoteArea: boolean }) => {
-    setIsRemoteArea(isRemoteArea);
+    // setIsRemoteArea(isRemoteArea);
   };
 
-  const [couponSelection, setCouponSelection] = useState<number[]>([]);
   const updateCouponSelection = ({
     couponSelection,
   }: {
     couponSelection: number[];
   }) => {
-    setCouponSelection(couponSelection);
+    // setCouponSelection(couponSelection);
   };
 
   const [pricing] = useState({
@@ -47,13 +45,15 @@ export const useOrderSheet = () => {
     pricing.orderSheetAmount - pricing.discountAmount + pricing.shippingFee;
 
   return {
-    products,
+    status,
+
+    products: data?.products,
     totalCount,
 
-    isRemoteArea,
+    isRemoteArea: data?.isRemoteArea,
     updateIsRemoteArea,
 
-    couponSelection,
+    couponSelection: data?.selectedCoupons,
     updateCouponSelection,
 
     pricing,

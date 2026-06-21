@@ -56,7 +56,7 @@ export const OrderReview = () => {
           title={"주문 확인"}
           subTitle={
             <>
-              총 {products.length}종류의 상품 {totalCount}개를 주문합니다.{" "}
+              총 {products?.length}종류의 상품 {totalCount}개를 주문합니다.{" "}
               <br />
               최종 결제 금액을 확인해 주세요.
             </>
@@ -64,7 +64,7 @@ export const OrderReview = () => {
         />
 
         <List>
-          {products.map((product) => {
+          {products?.map((product) => {
             return (
               <List.Item>
                 <List.Item.Left>
