@@ -39,11 +39,18 @@ export const useOrderSheet = () => {
       },
       [id],
     ),
+    onSuccess: () => {
+      orderSheetLoadData.refetch();
+      pricingLoadData.refetch();
+    },
   });
 
-  const updateIsRemoteArea = ({ isRemoteArea }: { isRemoteArea: boolean }) => {
-    // setIsRemoteArea(isRemoteArea);
-    updateIsRemoteAreaMutate(isRemoteArea);
+  const updateIsRemoteArea = async ({
+    isRemoteArea,
+  }: {
+    isRemoteArea: boolean;
+  }) => {
+    await updateIsRemoteAreaMutate(isRemoteArea);
   };
 
   const updateCouponSelection = ({
