@@ -34863,7 +34863,7 @@ function canonicalDomain(domainName) {
 	if (/[^\u0001-\u007f]/.test(str)) return domainToASCII(str);
 	return str.toLowerCase();
 }
-function formatDate(date) {
+function formatDate$1(date) {
 	return date.toUTCString();
 }
 function parseDate(cookieDate) {
@@ -34877,7 +34877,7 @@ function parseDate(cookieDate) {
 	const dateTokens = cookieDate.split(DELIMITER).filter((token) => token.length > 0);
 	for (const dateToken of dateTokens) {
 		if (flags.foundTime === void 0) {
-			const [, hours, minutes, seconds] = TIME.exec(dateToken) || [];
+			const [, hours, minutes, seconds] = TIME$1.exec(dateToken) || [];
 			if (hours != void 0 && minutes != void 0 && seconds != void 0) {
 				const parsedHours = parseInt(hours, 10);
 				const parsedMinutes = parseInt(minutes, 10);
@@ -34941,7 +34941,7 @@ var months = [
 	"dec"
 ];
 var DELIMITER = /[\x09\x20-\x2F\x3B-\x40\x5B-\x60\x7B-\x7E]/;
-var TIME = /^(\d{1,2}):(\d{1,2}):(\d{1,2})(?:[\x00-\x2F\x3A-\xFF][\x00-\xFF]*)?$/;
+var TIME$1 = /^(\d{1,2}):(\d{1,2}):(\d{1,2})(?:[\x00-\x2F\x3A-\xFF][\x00-\xFF]*)?$/;
 var DAY_OF_MONTH = /^[0-9]{1,2}(?:[\x00-\x2F\x3A-\xFF][\x00-\xFF]*)?$/;
 var MONTH = /^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[\x00-\xFF]*$/i;
 var YEAR = /^[\x30-\x39]{2,4}(?:[\x00-\x2F\x3A-\xFF][\x00-\xFF]*)?$/;
@@ -35284,7 +35284,7 @@ var _Cookie = class _Cookie {
 	toString() {
 		let str = this.cookieString();
 		if (this.expires != "Infinity") {
-			if (this.expires instanceof Date) str += `; Expires=${formatDate(this.expires)}`;
+			if (this.expires instanceof Date) str += `; Expires=${formatDate$1(this.expires)}`;
 		}
 		if (this.maxAge != null && this.maxAge != Infinity) str += `; Max-Age=${String(this.maxAge)}`;
 		if (this.domain && !this.hostOnly) str += `; Domain=${this.domain}`;
@@ -41611,6 +41611,39 @@ var __vitePreload = function preload(baseModule, deps, importerUrl) {
 	});
 };
 //#endregion
+//#region node_modules/msw/lib/core/utils/internal/hasRefCounted.mjs
+function hasRefCounted(value) {
+	return isObject(value) && typeof Reflect.get(value, "ref") === "function" && typeof Reflect.get(value, "unref") === "function";
+}
+//#endregion
+//#region node_modules/msw/lib/core/delay.mjs
+var SET_TIMEOUT_MAX_ALLOWED_INT = 2147483647;
+function getRealisticResponseTime() {
+	if (isNodeProcess$1()) return 5;
+	return Math.floor(Math.random() * 300 + 100);
+}
+async function delay(durationOrMode) {
+	let delayTime;
+	if (typeof durationOrMode === "string") switch (durationOrMode) {
+		case "infinite":
+			delayTime = SET_TIMEOUT_MAX_ALLOWED_INT;
+			break;
+		case "real":
+			delayTime = getRealisticResponseTime();
+			break;
+		default: throw new Error(`Failed to delay a response: unknown delay mode "${durationOrMode}". Please make sure you provide one of the supported modes ("real", "infinite") or a number.`);
+	}
+	else if (typeof durationOrMode === "undefined") delayTime = getRealisticResponseTime();
+	else {
+		if (durationOrMode > 2147483647) throw new Error(`Failed to delay a response: provided delay duration (${durationOrMode}) exceeds the maximum allowed duration for "setTimeout" (${SET_TIMEOUT_MAX_ALLOWED_INT}). This will cause the response to be returned immediately. Please use a number within the allowed range to delay the response by exact duration, or consider the "infinite" delay mode to delay the response indefinitely.`);
+		delayTime = durationOrMode;
+	}
+	return new Promise((resolve) => {
+		const timeoutId = setTimeout(resolve, delayTime);
+		if (delayTime === 2147483647 && isNodeProcess$1() && hasRefCounted(timeoutId)) timeoutId.unref();
+	});
+}
+//#endregion
 //#region src/configs/env.ts
 var ENV = {
 	BASE_URL: "/shopping-cart-full-stack",
@@ -41618,7 +41651,7 @@ var ENV = {
 };
 //#endregion
 //#region src/mocks/data/carts.ts
-var cartsProducts = [{
+var cartsProducts$1 = [{
 	id: 1,
 	price: 35e3,
 	quantity: 2,
@@ -41633,7 +41666,11 @@ var cartsProducts = [{
 }];
 //#endregion
 //#region src/mocks/msw/handlers/carts.ts
-var handlers$1 = [
+var createCartsProducts = () => {
+	return cartsProducts$1.map((cartsProduct) => ({ ...cartsProduct }));
+};
+var cartsProducts = createCartsProducts();
+var handlers$4 = [
 	http.get(ENV.API_URL + "/carts/:cartId", async ({ params }) => {
 		const { cartId } = params;
 		return HttpResponse.json({
@@ -41650,17 +41687,210 @@ var handlers$1 = [
 		const productData = cartsProducts.find((product) => product.id === productId);
 		productData.quantity = data.quantity;
 		return HttpResponse.json({
-			data: { ...productData },
+			data: productData,
 			status: 200
 		}, { status: 200 });
 	}),
-	http.delete(ENV.API_URL + "/carts/:cartId/products/:productId", async () => {
+	http.delete(ENV.API_URL + "/carts/:cartId/products/:productId", async ({ params }) => {
+		const productId = Number(params.productId);
+		cartsProducts = cartsProducts.filter((cartsProduct) => {
+			return cartsProduct.id !== productId;
+		});
 		return new HttpResponse(null, { status: 204 });
 	})
 ];
-setupWorker(...[http.get("/health", () => {
-	return HttpResponse.json({});
-}), ...handlers$1]);
+//#endregion
+//#region src/mocks/data/shippingFee.ts
+var shippingFee$1 = 3e3;
+//#endregion
+//#region src/mocks/msw/handlers/shippingFee.ts
+var createShippingFee = () => {
+	return shippingFee$1;
+};
+var shippingFee = createShippingFee();
+var handlers$3 = [http.get(ENV.API_URL + "/shipping-fee", async () => {
+	return HttpResponse.json({
+		data: { shippingFee },
+		status: 200
+	}, { status: 200 });
+})];
+//#endregion
+//#region src/mocks/data/coupons.ts
+var coupons$1 = [
+	{
+		id: 1,
+		code: "FIXED5000",
+		name: "5,000원 할인 쿠폰",
+		expirationDate: "2026-11-30",
+		minimumOrderAmount: 1e5
+	},
+	{
+		id: 2,
+		code: "BOGO",
+		name: "2개 구매 시 1개 무료 쿠폰",
+		expirationDate: "2026-06-30"
+	},
+	{
+		id: 3,
+		code: "FREESHIPPING",
+		name: "5만원 이상 구매 시 무료 배송 쿠폰",
+		expirationDate: "2026-08-31",
+		minimumOrderAmount: 5e4
+	},
+	{
+		id: 4,
+		code: "MIRACLESALE",
+		name: "미라클모닝 30% 할인 쿠폰",
+		expirationDate: "2026-07-31",
+		validityPeriod: {
+			startsAt: "04:00",
+			endsAt: "07:00"
+		}
+	}
+];
+//#endregion
+//#region src/mocks/msw/handlers/coupons.ts
+var createCoupons = () => {
+	return coupons$1;
+};
+var coupons = createCoupons();
+var handlers$2 = [http.get(ENV.API_URL + "/coupons", async () => {
+	return HttpResponse.json({
+		data: { coupons },
+		status: 200
+	}, { status: 200 });
+})];
+//#endregion
+//#region src/mocks/data/orderSheets.ts
+var orderSheets$1 = [
+	{
+		items: [{
+			product: {
+				id: 1,
+				name: "Shopping Basket",
+				price: 18e3,
+				imgUrl: "https://example.com/images/shopping-basket.png"
+			},
+			quantity: 4
+		}, {
+			product: {
+				id: 3,
+				name: "Reusable Cup",
+				price: 9900,
+				imgUrl: "https://example.com/images/reusable-cup.png"
+			},
+			quantity: 1
+		}],
+		isRemoteShippingArea: false,
+		selectedCoupons: [4]
+	},
+	{
+		items: [{
+			product: {
+				id: 2,
+				name: "Tote Bag",
+				price: 32e3,
+				imgUrl: "https://example.com/images/shopping-basket.png"
+			},
+			quantity: 1
+		}, {
+			product: {
+				id: 3,
+				name: "Reusable Cup",
+				price: 9900,
+				imgUrl: "https://example.com/images/reusable-cup.png"
+			},
+			quantity: 1
+		}],
+		isRemoteShippingArea: false,
+		selectedCoupons: [4]
+	},
+	{
+		items: [{
+			product: {
+				id: 2,
+				name: "Tote Bag",
+				price: 32e3,
+				imgUrl: "https://example.com/images/shopping-basket.png"
+			},
+			quantity: 4
+		}],
+		isRemoteShippingArea: false,
+		selectedCoupons: [2, 4]
+	}
+];
+var pricing = {
+	orderAmount: 495e3,
+	couponDiscountAmount: 13770,
+	shippingFee: 3e3
+};
+//#endregion
+//#region src/mocks/msw/handlers/orderSheets.ts
+var TIME = 0;
+var i = 0;
+var createOrderSheets = () => {
+	return orderSheets$1;
+};
+var orderSheets = createOrderSheets();
+var handlers$1 = [
+	http.get(ENV.API_URL + "/order-sheet/:id", async ({ params }) => {
+		await delay(TIME);
+		const orderSheet = orderSheets[Number(params.id) - 1];
+		return HttpResponse.json({
+			data: { orderSheet: {
+				...orderSheet,
+				isRemoteShippingArea: !orderSheet.isRemoteShippingArea
+			} },
+			status: 200
+		}, { status: 200 });
+	}),
+	http.post(ENV.API_URL + "/order-sheet/:cartId", async () => {
+		return HttpResponse.json({
+			data: { orderSheetId: 1 },
+			status: 200
+		}, { status: 200 });
+	}),
+	http.get(ENV.API_URL + "/order-sheet/:id/pricing", async () => {
+		i++;
+		return HttpResponse.json({
+			data: { pricing: {
+				couponDiscountAmount: pricing.couponDiscountAmount + i,
+				orderAmount: pricing.orderAmount + i,
+				shippingFee: pricing.shippingFee + i
+			} },
+			status: 200
+		}, { status: 200 });
+	}),
+	http.patch(ENV.API_URL + "/order-sheet/:id/shipping-area", async () => {
+		i++;
+		return HttpResponse.json(void 0, { status: 204 });
+	}),
+	http.get(ENV.API_URL + "/order-sheet/:id/able-coupons", async () => {
+		return HttpResponse.json({
+			data: { able: ["FIXED5000", "MIRACLESALE"] },
+			status: 200
+		}, { status: 200 });
+	}),
+	http.post(ENV.API_URL + "/order-sheet/:id/coupon-discount-preview", async () => {
+		i++;
+		return HttpResponse.json({
+			data: { couponDiscountAmount: i },
+			status: 200
+		}, { status: 200 });
+	}),
+	http.patch(ENV.API_URL + "/order-sheet/:id/coupons", async () => {
+		return HttpResponse.json(void 0, { status: 204 });
+	})
+];
+setupWorker(...[
+	http.get("/health", () => {
+		return HttpResponse.json({});
+	}),
+	...handlers$4,
+	...handlers$3,
+	...handlers$2,
+	...handlers$1
+]);
 //#endregion
 //#region node_modules/react-router/dist/development/chunk-QUQL4437.mjs
 /**
@@ -42275,6 +42505,10 @@ function useNavigateUnstable() {
 	]);
 }
 import_react.createContext(null);
+function useParams() {
+	let { matches } = import_react.useContext(RouteContext);
+	return matches[matches.length - 1]?.params ?? {};
+}
 function useResolvedPath(to, { relative } = {}) {
 	let { matches } = import_react.useContext(RouteContext);
 	let { pathname: locationPathname } = useLocation();
@@ -43632,7 +43866,8 @@ var AppProviders = ({ children }) => {
 var ROUTES = {
 	HOME: "/",
 	CARTS: "/carts",
-	ORDER_REVIEW: "/order-review"
+	ORDER_REVIEW: "/order-review",
+	PAYMENT_REVIEW: "/payment-review"
 };
 /*!
 Copyright (c) 2018 Jed Watson.
@@ -43690,14 +43925,14 @@ var View = (props) => {
 var Layout_module_default = {};
 //#endregion
 //#region src/core/components/Layout/Layout.tsx
-var classnameDefault$12 = "ui-layout";
+var classnameDefault$13 = "ui-layout";
 var Layout = (props) => {
 	const { as = "div", className, children, ...restProps } = props;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(View, {
 		as,
 		className: createClassName({
 			styles: Layout_module_default,
-			baseName: classnameDefault$12,
+			baseName: classnameDefault$13,
 			modifiers: {},
 			className
 		}),
@@ -43723,14 +43958,14 @@ var Back = (props) => {
 };
 //#endregion
 //#region src/core/components/Header/Header.tsx
-var classnameDefault$11 = "ui-header";
-var Header = (props) => {
+var classnameDefault$12 = "ui-header";
+var Header$1 = (props) => {
 	const { as = "div", className, leading, title, trailing, ...restProps } = props;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(View, {
 		as,
 		className: createClassName({
 			styles: Header_module_default,
-			baseName: classnameDefault$11,
+			baseName: classnameDefault$12,
 			modifiers: {},
 			className
 		}),
@@ -43742,31 +43977,34 @@ var Header = (props) => {
 		]
 	});
 };
-Header.Back = Back;
+Header$1.Back = Back;
 //#endregion
 //#region src/core/components/Button/Button.module.css
 var Button_module_default = {
-	"ui-button": "_ui-button_pvl2p_1",
-	"variant-default": "_variant-default_pvl2p_18",
-	"variant-primary": "_variant-primary_pvl2p_22",
-	"variant-secondary": "_variant-secondary_pvl2p_27",
-	"size-small": "_size-small_pvl2p_33",
-	"size-large": "_size-large_pvl2p_40",
-	"is-block": "_is-block_pvl2p_46"
+	"ui-button": "_ui-button_llubq_1",
+	"variant-default": "_variant-default_llubq_18",
+	"variant-primary": "_variant-primary_llubq_22",
+	"variant-secondary": "_variant-secondary_llubq_27",
+	"size-small": "_size-small_llubq_33",
+	"size-medium": "_size-medium_llubq_40",
+	"size-large": "_size-large_llubq_46",
+	"edge-rounded": "_edge-rounded_llubq_58",
+	"is-block": "_is-block_llubq_62"
 };
 //#endregion
 //#region src/core/components/Button/Button.tsx
-var classnameDefault$10 = "ui-button";
+var classnameDefault$11 = "ui-button";
 var Button = (props) => {
-	const { as = "button", className, children, variant, size, block, ...restProps } = props;
+	const { as = "button", className, children, variant, size, edge = "rounded", block, ...restProps } = props;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(View, {
 		as,
 		className: createClassName({
 			styles: Button_module_default,
-			baseName: classnameDefault$10,
+			baseName: classnameDefault$11,
 			modifiers: {
 				variant: variant && Button_module_default[`variant-${variant}`],
 				size: size && Button_module_default[`size-${size}`],
+				edge: edge && Button_module_default[`edge-${edge}`],
 				block: block && Button_module_default[`is-block`]
 			},
 			className
@@ -43782,13 +44020,13 @@ var Checkbox_module_default = {
 };
 //#endregion
 //#region src/core/components/Checkbox/Checkbox.tsx
-var classnameDefault$9 = "ui-checkbox";
+var classnameDefault$10 = "ui-checkbox";
 var Checkbox = (props) => {
 	const { as = "input", id, label, checked, empty, className, ...restProps } = props;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: createClassName({
 			styles: Checkbox_module_default,
-			baseName: classnameDefault$9,
+			baseName: classnameDefault$10,
 			modifiers: { checked: checked && Checkbox_module_default[`checked`] },
 			className
 		}),
@@ -43805,76 +44043,93 @@ var Checkbox = (props) => {
 	});
 };
 var List_module_default = {
-	"ui-list": "_ui-list_g8kf0_1",
-	item: "_item_g8kf0_5",
-	header: "_header_g8kf0_9",
-	"header-left": "_header-left_g8kf0_14",
-	"header-right": "_header-right_g8kf0_17",
-	body: "_body_g8kf0_21",
-	left: "_left_g8kf0_29",
-	right: "_right_g8kf0_32",
-	box: "_box_g8kf0_36",
-	title: "_title_g8kf0_42",
-	content: "_content_g8kf0_48",
-	description: "_description_g8kf0_52"
+	"ui-list": "_ui-list_1pwde_1",
+	item: "_item_1pwde_5",
+	header: "_header_1pwde_9",
+	"header-left": "_header-left_1pwde_14",
+	"header-right": "_header-right_1pwde_17",
+	body: "_body_1pwde_25",
+	left: "_left_1pwde_33",
+	right: "_right_1pwde_36",
+	box: "_box_1pwde_40",
+	title: "_title_1pwde_46",
+	content: "_content_1pwde_52",
+	description: "_description_1pwde_56"
 };
 //#endregion
-//#region src/core/components/List/Item.tsx
-var Item$1 = ({ headerLeft, headerRight, left, right, title, content, description, ...restProps }) => {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: List_module_default.item,
+//#region src/core/components/List/Left.tsx
+var Left = ({ children, ...restProps }) => {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+		className: List_module_default.left,
 		...restProps,
-		children: [(headerLeft || headerRight) && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			className: List_module_default.header,
-			children: [headerLeft && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				className: List_module_default.headerLeft,
-				children: headerLeft
-			}), headerRight && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				className: List_module_default.headerRight,
-				children: headerRight
-			})]
-		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			className: List_module_default.body,
-			children: [
-				left && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					className: List_module_default.left,
-					children: left
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: List_module_default.box,
-					children: [
-						title && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-							className: List_module_default.title,
-							children: title
-						}),
-						content && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-							className: List_module_default.content,
-							children: content
-						}),
-						description && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-							className: List_module_default.description,
-							children: description
-						})
-					]
-				}),
-				right && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					className: List_module_default.right,
-					children: right
-				})
-			]
-		})]
+		children
 	});
 };
 //#endregion
+//#region src/core/components/List/Box.tsx
+var Box = ({ title, content, description, ...restProps }) => {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: List_module_default.box,
+		...restProps,
+		children: [
+			title && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: List_module_default.title,
+				children: title
+			}),
+			content && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: List_module_default.content,
+				children: content
+			}),
+			description && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: List_module_default.description,
+				children: description
+			})
+		]
+	});
+};
+//#endregion
+//#region src/core/components/List/Right.tsx
+var Right = ({ children, ...restProps }) => {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+		className: List_module_default.right,
+		...restProps,
+		children
+	});
+};
+//#endregion
+//#region src/core/components/List/Item.tsx
+var Item$1 = ({ header, children, ...restProps }) => {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: List_module_default.item,
+		...restProps,
+		children: [header && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: List_module_default.header,
+			children: [header.left && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: List_module_default.headerLeft,
+				children: header.left
+			}), header.right && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: List_module_default.headerRight,
+				children: header.right
+			})]
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			className: List_module_default.body,
+			children
+		})]
+	});
+};
+Item$1.Left = Left;
+Item$1.Box = Box;
+Item$1.Right = Right;
+//#endregion
 //#region src/core/components/List/List.tsx
-var classnameDefault$8 = "ui-list";
+var classnameDefault$9 = "ui-list";
 var List = (props) => {
 	const { as = "div", className, children, ...restProps } = props;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(View, {
 		as,
 		className: createClassName({
 			styles: List_module_default,
-			baseName: classnameDefault$8,
+			baseName: classnameDefault$9,
 			modifiers: {},
 			className
 		}),
@@ -43888,14 +44143,14 @@ List.Item = Item$1;
 var ImgBox_module_default = { "ui-img-box": "_ui-img-box_t57eb_1" };
 //#endregion
 //#region src/core/components/ImgBox/ImgBox.tsx
-var classnameDefault$7 = "ui-img-box";
+var classnameDefault$8 = "ui-img-box";
 var ImgBox = (props) => {
 	const { as = "div", className, img, ...restProps } = props;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(View, {
 		as,
 		className: createClassName({
 			styles: ImgBox_module_default,
-			baseName: classnameDefault$7,
+			baseName: classnameDefault$8,
 			modifiers: {},
 			className
 		}),
@@ -43907,21 +44162,23 @@ var ImgBox = (props) => {
 	});
 };
 var Title_module_default = {
-	"ui-title": "_ui-title_1lnq7_1",
-	title: "_title_1lnq7_5",
-	"sub-title": "_sub-title_1lnq7_10"
+	"ui-title": "_ui-title_w4fd2_1",
+	"sub-title": "_sub-title_w4fd2_6",
+	"level-1": "_level-1_w4fd2_12",
+	title: "_title_w4fd2_12",
+	"level-2": "_level-2_w4fd2_24"
 };
 //#endregion
 //#region src/core/components/Title/Title.tsx
-var classnameDefault$6 = "ui-title";
+var classnameDefault$7 = "ui-title";
 var Title = (props) => {
-	const { as = "div", className, title, subTitle, ...restProps } = props;
+	const { as = "div", className, title, subTitle, level = 1, ...restProps } = props;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(View, {
 		as,
 		className: createClassName({
 			styles: Title_module_default,
-			baseName: classnameDefault$6,
-			modifiers: {},
+			baseName: classnameDefault$7,
+			modifiers: { level: level && Title_module_default[`level-${level}`] },
 			className
 		}),
 		...restProps,
@@ -43957,14 +44214,14 @@ var Item = (props) => {
 };
 //#endregion
 //#region src/core/components/DataInfo/DataInfo.tsx
-var classnameDefault$5 = "ui-data-info";
+var classnameDefault$6 = "ui-data-info";
 var DataInfo = (props) => {
 	const { as = "div", className, children, ...restProps } = props;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(View, {
 		as,
 		className: createClassName({
 			styles: DataInfo_module_default,
-			baseName: classnameDefault$5,
+			baseName: classnameDefault$6,
 			modifiers: {},
 			className
 		}),
@@ -43976,30 +44233,35 @@ DataInfo.Item = Item;
 //#endregion
 //#region src/core/components/NumberStepper/NumberStepper.module.css
 var NumberStepper_module_default = {
-	"ui-number-stepper": "_ui-number-stepper_mu194_1",
-	"value-item": "_value-item_mu194_6",
-	"button-plus": "_button-plus_mu194_21",
-	"button-minus": "_button-minus_mu194_22"
+	"ui-number-stepper": "_ui-number-stepper_8whk0_1",
+	"value-item": "_value-item_8whk0_6",
+	"button-plus": "_button-plus_8whk0_21",
+	"button-minus": "_button-minus_8whk0_22"
 };
 //#endregion
 //#region src/core/components/NumberStepper/NumberStepper.tsx
-var classnameDefault$4 = "ui-";
+var classnameDefault$5 = "ui-number-stepper";
 var NumberStepper = (props) => {
-	const { as = "div", className, value, onIncrement, onDecrement, ...restProps } = props;
+	const { as = "div", className, min, max, value, onIncrement, onDecrement, ...restProps } = props;
+	const classname = createClassName({
+		styles: NumberStepper_module_default,
+		baseName: classnameDefault$5,
+		modifiers: {},
+		className
+	});
+	const isMinDisabled = typeof min !== "undefined" && value <= min;
+	const isMaxDisabled = typeof max !== "undefined" && value >= max;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(View, {
 		as,
-		className: createClassName({
-			styles: NumberStepper_module_default,
-			baseName: classnameDefault$4,
-			modifiers: {},
-			className
-		}),
+		className: classname,
 		...restProps,
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 				className: NumberStepper_module_default[`button-minus`],
 				"aria-label": "-",
+				disabled: isMinDisabled,
 				onClick: () => {
+					if (isMinDisabled) return;
 					onDecrement();
 				}
 			}),
@@ -44010,7 +44272,9 @@ var NumberStepper = (props) => {
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 				className: NumberStepper_module_default[`button-plus`],
 				"aria-label": "+",
+				disabled: isMaxDisabled,
 				onClick: () => {
+					if (isMaxDisabled) return;
 					onIncrement();
 				}
 			})
@@ -44022,14 +44286,14 @@ var NumberStepper = (props) => {
 var ContentBox_module_default = { "ui-content-box": "_ui-content-box_1qdw3_1" };
 //#endregion
 //#region src/core/components/ContentBox/ContentBox.tsx
-var classnameDefault$3 = "ui-content-box";
+var classnameDefault$4 = "ui-content-box";
 var ContentBox = (props) => {
 	const { as = "div", className, children, ...restProps } = props;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(View, {
 		as,
 		className: createClassName({
 			styles: ContentBox_module_default,
-			baseName: classnameDefault$3,
+			baseName: classnameDefault$4,
 			modifiers: {},
 			className
 		}),
@@ -44042,14 +44306,14 @@ var ContentBox = (props) => {
 var Notice_module_default = { "ui-notice": "_ui-notice_10o55_1" };
 //#endregion
 //#region src/core/components/Notice/Notice.tsx
-var classnameDefault$2 = "ui-notice";
+var classnameDefault$3 = "ui-notice";
 var Notice = (props) => {
 	const { as = "div", className, children, ...restProps } = props;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(View, {
 		as,
 		className: createClassName({
 			styles: Notice_module_default,
-			baseName: classnameDefault$2,
+			baseName: classnameDefault$3,
 			modifiers: {},
 			className
 		}),
@@ -44062,14 +44326,14 @@ var Notice = (props) => {
 var Loading_module_default = { "ui-loading": "_ui-loading_95g30_1" };
 //#endregion
 //#region src/core/components/Loading/Loading.tsx
-var classnameDefault$1 = "ui-loading";
+var classnameDefault$2 = "ui-loading";
 var Loading = (props) => {
 	const { as = "div", className, children, ...restProps } = props;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(View, {
 		as,
 		className: createClassName({
 			styles: Loading_module_default,
-			baseName: classnameDefault$1,
+			baseName: classnameDefault$2,
 			modifiers: {},
 			className
 		}),
@@ -44082,14 +44346,14 @@ var Loading = (props) => {
 var Alert_module_default = { "ui-alert": "_ui-alert_1f0lt_1" };
 //#endregion
 //#region src/core/components/Alert/Alert.tsx
-var classnameDefault = "ui-alert";
+var classnameDefault$1 = "ui-alert";
 var Alert = (props) => {
 	const { as = "div", className, children, onClose, ...restProps } = props;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(View, {
 		as,
 		className: createClassName({
 			styles: Alert_module_default,
-			baseName: classnameDefault,
+			baseName: classnameDefault$1,
 			modifiers: {},
 			className
 		}),
@@ -44103,59 +44367,28 @@ var Alert = (props) => {
 //#endregion
 //#region src/core/components/Alert/useAlert.ts
 var useAlert = () => {
-	const [open, setOpen] = (0, import_react.useState)(false);
-	const onOpen = () => {
-		setOpen(true);
+	const [message, setMessage] = (0, import_react.useState)(null);
+	const onOpen = (message) => {
+		setMessage(message);
 	};
 	const onClose = () => {
-		setOpen(false);
+		setMessage(null);
 	};
 	return {
-		open,
+		open: message !== null,
+		message,
 		onOpen,
 		onClose
 	};
 };
 //#endregion
-//#region src/services/core/useLoadData/useLoadData.ts
-var useLoadData = ({ queryFn }) => {
-	const [status, setStatus] = (0, import_react.useState)({
-		status: "idle",
-		data: null,
-		error: null
-	});
-	const fetchData = (0, import_react.useCallback)(async () => {
-		setStatus({
-			status: "loading",
-			data: null,
-			error: null
-		});
-		try {
-			const data = await queryFn();
-			setStatus({
-				status: "success",
-				data,
-				error: null
-			});
-			return data;
-		} catch {
-			setStatus({
-				status: "error",
-				data: null,
-				error: true
-			});
-		}
-	}, [queryFn]);
-	const refetch = (0, import_react.useCallback)(() => {
-		return fetchData();
-	}, [fetchData]);
-	(0, import_react.useEffect)(() => {
-		refetch();
-	}, [refetch]);
-	return {
-		status,
-		refetch
-	};
+//#region src/core/utils/format.ts
+var formatNumber = (value) => {
+	return value.toLocaleString("ko-KR");
+};
+var formatDate = (dateString) => {
+	const [year, month, day] = dateString.split("-");
+	return `${year}년 ${Number(month)}월 ${Number(day)}일`;
 };
 //#endregion
 //#region src/services/core/http/error.ts
@@ -44182,6 +44415,299 @@ var RequestNetworkError = class extends Error {
 		this.headers = error.headers;
 		this.config = error.config;
 	}
+};
+//#endregion
+//#region src/services/core/http/requestAjax.ts
+var requestAjax = async (url, config) => {
+	const { method = "get", url: configUrl, pathParams, query, data, headers } = config || {};
+	let finalUrl = `${ENV.API_URL || ""}${configUrl || url}`;
+	if (pathParams) {
+		const paramsString = pathParams.map(({ value }) => value).join("/");
+		finalUrl += `/${paramsString}`;
+	}
+	if (query) {
+		const querystring = new URLSearchParams(query).toString();
+		finalUrl += `?${querystring}`;
+	}
+	const customHeaders = {
+		"Content-Type": "application/json",
+		...headers
+	};
+	let res;
+	try {
+		res = await fetch(finalUrl, {
+			method: method.toUpperCase(),
+			...!!Object.values(customHeaders).filter(Boolean).length && { headers: { ...customHeaders } },
+			...data && { body: data instanceof FormData ? data : JSON.stringify(data) }
+		});
+	} catch (error) {
+		throw new RequestNetworkError({
+			data: error,
+			headers: customHeaders,
+			config
+		});
+	}
+	let responseData = await res.text();
+	try {
+		responseData = JSON.parse(responseData);
+	} catch (e) {
+		console.error(e);
+	}
+	const response = {
+		data: responseData,
+		status: res.status,
+		headers: customHeaders,
+		config
+	};
+	if (res.ok) return response;
+	else throw new RequestAjaxError(response);
+};
+//#endregion
+//#region src/services/apis/orderSheets/fetcher.ts
+var getOrderSheet$1 = async ({ pathParams: [{ value: id }] }) => {
+	return (await requestAjax("/order-sheet", {
+		method: "get",
+		pathParams: [{
+			name: "id",
+			value: id
+		}]
+	})).data;
+};
+var postOrderSheet$1 = async ({ pathParams: [{ value: cartId }], data: { productIds } }) => {
+	return (await requestAjax("/order-sheet", {
+		method: "post",
+		pathParams: [{
+			name: "cartId",
+			value: cartId
+		}],
+		data: { productIds }
+	})).data;
+};
+var getOrderSheetPricing$1 = async ({ pathParams: [{ value: id }] }) => {
+	return (await requestAjax(`/order-sheet/${id}/pricing`, { method: "get" })).data;
+};
+var patchOrderSheetShippingArea$1 = async ({ pathParams: [{ value: id }], data: { isRemoteShippingArea } }) => {
+	return (await requestAjax(`/order-sheet/${id}/shipping-area`, {
+		method: "patch",
+		data: { isRemoteShippingArea }
+	})).data;
+};
+var patchOrderSheetCoupons$1 = async ({ pathParams: [{ value: id }], data: { selectedCoupons } }) => {
+	return (await requestAjax(`/order-sheet/${id}/coupons`, {
+		method: "patch",
+		data: { selectedCoupons }
+	})).data;
+};
+var getOrderSheetAbleCoupons$1 = async ({ pathParams: [{ value: id }] }) => {
+	return (await requestAjax(`/order-sheet/${id}/able-coupons`, { method: "get" })).data;
+};
+var postOrderSheetCouponsDiscountPreview$1 = async ({ pathParams: [{ value: id }] }) => {
+	return (await requestAjax(`/order-sheet/${id}/coupon-discount-preview`, { method: "post" })).data;
+};
+//#endregion
+//#region src/services/apis/orderSheets/mapper.ts
+var mapGetOrderSheetModelToRequestDTO = (model) => {
+	return model;
+};
+var mapGetOrderSheetResponseDTOToModel = (response) => {
+	return {
+		products: response.data.orderSheet.items.map((item) => {
+			const { product } = item;
+			return {
+				id: product.id,
+				quantity: item.quantity,
+				name: product.name,
+				price: product.price,
+				imgUrl: product.imgUrl
+			};
+		}),
+		isRemoteArea: response.data.orderSheet.isRemoteShippingArea,
+		selectedCoupons: response.data.orderSheet.selectedCoupons
+	};
+};
+var mapPostOrderSheetModelToRequestDTO = (model) => {
+	return model;
+};
+var mapPostOrderSheetResponseDTOToModel = (response) => {
+	return response.data;
+};
+var mapGetOrderSheetPricingModelToRequestDTO = (model) => {
+	return model;
+};
+var mapGetOrderSheetPricingResponseDTOToModel = (response) => {
+	return {
+		orderSheetAmount: response.data.pricing.orderAmount,
+		discountAmount: response.data.pricing.couponDiscountAmount,
+		shippingFee: response.data.pricing.shippingFee
+	};
+};
+var mapPatchOrderSheetShippingAreaModelToRequestDTO = (model) => {
+	return {
+		id: model.id,
+		isRemoteShippingArea: model.isRemoteArea
+	};
+};
+var mapPatchOrderSheetCouponsModelToRequestDTO = (model) => {
+	return {
+		id: model.id,
+		selectedCoupons: model.selectedCoupons
+	};
+};
+var mapGetOrderSheetAbleCouponsModelToRequestDTO = (model) => {
+	return model;
+};
+var mapGetOrderSheetAbleCouponsResponseDTOToModel = (response) => {
+	return { ableCoupons: response.data.able };
+};
+var mapPostOrderSheetCouponsDiscountPreviewModelToRequestDTO = (model) => {
+	return model;
+};
+var mapPostOrderSheetCouponsDiscountPreviewResponseDTOToModel = (response) => {
+	return { discountAmount: response.data.couponDiscountAmount };
+};
+//#endregion
+//#region src/services/apis/orderSheets/repository.ts
+var getOrderSheet = async (model) => {
+	const { id } = mapGetOrderSheetModelToRequestDTO(model);
+	return mapGetOrderSheetResponseDTOToModel(await getOrderSheet$1({ pathParams: [{
+		name: "id",
+		value: id
+	}] }));
+};
+var postOrderSheet = async (model) => {
+	const { cartId, productIds } = mapPostOrderSheetModelToRequestDTO(model);
+	return mapPostOrderSheetResponseDTOToModel(await postOrderSheet$1({
+		pathParams: [{
+			name: "cartId",
+			value: cartId
+		}],
+		data: { productIds }
+	}));
+};
+var getOrderSheetPricing = async (model) => {
+	const { id } = mapGetOrderSheetPricingModelToRequestDTO(model);
+	return mapGetOrderSheetPricingResponseDTOToModel(await getOrderSheetPricing$1({ pathParams: [{
+		name: "id",
+		value: id
+	}] }));
+};
+var patchOrderSheetShippingArea = async (model) => {
+	const { id, isRemoteShippingArea } = mapPatchOrderSheetShippingAreaModelToRequestDTO(model);
+	await patchOrderSheetShippingArea$1({
+		pathParams: [{
+			name: "id",
+			value: id
+		}],
+		data: { isRemoteShippingArea }
+	});
+};
+var patchOrderSheetCoupons = async (model) => {
+	const { id, selectedCoupons } = mapPatchOrderSheetCouponsModelToRequestDTO(model);
+	await patchOrderSheetCoupons$1({
+		pathParams: [{
+			name: "id",
+			value: id
+		}],
+		data: { selectedCoupons }
+	});
+};
+var getOrderSheetAbleCoupons = async (model) => {
+	const { id } = mapGetOrderSheetAbleCouponsModelToRequestDTO(model);
+	return mapGetOrderSheetAbleCouponsResponseDTOToModel(await getOrderSheetAbleCoupons$1({ pathParams: [{
+		name: "id",
+		value: id
+	}] }));
+};
+var postOrderSheetCouponsDiscountPreview = async (model) => {
+	const { id, selectedCoupons } = mapPostOrderSheetCouponsDiscountPreviewModelToRequestDTO(model);
+	return mapPostOrderSheetCouponsDiscountPreviewResponseDTOToModel(await postOrderSheetCouponsDiscountPreview$1({
+		pathParams: [{
+			name: "id",
+			value: id
+		}],
+		data: { selectedCoupons }
+	}));
+};
+//#endregion
+//#region src/pages/carts/cartSelectionStorage.ts
+var STORAGE_KEY = "cart-selection";
+var cartSelectionStorage = {
+	load: () => {
+		const value = localStorage.getItem(STORAGE_KEY);
+		if (!value) return [];
+		try {
+			return JSON.parse(value);
+		} catch {
+			return [];
+		}
+	},
+	save: (selectedId) => {
+		const value = JSON.stringify(selectedId);
+		localStorage.setItem(STORAGE_KEY, value);
+	},
+	remove: () => {
+		localStorage.removeItem(STORAGE_KEY);
+	}
+};
+//#endregion
+//#region src/pages/carts/validate.ts
+var validateUpdateProductQuantity = (quantity) => {
+	if (quantity < 1) return false;
+	if (quantity > 99) return false;
+	return true;
+};
+//#endregion
+//#region src/pages/carts/useCarts.ts
+var useCarts = () => {
+	const [cartProducts, setCartProducts] = (0, import_react.useState)([]);
+	const [selectionProducts, setSelectionProducts] = (0, import_react.useState)([]);
+	const updateCartProducts = (products) => {
+		setCartProducts(products);
+		const savedSelections = cartSelectionStorage.load();
+		const selectionProducts = savedSelections.length ? savedSelections : products.map((product) => product.id);
+		setSelectionProducts(selectionProducts);
+		cartSelectionStorage.save(selectionProducts);
+	};
+	const updateProductQuantity = ({ id: productId, quantity }) => {
+		if (!validateUpdateProductQuantity(quantity)) return false;
+		setCartProducts(cartProducts.map((product) => {
+			return product.id !== productId ? product : {
+				...product,
+				quantity
+			};
+		}));
+	};
+	const deleteProduct = ({ id: productId }) => {
+		setCartProducts(cartProducts.filter((product) => {
+			return product.id !== productId;
+		}));
+		setSelectionProducts(selectionProducts.filter((id) => id !== productId));
+	};
+	const updateProductSelection = ({ id: productId, selected }) => {
+		const changedSelectionProducts = selected ? [...selectionProducts, productId] : selectionProducts.filter((id) => id !== productId);
+		setSelectionProducts(changedSelectionProducts);
+		cartSelectionStorage.save(changedSelectionProducts);
+	};
+	const updateAllProductSelection = ({ selected }) => {
+		const changedSelectionProducts = selected ? cartProducts.map((product) => product.id) : [];
+		setSelectionProducts(changedSelectionProducts);
+		cartSelectionStorage.save(changedSelectionProducts);
+	};
+	return {
+		cartProducts: cartProducts.map((cartProduct) => {
+			const selected = selectionProducts.includes(cartProduct.id);
+			return {
+				...cartProduct,
+				selected
+			};
+		}),
+		selectionProducts,
+		updateCartProducts,
+		updateProductQuantity,
+		deleteProduct,
+		updateProductSelection,
+		updateAllProductSelection
+	};
 };
 //#endregion
 //#region src/services/core/useExecute/useExecute.ts
@@ -44224,70 +44750,33 @@ var useExecute = ({ executeFn, onSuccess, onError }) => {
 	};
 };
 //#endregion
-//#region src/services/core/http/requestAjax.ts
-var requestAjax = async (url, config) => {
-	const { method = "get", url: configUrl, pathParams, query, data, headers } = config || {};
-	let finalUrl = `${ENV.API_URL || ""}${configUrl || url}`;
-	if (pathParams) {
-		const paramsstring = Object.values(pathParams).join("/");
-		finalUrl += `/${paramsstring}`;
-	}
-	if (query) {
-		const querystring = new URLSearchParams(query).toString();
-		finalUrl += `?${querystring}`;
-	}
-	const customHeaders = {
-		"Content-Type": "application/json",
-		...headers
-	};
-	let res;
-	try {
-		res = await fetch(finalUrl, {
-			method,
-			...!!Object.values(customHeaders).filter(Boolean).length && { headers: { ...customHeaders } },
-			...data && { body: data instanceof FormData ? data : JSON.stringify(data) }
-		});
-	} catch (error) {
-		throw new RequestNetworkError({
-			data: error,
-			headers: customHeaders,
-			config
-		});
-	}
-	let responseData = await res.text();
-	try {
-		responseData = JSON.parse(responseData);
-	} catch (e) {
-		console.error(e);
-	}
-	const response = {
-		data: responseData,
-		status: res.status,
-		headers: customHeaders,
-		config
-	};
-	if (res.ok) return response;
-	else throw new RequestAjaxError(response);
-};
-//#endregion
 //#region src/services/apis/carts/fetcher.ts
-var getCarts$1 = async ({ pathParams: { cartId } }) => {
+var getCarts$1 = async ({ pathParams: [{ value: cartId }] }) => {
 	return (await requestAjax("/carts", {
 		method: "get",
-		pathParams: { cartId }
+		pathParams: [{
+			name: "cartId",
+			value: cartId
+		}]
 	})).data;
 };
-var patchCartsProducts$1 = async ({ pathParams: { cartId, productId }, data: { quantity } }) => {
+var patchCartsProducts$1 = async ({ pathParams: [{ value: cartId }, { value: productId }], data: { quantity } }) => {
 	return (await requestAjax(`/carts/${cartId}/products`, {
 		method: "patch",
-		pathParams: { productId },
+		pathParams: [{
+			name: "productId",
+			value: productId
+		}],
 		data: { quantity }
 	})).data;
 };
-var deleteCartsProducts$1 = async ({ pathParams: { cartId, productId } }) => {
+var deleteCartsProducts$1 = async ({ pathParams: [{ value: cartId }, { value: productId }] }) => {
 	return (await requestAjax(`/carts/${cartId}/products`, {
 		method: "delete",
-		pathParams: { productId }
+		pathParams: [{
+			name: "productId",
+			value: productId
+		}]
 	})).data;
 };
 //#endregion
@@ -44314,115 +44803,167 @@ var mapDeleteCartsProductsResponseDTOToModel = (response) => {
 //#region src/services/apis/carts/repository.ts
 var getCarts = async (model) => {
 	const { cartId } = mapGetCartsModelToRequestDTO(model);
-	return mapGetCartsResponseDTOToModel(await getCarts$1({ pathParams: { cartId } }));
+	return mapGetCartsResponseDTOToModel(await getCarts$1({ pathParams: [{
+		name: "cartId",
+		value: cartId
+	}] }));
 };
 var patchCartsProducts = async (model) => {
 	const { cartId, productId, quantity } = mapPatchCartsProductsModelToRequestDTO(model);
 	return mapPatchCartsProductsResponseDTOToModel(await patchCartsProducts$1({
-		pathParams: {
-			cartId,
-			productId
-		},
+		pathParams: [{
+			name: "cartId",
+			value: cartId
+		}, {
+			name: "productId",
+			value: productId
+		}],
 		data: { quantity }
 	}));
 };
 var deleteCartsProducts = async (model) => {
 	const { cartId, productId } = mapDeleteCartsProductsModelToRequestDTO(model);
-	return mapDeleteCartsProductsResponseDTOToModel(await deleteCartsProducts$1({ pathParams: {
-		cartId,
-		productId
-	} }));
+	return mapDeleteCartsProductsResponseDTOToModel(await deleteCartsProducts$1({ pathParams: [{
+		name: "cartId",
+		value: cartId
+	}, {
+		name: "productId",
+		value: productId
+	}] }));
 };
 //#endregion
-//#region src/pages/carts/validate.ts
-var validateUpdateProductQuauntity = (quantity) => {
-	if (quantity < 1) return false;
-	if (quantity > 99) return false;
-	return true;
+//#region src/pages/carts/constants.ts
+var DELIVERY_FEE = 3e3;
+//#endregion
+//#region src/pages/carts/useCartsActions/useCartsDeleteAction.ts
+var useCartsDeleteAction = ({ deleteProduct }) => {
+	const { mutate: deleteCartsProductsMutate } = useExecute({ executeFn: deleteCartsProducts });
+	const executeDeleteProduct = async ({ id: productId }) => {
+		await deleteCartsProductsMutate({
+			cartId: 1,
+			productId
+		});
+		deleteProduct({ id: productId });
+	};
+	return { deleteProduct: executeDeleteProduct };
 };
 //#endregion
-//#region src/pages/carts/useCarts.ts
-var useCarts = () => {
-	const [cartProducts, setCartProducts] = (0, import_react.useState)([]);
-	const updateProductQuauntity = ({ id: productId, quantity }) => {
-		if (!validateUpdateProductQuauntity(quantity)) return false;
-		setCartProducts(cartProducts.map((product) => {
-			return product.id !== productId ? product : {
-				...product,
-				quantity
-			};
-		}));
-	};
-	const deleteProduct = ({ id: productId }) => {
-		setCartProducts(cartProducts.filter((product) => {
-			return product.id !== productId;
-		}));
-	};
-	const updateProductSelection = ({ id: productId, selected }) => {
-		setCartProducts(cartProducts.map((product) => {
-			return product.id !== productId ? product : {
-				...product,
-				selected
-			};
-		}));
-	};
-	const updateAllProductSelection = ({ selected }) => {
-		setCartProducts(cartProducts.map((product) => {
-			return {
-				...product,
-				selected
-			};
-		}));
-	};
+//#region src/services/core/useLoadData/useLoadData.ts
+var useLoadData = ({ queryFn }) => {
+	const [status, setStatus] = (0, import_react.useState)({
+		status: "idle",
+		data: null,
+		error: null
+	});
+	const fetchData = (0, import_react.useCallback)(async () => {
+		setStatus({
+			status: "loading",
+			data: null,
+			error: null
+		});
+		try {
+			const data = await queryFn();
+			setStatus({
+				status: "success",
+				data,
+				error: null
+			});
+			return data;
+		} catch (error) {
+			setStatus({
+				status: "error",
+				data: null,
+				error: error instanceof RequestAjaxError ? error?.data : error
+			});
+		}
+	}, [queryFn]);
+	const refetch = (0, import_react.useCallback)(() => {
+		return fetchData();
+	}, [fetchData]);
+	(0, import_react.useEffect)(() => {
+		refetch();
+	}, [refetch]);
 	return {
-		cartProducts,
-		setCartProducts,
-		updateProductQuauntity,
-		deleteProduct,
-		updateProductSelection,
-		updateAllProductSelection
+		status,
+		refetch
 	};
 };
 //#endregion
-//#region src/pages/carts/useCartsActions.ts
-var CART_ID = 1;
-var useCartsActions = () => {
-	const { cartProducts, setCartProducts, updateProductQuauntity, deleteProduct, updateProductSelection, updateAllProductSelection } = useCarts();
-	const { status: { status: loadCartsProductsStatus, data } } = useLoadData({ queryFn: (0, import_react.useCallback)(async () => {
-		return await getCarts({ cartId: CART_ID });
+//#region src/pages/carts/errorPolicy.ts
+var LOAD_ERROR_POLICY = {
+	RESOURCE_NOT_FOUND: {
+		type: "field",
+		message: ""
+	},
+	ROUTE_NOT_FOUND: {
+		type: "field",
+		message: ""
+	}
+};
+var UPDATE_QUANTITY_ERROR_POLICY = {
+	MISSING_FIELD: { type: "ignore" },
+	INVALID: { type: "ignore" },
+	RESOURCE_NOT_FOUND: { type: "ignore" },
+	TYPE_MISMATCH: {
+		type: "alert",
+		message: "잘못된 형식의 요청입니다. 입력값을 확인해주세요."
+	},
+	NO_JSON: {
+		type: "alert",
+		message: "잘못된 요청입니다. 다시 시도해주세요."
+	},
+	ROUTE_NOT_FOUND: {
+		type: "alert",
+		message: "요청한 기능을 찾을 수 없습니다. 잠시 후 다시 시도해주세요."
+	}
+};
+var applyErrorPolicy = (policy, options) => {
+	if (!policy) return;
+	const handler = options[policy.type];
+	if (!handler) return;
+	if ("message" in policy) return handler(policy);
+};
+//#endregion
+//#region src/pages/carts/useCartsActions/useCartsLoadAction.ts
+var useCartsLoadAction = ({ updateCartProducts }) => {
+	const { status: { status, data, error } } = useLoadData({ queryFn: (0, import_react.useCallback)(async () => {
+		return await getCarts({ cartId: 1 });
 	}, []) });
+	const policy = LOAD_ERROR_POLICY[error?.errorCode];
+	const errorMessage = applyErrorPolicy(policy, { field: (policy) => policy.message });
 	(0, import_react.useEffect)(() => {
 		if (!data?.products) return;
-		setCartProducts(data?.products.map((product) => ({
-			...product,
-			selected: true
-		})));
+		updateCartProducts(data.products);
 	}, [data]);
-	const { open, onOpen, onClose } = useAlert();
-	const { status: { error: patchCartsProductsError }, mutate: patchCartsProductsMutate } = useExecute({
+	return {
+		data,
+		status,
+		errorMessage
+	};
+};
+//#endregion
+//#region src/pages/carts/useCartsActions/useCartsUpdateQuantityAction.ts
+var useCartsUpdateQuantityAction = ({ updateProductQuantity }) => {
+	const { open, message, onOpen, onClose } = useAlert();
+	const { mutate: patchCartsProductsMutate } = useExecute({
 		executeFn: patchCartsProducts,
 		onError: (error) => {
 			if (error instanceof RequestAjaxError) {
 				const { errorCode } = error.data;
-				if (errorCode === "MISSING_FIELD") return;
-				if (errorCode === "INVALID") return;
-				if (errorCode === "RESOURCE_NOT_FOUND") return;
-				if (errorCode === "TYPE_MISMATCH" || errorCode === "NO_JSON" || errorCode === "ROUTE_NOT_FOUND") {
-					onOpen();
-					return;
-				}
+				const policy = UPDATE_QUANTITY_ERROR_POLICY[errorCode];
+				applyErrorPolicy(policy, { alert: (policy) => onOpen(policy.message) });
 			}
 		}
 	});
-	const executeUpdateProductQuauntity = async ({ id: productId, quantity }) => {
-		if (!validateUpdateProductQuauntity(quantity)) return false;
+	const executeUpdateProductQuantity = async ({ id: productId, quantity }) => {
+		if (!validateUpdateProductQuantity(quantity)) return false;
 		try {
 			await patchCartsProductsMutate({
-				cartId: CART_ID,
+				cartId: 1,
 				productId,
 				quantity
 			});
-			updateProductQuauntity({
+			updateProductQuantity({
 				id: productId,
 				quantity
 			});
@@ -44430,42 +44971,68 @@ var useCartsActions = () => {
 			console.log(error);
 		}
 	};
-	const { mutate: deleteCartsProductsMutate } = useExecute({ executeFn: deleteCartsProducts });
-	const executeDeleteProduct = async ({ id: productId }) => {
-		await deleteCartsProductsMutate({
-			cartId: CART_ID,
-			productId
-		});
-		deleteProduct({ id: productId });
-	};
 	return {
-		loadCartsProductsStatus,
-		cartProducts,
-		updateProductQuauntityError: patchCartsProductsError,
-		updateProductQuauntity: executeUpdateProductQuauntity,
-		deleteProduct: executeDeleteProduct,
-		updateProductSelection,
-		updateAllProductSelection,
+		errorMessage: message,
+		updateProductQuantity: executeUpdateProductQuantity,
 		openAlert: open,
 		onAlertClose: onClose
 	};
 };
 //#endregion
-//#region src/pages/carts/constants.ts
-var DEVERLY_FEE = 3e3;
+//#region src/pages/carts/useCartsActions/useCartsActions.ts
+var useCartsActions = () => {
+	const { cartProducts, selectionProducts, updateCartProducts, updateProductQuantity, deleteProduct, updateProductSelection, updateAllProductSelection } = useCarts();
+	const loadAction = useCartsLoadAction({ updateCartProducts });
+	const updateQuantityAction = useCartsUpdateQuantityAction({ updateProductQuantity });
+	const deleteAction = useCartsDeleteAction({ deleteProduct });
+	const submit = async () => {
+		return (await postOrderSheet({
+			cartId: 1,
+			productIds: selectionProducts
+		})).id;
+	};
+	return {
+		loadCartsProductsStatus: loadAction.status,
+		loadProductQuantityErrorMessage: loadAction.errorMessage,
+		cartProducts,
+		updateProductQuantityErrorMessage: updateQuantityAction.errorMessage,
+		updateProductQuantity: updateQuantityAction.updateProductQuantity,
+		openAlert: updateQuantityAction.openAlert,
+		onAlertClose: updateQuantityAction.onAlertClose,
+		deleteProduct: deleteAction.deleteProduct,
+		updateProductSelection,
+		updateAllProductSelection,
+		submit
+	};
+};
+//#endregion
+//#region src/pages/carts/calculateCartAmounts.ts
+var calculateCartAmounts = (cartProducts) => {
+	if (!cartProducts.length) return {
+		cartAmount: 0,
+		deliveryFee: 0,
+		paymentAmount: 0
+	};
+	const cartAmount = cartProducts.reduce((acc, product) => {
+		acc += product.price * product.quantity;
+		return acc;
+	}, 0);
+	const deliveryFee = cartAmount >= 1e5 ? 0 : DELIVERY_FEE;
+	return {
+		cartAmount,
+		deliveryFee,
+		paymentAmount: cartAmount + deliveryFee
+	};
+};
 //#endregion
 //#region src/pages/carts/Carts.tsx
-var ERROR_MESSAGES = {
-	TYPE_MISMATCH: "잘못된 형식의 요청입니다. 입력값을 확인해주세요.",
-	NO_JSON: "잘못된 요청입니다. 다시 시도해주세요.",
-	ROUTE_NOT_FOUND: "요청한 기능을 찾을 수 없습니다. 잠시 후 다시 시도해주세요."
-};
 var Carts = () => {
-	const { loadCartsProductsStatus, cartProducts, updateProductQuauntityError, updateProductQuauntity, deleteProduct, updateProductSelection, updateAllProductSelection, openAlert, onAlertClose } = useCartsActions();
-	const errorCode = updateProductQuauntityError?.errorCode;
-	const errorMessage = errorCode && errorCode in ERROR_MESSAGES ? ERROR_MESSAGES[errorCode] : "";
+	const { loadCartsProductsStatus, loadProductQuantityErrorMessage, cartProducts, updateProductQuantity, deleteProduct, updateProductSelection, updateAllProductSelection, submit, updateProductQuantityErrorMessage, openAlert, onAlertClose } = useCartsActions();
+	const isLoadingCartProducts = loadCartsProductsStatus === "loading";
+	const shouldShowCartProducts = cartProducts.length !== 0;
+	const shouldShowEmptyCartProducts = loadCartsProductsStatus === "success" && cartProducts.length === 0;
 	const handleChangeQuantity = ({ id, quantity }) => {
-		updateProductQuauntity({
+		updateProductQuantity({
 			id,
 			quantity
 		});
@@ -44473,8 +45040,8 @@ var Carts = () => {
 	const handleClickDeleteProduct = ({ id }) => {
 		deleteProduct({ id });
 	};
-	const isAllChecked = cartProducts.every((product) => product.selected);
-	const handleAllToogleProductChecked = ({ checked }) => {
+	const isAllChecked = cartProducts.length ? cartProducts.every((product) => product.selected) : false;
+	const handleAllToggleProductChecked = ({ checked }) => {
 		updateAllProductSelection({ selected: checked });
 	};
 	const handleToggleProductChecked = ({ id, checked }) => {
@@ -44483,22 +45050,15 @@ var Carts = () => {
 			selected: checked
 		});
 	};
-	const naviate = useNavigate();
-	const handleClickOrderReview = () => {
-		naviate(ROUTES.ORDER_REVIEW, { state: {
-			products: filteredCartProducts.map((product) => product.quantity),
-			paymentAmount
-		} });
+	const navigate = useNavigate();
+	const handleClickOrderReview = async () => {
+		const id = await submit();
+		navigate(`${ROUTES.ORDER_REVIEW}/${id}`);
 	};
 	const filteredCartProducts = cartProducts.filter((product) => product.selected);
-	const cartAmount = filteredCartProducts.reduce((acc, selectedProduct) => {
-		acc += selectedProduct.price * selectedProduct.quantity;
-		return acc;
-	}, 0);
-	const delveryFee = cartAmount >= 1e5 ? 0 : DEVERLY_FEE;
-	const paymentAmount = cartAmount + delveryFee;
+	const { cartAmount, deliveryFee, paymentAmount } = calculateCartAmounts(filteredCartProducts);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Layout, { children: [
-		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Header, { title: "SHOP" }),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Header$1, { title: "SHOP" }),
 		/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(ContentBox, { children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Title, {
 				title: "장바구니",
@@ -44509,55 +45069,61 @@ var Carts = () => {
 				label: "전체선택",
 				checked: isAllChecked,
 				onChange: (e) => {
-					handleAllToogleProductChecked({ checked: e.target.checked });
+					handleAllToggleProductChecked({ checked: e.target.checked });
 				}
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("hr", {}),
-			loadCartsProductsStatus === "loading" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Loading, { children: "loading..." }),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(List, { children: cartProducts.map((product) => {
-				return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(List.Item, {
+			isLoadingCartProducts && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Loading, { children: "loading..." }),
+			shouldShowCartProducts && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(List, { children: cartProducts.map((product) => {
+				return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(List.Item, {
 					"data-testid": `cart-product-${product.id}`,
-					headerLeft: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Checkbox, {
-						id: String(product.id),
-						name: String(product.id),
-						empty: true,
-						checked: product.selected,
-						onChange: (e) => {
-							handleToggleProductChecked({
-								id: product.id,
-								checked: e.target.checked
-							});
-						}
-					}),
-					headerRight: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-						variant: "secondary",
-						size: "small",
-						onClick: () => {
-							handleClickDeleteProduct({ id: product.id });
-						},
-						children: "삭제"
-					}),
-					left: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ImgBox, { img: product.imgUrl || "" }),
-					title: product.name,
-					content: `${product.price}원`,
-					description: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(NumberStepper, {
-						value: product.quantity,
-						onDecrement: () => {
-							handleChangeQuantity({
-								id: product.id,
-								quantity: product.quantity - 1
-							});
-						},
-						onIncrement: () => {
-							handleChangeQuantity({
-								id: product.id,
-								quantity: product.quantity + 1
-							});
-						}
-					})
+					header: {
+						left: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Checkbox, {
+							id: String(product.id),
+							name: String(product.id),
+							empty: true,
+							checked: product.selected,
+							onChange: (e) => {
+								handleToggleProductChecked({
+									id: product.id,
+									checked: e.target.checked
+								});
+							}
+						}),
+						right: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+							variant: "secondary",
+							size: "small",
+							onClick: () => {
+								handleClickDeleteProduct({ id: product.id });
+							},
+							children: "삭제"
+						})
+					},
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(List.Item.Box, {
+						title: product.name,
+						content: `${formatNumber(product.price)}원`,
+						description: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(NumberStepper, {
+							min: 1,
+							max: 99,
+							value: product.quantity,
+							onDecrement: () => {
+								handleChangeQuantity({
+									id: product.id,
+									quantity: product.quantity - 1
+								});
+							},
+							onIncrement: () => {
+								handleChangeQuantity({
+									id: product.id,
+									quantity: product.quantity + 1
+								});
+							}
+						})
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(List.Item.Left, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ImgBox, { img: product.imgUrl || "" }) })]
 				}, product.id);
 			}) }),
-			!cartProducts.length && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Notice, { children: "장바구니에 담은 상품이 없습니다." }),
+			loadProductQuantityErrorMessage && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Notice, { children: loadProductQuantityErrorMessage }),
+			shouldShowEmptyCartProducts && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Notice, { children: "장바구니에 담은 상품이 없습니다." }),
 			!!cartProducts.length && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { children: [
 				"총 주문 금액이 ",
 				1e5,
@@ -44565,15 +45131,15 @@ var Carts = () => {
 			] }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DataInfo, { children: [
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(DataInfo.Item, {
 					title: "주문금액",
-					content: `${cartAmount}원`
+					content: `${formatNumber(cartAmount)}원`
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(DataInfo.Item, {
 					title: "배송비",
-					content: `${delveryFee}원`
+					content: `${formatNumber(deliveryFee)}원`
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(DataInfo.Item, {
 					title: "총결제금액",
-					content: `${paymentAmount}원`
+					content: `${formatNumber(paymentAmount)}원`
 				})
 			] })] })
 		] }),
@@ -44587,47 +45153,426 @@ var Carts = () => {
 		}),
 		openAlert && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Alert, {
 			onClose: onAlertClose,
-			children: errorMessage
+			children: updateProductQuantityErrorMessage
 		})
 	] });
+};
+//#endregion
+//#region src/pages/orderReview/useOrderSheet/useOrderSheetData.ts
+var useOrderSheetData = () => {
+	const { id } = useParams();
+	const orderSheetLoadData = useLoadData({ queryFn: (0, import_react.useCallback)(async () => {
+		if (!id) return;
+		return await getOrderSheet({ id: Number(id) });
+	}, [id]) });
+	const { status, data } = orderSheetLoadData.status;
+	const { refetch } = orderSheetLoadData;
+	const totalCount = data?.products.reduce((acc, product) => {
+		acc += product.quantity;
+		return acc;
+	}, 0);
+	return {
+		status,
+		products: data?.products,
+		totalCount,
+		isRemoteArea: data?.isRemoteArea,
+		couponSelection: data?.selectedCoupons,
+		refetch
+	};
+};
+//#endregion
+//#region src/pages/orderReview/useOrderSheet/useOrderSheetPricing.ts
+var useOrderSheetPricing = () => {
+	const { id } = useParams();
+	const loadData = useLoadData({ queryFn: (0, import_react.useCallback)(async () => {
+		if (!id) return;
+		return await getOrderSheetPricing({ id: Number(id) });
+	}, [id]) });
+	const { data } = loadData.status;
+	const { refetch } = loadData;
+	return {
+		pricing: data,
+		paymentAmount: data ? data.orderSheetAmount - data.discountAmount + data.shippingFee : 0,
+		refetch
+	};
+};
+//#endregion
+//#region src/pages/orderReview/useOrderSheet/useOrderSheetIsRemoteArea.ts
+var useOrderSheetIsRemoteArea = ({ onUpdate }) => {
+	const { id } = useParams();
+	const { mutate: updateIsRemoteAreaMutate } = useExecute({
+		executeFn: (0, import_react.useCallback)(async (isRemoteArea) => {
+			return await patchOrderSheetShippingArea({
+				id: Number(id),
+				isRemoteArea
+			});
+		}, [id]),
+		onSuccess: () => {
+			onUpdate();
+		}
+	});
+	return { updateIsRemoteAreaMutate };
+};
+//#endregion
+//#region src/pages/orderReview/useOrderSheet/useOrderSheetCouponSelection.ts
+var useOrderSheetCouponSelection$1 = ({ onUpdate }) => {
+	const { id } = useParams();
+	const { mutate: updateSelectedCouponsMutate } = useExecute({
+		executeFn: (0, import_react.useCallback)(async (selectedCoupons) => {
+			return await patchOrderSheetCoupons({
+				id: Number(id),
+				selectedCoupons
+			});
+		}, [id]),
+		onSuccess: () => {
+			onUpdate();
+		}
+	});
+	return { updateSelectedCouponsMutate };
+};
+//#endregion
+//#region src/pages/orderReview/useOrderSheet/useOrderSheet.ts
+var useOrderSheet = () => {
+	const orderSheetLoadData = useOrderSheetData();
+	const { products, totalCount, isRemoteArea, couponSelection } = orderSheetLoadData;
+	const { updateIsRemoteAreaMutate } = useOrderSheetIsRemoteArea({ onUpdate: () => {
+		orderSheetLoadData.refetch();
+		pricingLoadData.refetch();
+	} });
+	const updateIsRemoteArea = async ({ isRemoteArea }) => {
+		await updateIsRemoteAreaMutate(isRemoteArea);
+	};
+	const { updateSelectedCouponsMutate } = useOrderSheetCouponSelection$1({ onUpdate: () => {
+		orderSheetLoadData.refetch();
+		pricingLoadData.refetch();
+	} });
+	const updateCouponSelection = async ({ couponSelection }) => {
+		await updateSelectedCouponsMutate(couponSelection);
+	};
+	const pricingLoadData = useOrderSheetPricing();
+	const { pricing, paymentAmount } = pricingLoadData;
+	return {
+		products,
+		totalCount,
+		isRemoteArea,
+		couponSelection,
+		pricing,
+		paymentAmount,
+		updateIsRemoteArea,
+		updateCouponSelection
+	};
+};
+var Modal_module_default = {
+	"ui-modal": "_ui-modal_1e8y8_2",
+	container: "_container_1e8y8_2",
+	"button-close": "_button-close_1e8y8_14",
+	header: "_header_1e8y8_25",
+	dim: "_dim_1e8y8_31"
+};
+//#endregion
+//#region src/core/components/Modal/Header.tsx
+var Header = (props) => {
+	const { as = "div", children, ...restProps } = props;
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(View, {
+		as,
+		className: Modal_module_default["header"],
+		...restProps,
+		children
+	});
+};
+//#endregion
+//#region src/core/components/Modal/Modal.tsx
+var classnameDefault = "ui-modal";
+var Modal = (props) => {
+	const { as = "div", className, children, onClose, ...restProps } = props;
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(View, {
+		as,
+		className: createClassName({
+			styles: Modal_module_default,
+			baseName: classnameDefault,
+			modifiers: {},
+			className
+		}),
+		...restProps,
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: Modal_module_default["container"],
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+				className: Modal_module_default["button-close"],
+				onClick: onClose,
+				children: "close"
+			}), children]
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: Modal_module_default["dim"] })]
+	});
+};
+Modal.Header = Header;
+//#endregion
+//#region src/services/apis/coupons/fetcher.ts
+var getCoupons$1 = async () => {
+	return (await requestAjax("/coupons", { method: "get" })).data;
+};
+//#endregion
+//#region src/services/apis/coupons/mapper.ts
+var mapGetCouponsResponseDTOToModel = (response) => {
+	return { coupons: response.data.coupons.map((coupon) => {
+		return {
+			id: coupon.id,
+			name: coupon.name,
+			code: coupon.code,
+			expirationDate: coupon.expirationDate,
+			...coupon.minimumOrderAmount ? { minOrderAmount: coupon.minimumOrderAmount } : {},
+			...coupon.validityPeriod ? { validTime: {
+				start: coupon.validityPeriod.startsAt,
+				end: coupon.validityPeriod.endsAt
+			} } : {}
+		};
+	}) };
+};
+//#endregion
+//#region src/services/apis/coupons/repository.ts
+var getCoupons = async () => {
+	return mapGetCouponsResponseDTOToModel(await getCoupons$1());
+};
+//#endregion
+//#region src/pages/orderReview/modals/useOrderSheetCoupons/useCoupons.ts
+var useCoupons = () => {
+	return { coupons: useLoadData({ queryFn: getCoupons }).status.data?.coupons };
+};
+//#endregion
+//#region src/pages/orderReview/modals/useOrderSheetCoupons/useOrderSheetAbleCoupons.ts
+var useOrderSheetAbleCoupons = () => {
+	const { id } = useParams();
+	return { ableCoupons: useLoadData({ queryFn: (0, import_react.useCallback)(async () => {
+		return await getOrderSheetAbleCoupons({ id: Number(id) });
+	}, [id]) }).status.data?.ableCoupons };
+};
+//#endregion
+//#region src/pages/orderReview/modals/useOrderSheetCoupons/useOrderSheetCouponSelection.ts
+var useOrderSheetCouponSelection = ({ couponSelection, updateCouponSelection: updateCouponSelectionActions }) => {
+	const { id } = useParams();
+	const [draftCouponSelection, setDraftCouponSelection] = (0, import_react.useState)(couponSelection);
+	const changeCouponSelection = ({ id, checked }) => {
+		setDraftCouponSelection(checked ? [...draftCouponSelection, id] : draftCouponSelection.filter((couponId) => couponId !== id));
+	};
+	const discountAmount = useLoadData({ queryFn: (0, import_react.useCallback)(async () => {
+		return await postOrderSheetCouponsDiscountPreview({
+			id: Number(id),
+			selectedCoupons: draftCouponSelection
+		});
+	}, [id, draftCouponSelection]) }).status.data?.discountAmount;
+	const updateCouponSelection = async () => {
+		await updateCouponSelectionActions({ couponSelection: draftCouponSelection });
+	};
+	return {
+		draftCouponSelection,
+		discountAmount,
+		changeCouponSelection,
+		updateCouponSelection
+	};
+};
+//#endregion
+//#region src/pages/orderReview/modals/useOrderSheetCoupons/useOrderSheetCoupons.ts
+var useOrderSheetCoupons = ({ couponSelection, updateCouponSelection: updateCouponSelectionActions }) => {
+	const { coupons } = useCoupons();
+	const { ableCoupons } = useOrderSheetAbleCoupons();
+	const { draftCouponSelection, discountAmount, changeCouponSelection, updateCouponSelection } = useOrderSheetCouponSelection({
+		couponSelection,
+		updateCouponSelection: updateCouponSelectionActions
+	});
+	return {
+		coupons: coupons?.map((coupon) => {
+			const isAble = ableCoupons?.includes(coupon.code);
+			const isSelected = draftCouponSelection.includes(coupon.id);
+			return {
+				...coupon,
+				isAble,
+				isSelected
+			};
+		}),
+		discountAmount,
+		changeCouponSelection,
+		updateCouponSelection
+	};
+};
+//#endregion
+//#region src/pages/orderReview/modals/CouponModal.tsx
+var CouponModal = ({ couponSelection, onUpdateCouponSelection, onClose }) => {
+	const { coupons, discountAmount, changeCouponSelection, updateCouponSelection } = useOrderSheetCoupons({
+		couponSelection,
+		updateCouponSelection: onUpdateCouponSelection
+	});
+	const handleChangeCouponSelection = (e) => {
+		changeCouponSelection({
+			id: Number(e.target.id),
+			checked: e.target.checked
+		});
+	};
+	const handleSubmit = async () => {
+		await updateCouponSelection();
+		onClose();
+	};
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Modal, {
+		onClose,
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Modal.Header, { children: "쿠폰을 선택해 주세요" }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: "쿠폰은 최대 2개까지 사용할 수 있습니다." }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(List, { children: coupons?.map((coupon) => {
+				return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(List.Item, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(List.Item.Box, {
+					style: { ...!coupon.isAble && {
+						opacity: .5,
+						pointerEvents: "none"
+					} },
+					title: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Checkbox, {
+						id: coupon.id,
+						label: coupon.name,
+						checked: coupon.isSelected,
+						onChange: handleChangeCouponSelection
+					}),
+					description: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+						coupon.expirationDate && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: ["만료일: ", formatDate(coupon.expirationDate)] }),
+						coupon.minOrderAmount && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
+							" 최소 주문 금액:",
+							" ",
+							formatNumber(coupon.minOrderAmount),
+							"원"
+						] }),
+						coupon.validTime && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
+							" 사용 가능 시간: ",
+							coupon.validTime.start,
+							"부터",
+							coupon.validTime.end,
+							"까지"
+						] })
+					] })
+				}) });
+			}) }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+				variant: "primary",
+				size: "medium",
+				block: true,
+				onClick: handleSubmit,
+				children: [
+					"총 ",
+					discountAmount,
+					"원 할인 쿠폰 사용하기"
+				]
+			})
+		]
+	});
 };
 //#endregion
 //#region src/pages/orderReview/OrderReview.tsx
 var OrderReview = () => {
 	const navigate = useNavigate();
-	const state = useLocation().state;
-	if (!state) return null;
-	const { products, paymentAmount } = state;
-	const totalCount = products.reduce((acc, product) => {
-		acc += product;
-		return acc;
-	}, 0);
-	const handlelickBack = () => {
+	const handleClickBack = () => {
 		navigate(-1);
 	};
+	const { products, totalCount, isRemoteArea, updateIsRemoteArea, couponSelection, updateCouponSelection, pricing, paymentAmount } = useOrderSheet();
+	const handleChangeIsRemoteArea = (e) => {
+		updateIsRemoteArea({ isRemoteArea: e.target.checked });
+	};
+	const [isOpenModal, setIsOpenModal] = (0, import_react.useState)(false);
+	const handleClickOpenModal = () => {
+		setIsOpenModal(true);
+	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Layout, { children: [
-		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Header, { leading: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Header.Back, { onClick: handlelickBack }) }),
-		/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Notice, { children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: "주문" }),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { children: [
-				"총 ",
-				products.length,
-				"종류의 상품 ",
-				totalCount,
-				"개를 주문합니다. ",
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
-				"최종 결제 금액을 확인해 주세요."
-			] }),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: "최종 결제 금액을 확인해 주세요." }),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: "총 결제 금액" }),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { children: [paymentAmount, "원"] })
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Header$1, { leading: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Header$1.Back, { onClick: handleClickBack }) }),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(ContentBox, { children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Title, {
+				title: "주문 확인",
+				subTitle: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+					"총 ",
+					products?.length,
+					"종류의 상품 ",
+					totalCount,
+					"개를 주문합니다.",
+					" ",
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
+					"최종 결제 금액을 확인해 주세요."
+				] })
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(List, { children: products?.map((product) => {
+				return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(List.Item, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(List.Item.Left, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ImgBox, { img: product.imgUrl }) }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(List.Item.Box, {
+					title: product.name,
+					content: `${formatNumber(product.price)}원`,
+					description: `${product.quantity}개`
+				})] });
+			}) }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+				variant: "secondary",
+				size: "medium",
+				edge: "rounded",
+				block: true,
+				onClick: handleClickOpenModal,
+				children: "쿠폰 적용"
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Title, {
+				title: "배송 정보",
+				level: 2
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Checkbox, {
+				id: "isRemoteArea",
+				label: "제주도 및 도서 산간 지역",
+				checked: isRemoteArea,
+				onChange: handleChangeIsRemoteArea
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: "총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다." }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DataInfo, { children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(DataInfo.Item, {
+					title: "주문 금액",
+					content: `${pricing?.orderSheetAmount}원`
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(DataInfo.Item, {
+					title: "쿠폰 할인 금액",
+					content: `${pricing?.discountAmount}원`
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(DataInfo.Item, {
+					title: "배송비",
+					content: `${pricing?.shippingFee}원`
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(DataInfo.Item, {
+					title: "총 결제 금액",
+					content: `${paymentAmount}원`
+				})
+			] })
 		] }),
 		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
 			variant: "primary",
 			size: "large",
 			block: true,
-			disabled: true,
 			children: "결제하기"
+		}),
+		isOpenModal && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CouponModal, {
+			couponSelection,
+			onUpdateCouponSelection: updateCouponSelection,
+			onClose: () => setIsOpenModal(false)
+		})
+	] });
+};
+//#endregion
+//#region src/pages/paymentReview/PaymentReview.tsx
+var PaymentReview = () => {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Layout, { children: [
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Header$1, {}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Notice, { children: [
+			"결제 확인",
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
+			"총 1종류의 상품 2개를 주문했습니다.",
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
+			"최종 결제 금액을 확인해 주세요.",
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
+			"총 결제 금액",
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
+			"70,000원"
+		] }),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+			variant: "primary",
+			size: "large",
+			block: true,
+			children: "장바구니로 돌아가기"
 		})
 	] });
 };
@@ -44646,8 +45591,12 @@ var routes = [
 		element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Carts, {})
 	},
 	{
-		path: ROUTES.ORDER_REVIEW,
+		path: `${ROUTES.ORDER_REVIEW}/:id`,
 		element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(OrderReview, {})
+	},
+	{
+		path: ROUTES.PAYMENT_REVIEW,
+		element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PaymentReview, {})
 	}
 ];
 //#endregion
@@ -44671,5 +45620,5 @@ function App() {
 }
 //#endregion
 //#region src/main.tsx
-(0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AppProviders, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }) }));
+(0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AppProviders, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
