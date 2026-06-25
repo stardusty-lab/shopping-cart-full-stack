@@ -12,6 +12,7 @@ import {
   calculateOrderSheetAmount,
   calculateAppliedShippingFee,
   calculateCouponDiscountAmount,
+  calculatePaymentAmount,
   calculateBestCouponCombination,
   canUseCoupon,
 } from "./orderSheets.domain.ts";
@@ -175,10 +176,17 @@ export const getOrderSheetPricing = (orderSheetId: number) => {
     },
   );
 
+  const paymentAmount = calculatePaymentAmount(
+    orderSheetAmount,
+    couponDiscountAmount,
+    shippingFreeAfterCoupon,
+  );
+
   return {
     orderAmount: orderSheetAmount,
     couponDiscountAmount: couponDiscountAmount,
     shippingFee: shippingFreeAfterCoupon,
+    paymentAmount: paymentAmount,
   };
 };
 
