@@ -19,13 +19,8 @@ export const useOrderSheetPricing = () => {
   const { data } = loadData.status;
   const { refetch } = loadData;
 
-  const paymentAmount = data
-    ? data.orderSheetAmount - data.discountAmount + data.shippingFee
-    : 0;
-
   return {
     pricing: data,
-    paymentAmount,
     refetch,
   };
 };

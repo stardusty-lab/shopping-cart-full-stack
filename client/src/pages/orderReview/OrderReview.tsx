@@ -111,7 +111,10 @@ export const OrderReview = () => {
             content={`${pricing?.discountAmount}원`}
           />
           <DataInfo.Item title="배송비" content={`${pricing?.shippingFee}원`} />
-          <DataInfo.Item title="총 결제 금액" content={`${paymentAmount}원`} />
+          <DataInfo.Item
+            title="총 결제 금액"
+            content={`${pricing?.paymentAmount}원`}
+          />
         </DataInfo>
       </ContentBox>
 
