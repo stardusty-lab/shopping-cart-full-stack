@@ -82,6 +82,7 @@ export const mapGetOrderSheetPricingResponseDTOToModel = (
     orderSheetAmount: response.data.pricing.orderAmount,
     discountAmount: response.data.pricing.couponDiscountAmount,
     shippingFee: response.data.pricing.shippingFee,
+    paymentAmount: response.data.pricing.paymentAmount,
   };
 };
 

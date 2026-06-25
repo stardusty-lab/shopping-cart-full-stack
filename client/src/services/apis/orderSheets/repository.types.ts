@@ -36,6 +36,7 @@ export type GetOrderSheetPricing = (
   orderSheetAmount: number;
   discountAmount: number;
   shippingFee: number;
+  paymentAmount: number;
 }>;
 
 // PatchOrderSheetShippingArea

@@ -68,6 +68,7 @@ export type GetOrderSheetPricingResponseDTO = ResponseDTO<
       orderAmount: number;
       couponDiscountAmount: number;
       shippingFee: number;
+      paymentAmount: number;
     };
   }
 >;
