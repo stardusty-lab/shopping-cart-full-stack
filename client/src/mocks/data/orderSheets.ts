@@ -68,4 +68,5 @@ export const pricing = {
   orderAmount: 49500,
   couponDiscountAmount: 13770,
   shippingFee: 3000,
+  paymentAmount: 38730,
 };
