@@ -238,10 +238,13 @@ export const canUseCoupon = (
   }
 };
 
-const getAllCouponCombination = (coupons: string[]): [string, string][] => {
-  const cases: [string, string][] = [];
+const getAllCouponCombination = (
+  coupons: string[],
+): ([string] | [string, string])[] => {
+  const cases: ([string] | [string, string])[] = [];
   coupons.forEach((coupon: string, index: number) => {
     for (let i = index; i < coupons.length; i++) {
+      cases.push([coupons[index]]);
       if (coupons[index] !== coupons[i]) {
         const caseData: [string, string] = [coupons[index], coupons[i]];
         cases.push(caseData);
