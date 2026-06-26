@@ -109,11 +109,13 @@ export const getOrderSheetAbleCoupons = async ({
 // PostOrderSheetCouponsDiscountPreview
 export const postOrderSheetCouponsDiscountPreview = async ({
   pathParams: [{ value: id }],
+  data: { selectedCoupons },
 }: PostOrderSheetCouponsDiscountPreviewRequestDTO): Promise<PostOrderSheetCouponsDiscountPreviewResponseDTO> => {
   const response = await requestAjax(
     `/order-sheet/${id}/coupon-discount-preview`,
     {
       method: "post",
+      data: { selectedCoupons },
     },
   );
 
